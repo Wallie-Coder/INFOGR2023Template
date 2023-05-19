@@ -19,15 +19,15 @@ class Sphere : Primitive
 
         
     }
-    public override float Collision()
+    public override float Collision(Ray ray)
     {
         // calculates the smalles intersection point t an returns this.
         // dont know what happens if there is no intersection.
 
-        base.Collision();
+        base.Collision(ray);
 
-        Vector3 rayDirection = new Vector3(1,0,0);
-        Vector3 rayOrigin = new Vector3(-2, 0, 0);
+        Vector3 rayDirection = ray.Direction;
+        Vector3 rayOrigin = ray.Origin;
 
         float dx = rayDirection.X;
         float dy = rayDirection.Y;
@@ -35,7 +35,7 @@ class Sphere : Primitive
 
         float Ex = rayOrigin.X;
         float Ey = rayOrigin.Y;
-        float Ez = rayOrigin.Z;
+       float Ez = rayOrigin.Z;
 
         float X0 = location.X;
         float Y0 = location.Y;
@@ -43,7 +43,7 @@ class Sphere : Primitive
 
         float r = radius;
 
-        float a = dx + dy + dz;
+        float a = dx * dx + dy * dy + dz * dz;
         float b = Ex - X0 + Ey - Y0 + Ez - Z0;
         float c = 2 * Ex * X0 + (X0 * X0) + (Ex * Ex) + 2 * Ey * Y0 + (Y0 * Y0) + (Ey * Ey) + 2 * Ez * Z0 + (Z0 * Z0) + (Ez * Ez);
 
@@ -52,7 +52,7 @@ class Sphere : Primitive
 
         try
         {
-            t1 = -b + (float)Math.Sqrt((double)((b * b) + 4 * a * c)) / 2 * a;
+            t1 = (-b + (float)Math.Sqrt((double)((b * b) + 4 * a * c))) / 2 * a;
         }
         catch
         {
@@ -61,7 +61,7 @@ class Sphere : Primitive
 
         try
         {
-            t2 = -b + (float)Math.Sqrt((double)((b * b) + 4 * a * c)) / 2 * a;
+            t2 = (-b - (float)Math.Sqrt((double)((b * b) + 4 * a * c))) / 2 * a;
         }
         catch
         {

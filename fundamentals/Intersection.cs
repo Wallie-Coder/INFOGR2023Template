@@ -6,16 +6,26 @@ class Intersection
 {
     // member variables
     float distance;
+    float t;
     Vector3 intersection;
     Vector3 normal;
     Ray ray;
     Primitive prim;
 
-    public Intersection(Ray ray, Primitive prim, Vector3 intersection)
+    public Vector3 IntersectionPoint { get { return intersection;} }
+
+    public Intersection(Ray ray, Primitive prim, float t)
     {
         this.ray = ray;
         this.prim = prim;
-        this.intersection = intersection;
+        this.t = t;
+        CalculateIntersection(ray, t);
+        SetNormal();
+    }
+
+    void CalculateIntersection(Ray r, float t)
+    {
+        intersection = r.Origin + t * r.Direction;
     }
 
     void SetNormal()
@@ -24,6 +34,7 @@ class Intersection
         {
             Sphere sphere = (Sphere)prim;
             normal = intersection - sphere.Location;
+            normal.Normalize();
         }
     }
 }

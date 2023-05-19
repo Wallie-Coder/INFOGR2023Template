@@ -4,13 +4,15 @@ using System;
 class Light
 {
     // position of the pointlight
-    Vector3 position;
+    Vector3 location;
     // intensity of the light
     Vector3 intensity;
 
-    public Light(Vector3 position, Vector3 intensity)
+    public Vector3 Location { get { return location; } }
+
+    public Light(Vector3 location, Vector3 intensity)
     {
-        this.position = position;
+        this.location = location;
         this.intensity = intensity;
     }
 }
