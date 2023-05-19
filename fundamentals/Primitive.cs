@@ -8,8 +8,8 @@ class Primitive
 
         
     }
-    public virtual void Collision()
+    public virtual float Collision()
     {
-
+        return 0f;
     }
 }
