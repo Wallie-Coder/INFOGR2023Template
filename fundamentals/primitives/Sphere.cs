@@ -45,7 +45,7 @@ class Sphere : Primitive
 
         float a = dx * dx + dy * dy + dz * dz;
         float b = Ex - X0 + Ey - Y0 + Ez - Z0;
-        float c = 2 * Ex * X0 + (X0 * X0) + (Ex * Ex) + 2 * Ey * Y0 + (Y0 * Y0) + (Ey * Ey) + 2 * Ez * Z0 + (Z0 * Z0) + (Ez * Ez);
+        float c = 2 * Ex * X0 + (X0 * X0) + (Ex * Ex) + 2 * Ey * Y0 + (Y0 * Y0) + (Ey * Ey) + 2 * Ez * Z0 + (Z0 * Z0) + (Ez * Ez) - 3 * (r * r);
 
         float t1 = 0;
         float t2 = 0;
