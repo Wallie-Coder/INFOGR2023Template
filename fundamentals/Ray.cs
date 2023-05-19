@@ -11,4 +11,10 @@ class Ray
     int bounces;
     // the amount of bounces after which we stop tracing the ray
     int maxBounces = 10;
+
+    public Ray(Vector3 direction)
+    {
+        this.direction = direction;
+        color = new Vector3(0,0,0);
+    }
 }
