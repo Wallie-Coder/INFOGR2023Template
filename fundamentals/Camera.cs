@@ -22,6 +22,11 @@ class Camera
 
     float planeDistance = 5;
 
+    public float PlaneDistance
+    {
+        get { return planeDistance; }
+    }
+
     Vector3 p0; // top right
     Vector3 p1; // top left
     Vector3 p2; // bottom right

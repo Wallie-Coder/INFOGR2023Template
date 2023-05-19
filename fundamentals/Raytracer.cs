@@ -31,10 +31,10 @@ class Raytracer
         {
             for(int j = 0; j < screen.width; j++) 
             {
-                Ray ray = new Ray(new Vector3(i / screen.height, j  / screen.width, 0) - camera.Location);
+                Ray ray = new Ray(new Vector3(i / screen.height, j  / screen.width, 1) - camera.Location, camera.Location); 
 
                 int location = i + j * screen.width;
-                screen.pixels[location] = 1;
+                screen.pixels[location] = 1; // color the ray returns
             }
         }
     }
