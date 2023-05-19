@@ -19,7 +19,7 @@ class Scene
         };
         primitives = new List<Primitive>
         {
-            new Sphere(new Vector3(0,0,15), 3)
+            new Sphere(new Vector3(0,0,15), 1000)
         };
     }
 }
