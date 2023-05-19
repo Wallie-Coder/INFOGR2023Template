@@ -16,5 +16,11 @@ class Sphere : Primitive
     {
         this.location = location;
         this.radius = radius;
+
+        
+    }
+    public override void Collision()
+    {
+        base.Collision();
     }
 }
