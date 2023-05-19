@@ -4,15 +4,11 @@ using System.Reflection.Metadata.Ecma335;
 
 class Intersection
 {
-    // distance to intersection
+    // member variables
     float distance;
-    // point of intersection
     Vector3 intersection;
-    // the normal of the primitive at the point of intersection
     Vector3 normal;
-    // the ray that intersected with a primitive
     Ray ray;
-    // the primitive the ray intersected with
     Primitive prim;
 
     public Intersection(Ray ray, Primitive prim, Vector3 intersection)
@@ -22,11 +18,11 @@ class Intersection
         this.intersection = intersection;
     }
 
-    void Normal()
+    void SetNormal()
     {
         if(prim is Sphere)
         {
-            Sphere sphere = prim as Sphere;
+            Sphere sphere = (Sphere)prim;
             normal = intersection - sphere.Location;
         }
     }
