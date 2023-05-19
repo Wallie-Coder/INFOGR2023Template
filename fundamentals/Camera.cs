@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace INFOGR2023Template.fundamentals
+namespace INFOGR2023Template.Fundamentals
 {
     internal class Camera
     {
