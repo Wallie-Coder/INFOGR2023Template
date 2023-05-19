@@ -12,7 +12,7 @@ class Sphere : Primitive
     }
 
 
-    internal Sphere(Vector3 location, float radius)
+    public Sphere(Vector3 location, float radius)
     {
         this.location = location;
         this.radius = radius;
