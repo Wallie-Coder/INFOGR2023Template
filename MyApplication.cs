@@ -12,7 +12,7 @@ namespace Template
         // initialize
         public void Init()
         {
-
+             
         }
         // tick: renders one frame
         public void Tick()
