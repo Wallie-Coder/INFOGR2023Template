@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace INFOGR2023Template
+namespace INFOGR2023Template.Fundamentals
 {
-    internal class Camera
+    internal class Primitive
     {
     }
 }
