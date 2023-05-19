@@ -1,4 +1,6 @@
-﻿using OpenTK.Mathematics;
+﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using System.Runtime.CompilerServices;
 using Template;
 
 class Camera
@@ -18,13 +20,13 @@ class Camera
 
     public Vector3 rightDirection;
 
-    public Vector3 planeCenter;
+    float aspectRatio = 16 / 9;
 
-    
+    public Vector3 planeCenter;
 
     float cameraHeight = 2.0f;
     float cameraWidth;
-    float planeDistance = 1;
+    float planeDistance = -1;
 
     public float PlaneDistance
     {
@@ -36,36 +38,26 @@ class Camera
     Vector3 p2; // bottom right
     public Vector3 p3; // bottom left
 
-    float aspectRatio;
+    
 
     //constructor
     public Camera(Surface screen)
     {
-        aspectRatio = screen.width / screen.height;
-        cameraWidth = aspectRatio * screen.width;
-        location = new Vector3(0, 0, 0);
-        forwardDirection = new Vector3(0, 0, -1);
-        upDirection = new Vector3(0, 1, 0);
-        rightDirection = new Vector3(1, 0, 0);
+        cameraWidth = aspectRatio * cameraHeight;
+        location = Vector3.Zero;
+        forwardDirection = new Vector3(0, 0, planeDistance);
+        upDirection = new Vector3(0, cameraHeight, 0);
+        rightDirection = new Vector3(cameraWidth, 0, 0);
         CalculatePlane();
     }
 
     // Calculates the plane center and corners of the plane the camera shows.
     void CalculatePlane()
     {
-        planeCenter = planeDistance * forwardDirection;
-        p0 = planeCenter + upDirection - rightDirection * aspectRatio;
-        p1 = planeCenter + upDirection + rightDirection * aspectRatio;
-        p2 = planeCenter - upDirection - rightDirection * aspectRatio;
-        p3 = planeCenter - upDirection + rightDirection * aspectRatio;
+        planeCenter = location + forwardDirection;
+        p3 = location - rightDirection / 2 - upDirection / 2 - forwardDirection;
     }
 
-    Vector2 PointOnPlane(float a, float b)
-    {
-        Vector3 u = p1 - p0;
-        Vector3 v = p2 - p0;
-        Vector3 temp = p0 + aspectRatio * u + aspectRatio * v;
-        return new Vector2(temp.X, temp.Y);
-    }
+
 }
 

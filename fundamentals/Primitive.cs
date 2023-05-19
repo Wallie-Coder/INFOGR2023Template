@@ -8,8 +8,8 @@ class Primitive
 
         
     }
-    public virtual float Collision(Ray ray)
+    public virtual bool Collision(Ray ray)
     {
-        return 0f;
+        return false;
     }
 }

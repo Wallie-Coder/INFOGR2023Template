@@ -17,9 +17,9 @@ class Plane : Primitive
         this.Distance = distance;
     }
 
-    public override float Collision(Ray ray)
+    public override bool Collision(Ray ray)
     {
-        return 0f;
+        return false;
     }
 }
 
