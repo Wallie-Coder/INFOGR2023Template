@@ -2,13 +2,19 @@
 
 class Sphere : Primitive
 {
-    Vector3 Location;
-    float Radius;
+    Vector3 location;
+    float radius;
+
+    public Vector3 Location
+    {
+        get { return location; }
+        private set { location = value; }
+    }
 
 
     internal Sphere(Vector3 location, float radius)
     {
-        this.Location = location;
-        this.Radius = radius;
+        this.location = location;
+        this.radius = radius;
     }
 }
