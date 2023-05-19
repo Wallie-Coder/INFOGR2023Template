@@ -8,5 +8,15 @@ namespace INFOGR2023Template.Fundamentals
 {
     internal class Primitive
     {
+
+        internal Primitive()
+        {
+
+        }
+
+        internal virtual void Collision()
+        {
+
+        }
     }
 }

@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace INFOGR2023Template.Fundamentals
 {
-    internal class Sphere : Primitive
+    internal class Plane : Primitive
     {
-        Vector3 Location;
-        float Radius;
+        Vector3 Normal;
 
+        float Distance;
 
-        internal Sphere(Vector3 location, float radius)
+        internal Plane(Vector3 normal, float distance)
         {
-            this.Location = location;
-            this.Radius = radius;
+            this.Normal = normal;
+            this.Distance = distance;
         }
 
         internal override void Collision()
