@@ -42,7 +42,6 @@ namespace Template
 
         int screenID;            // unique integer identifier of the OpenGL texture
         MyApplication? app;      // instance of the application
-        Raytracer? raytracer;
         bool terminated = false; // application terminates gracefully when this is true
 
         // The following variables are only needed in Modern OpenGL
@@ -78,7 +77,6 @@ namespace Template
             GL.Disable(EnableCap.DepthTest);
             Surface screen = new(ClientSize.X, ClientSize.Y);
             app = new MyApplication(screen);
-            raytracer = new Raytracer(screen);
             screenID = app.screen.GenTexture();
             if (allowPrehistoricOpenGL)
             {
@@ -176,7 +174,6 @@ namespace Template
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            if (raytracer != null) raytracer.Render();
             // called once per frame; render
             if (app != null) app.Tick();
             if (terminated)

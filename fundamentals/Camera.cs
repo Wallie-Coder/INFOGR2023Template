@@ -12,15 +12,19 @@ class Camera
         private set { location = value; }
     }
 
-    Vector3 forwardDirection;
+    public Vector3 forwardDirection;
 
-    Vector3 upDirection;
+    public Vector3 upDirection;
 
-    Vector3 rightDirection;
+    public Vector3 rightDirection;
 
-    Vector3 planeCenter;
+    public Vector3 planeCenter;
 
-    float planeDistance = 5;
+    
+
+    float cameraHeight = 2.0f;
+    float cameraWidth;
+    float planeDistance = 1;
 
     public float PlaneDistance
     {
@@ -30,7 +34,7 @@ class Camera
     Vector3 p0; // top right
     Vector3 p1; // top left
     Vector3 p2; // bottom right
-    Vector3 p3; // bottom left
+    public Vector3 p3; // bottom left
 
     float aspectRatio;
 
@@ -38,11 +42,12 @@ class Camera
     public Camera(Surface screen)
     {
         aspectRatio = screen.width / screen.height;
+        cameraWidth = aspectRatio * screen.width;
         location = new Vector3(0, 0, 0);
-        forwardDirection = new Vector3(0, 0, 1);
+        forwardDirection = new Vector3(0, 0, -1);
         upDirection = new Vector3(0, 1, 0);
         rightDirection = new Vector3(1, 0, 0);
-        
+        CalculatePlane();
     }
 
     // Calculates the plane center and corners of the plane the camera shows.

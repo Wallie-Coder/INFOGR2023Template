@@ -22,12 +22,14 @@ class Raytracer
 
     public void Render()
     {
-        for(int i = 0; i < screen.height; i++)
+        for(int i = screen.height-1; i >= 0; i--)
         {
             for(int j = 0; j < screen.width; j++) 
             {
                 Intersection intersection;
-                Ray ray = new Ray(new Vector3((float)(i + 1) / screen.height, (float)(j + 1)  / screen.width, 1) - camera.Location, camera.Location); 
+                float v = j / (screen.width - 1);
+                float u = i / (screen.height - 1);
+                Ray ray = new Ray(camera.p3 + u * camera.rightDirection + v * camera.upDirection - camera.Location, camera.Location); 
                 foreach(Primitive p in scene.Primitives)
                 {
                     float t = p.Collision(ray);
@@ -51,8 +53,8 @@ class Raytracer
                         //    }
                         //}
                         int location = j + i * screen.width;
-                        
-                        screen.pixels[location] = MixColor(255,255,255); // color the ray returns
+
+                        screen.Plot(j, i, 100000); // color the ray returns
                     }
                     else
                     {

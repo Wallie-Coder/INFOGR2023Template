@@ -4,10 +4,12 @@ namespace Template
     {
         // member variables
         public Surface screen;
+        Raytracer raytracer;
         // constructor
         public MyApplication(Surface screen)
         {
             this.screen = screen;
+            raytracer = new Raytracer(screen);
         }
         // initialize
         public void Init()
@@ -18,6 +20,8 @@ namespace Template
         public void Tick()
         {
             screen.Clear(0);
+            raytracer.Render();
+            //screen.Plot(50, 50, 100000);
         }
     }
 }

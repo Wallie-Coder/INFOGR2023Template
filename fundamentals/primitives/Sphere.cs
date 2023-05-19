@@ -21,61 +21,34 @@ class Sphere : Primitive
     }
     public override float Collision(Ray ray)
     {
-        // calculates the smalles intersection point t an returns this.
-        // dont know what happens if there is no intersection.
-
-        base.Collision(ray);
-
-        Vector3 rayDirection = ray.Direction;
-        Vector3 rayOrigin = ray.Origin;
-
-        float dx = rayDirection.X;
-        float dy = rayDirection.Y;
-        float dz = rayDirection.Z;
-
-        float Ex = rayOrigin.X;
-        float Ey = rayOrigin.Y;
-       float Ez = rayOrigin.Z;
-
-        float X0 = location.X;
-        float Y0 = location.Y;
-        float Z0 = location.Z;
+        // calculates the smallest t at which there is an intersection and returns this.
 
         float r = radius;
 
-        float a = dx * dx + dy * dy + dz * dz;
-        float b = Ex - X0 + Ey - Y0 + Ez - Z0;
-        float c = 2 * Ex * X0 + (X0 * X0) + (Ex * Ex) + 2 * Ey * Y0 + (Y0 * Y0) + (Ey * Ey) + 2 * Ez * Z0 + (Z0 * Z0) + (Ez * Ez) - 3 * (r * r);
-        //float b = 2 * ((dx * -X0) + (dy * -Y0) + (dz * -Z0));
-        //float c = X0 * X0 + Y0 * Y0 + Z0 * Z0 + r * r;
-        float t1 = 0;
-        float t2 = 0;
+        float a = Vector3.Dot(ray.Direction,ray.Direction);
+        float b = 2 * Vector3.Dot(ray.Direction, ray.Origin - location);
+        float c = Vector3.Dot(ray.Origin - location, ray.Origin - location) - (r * r);
 
-        try
-        {
-            t1 = (-b + (float)Math.Sqrt((double)((b * b) - 4 * a * c))) / 2 * a;
-        }
-        catch
-        {
-            t1 = 0;
-        }
+        float t1;
+        float t2;
 
-        try
-        {
-            t2 = (-b - (float)Math.Sqrt((double)((b * b) - 4 * a * c))) / 2 * a;
-        }
-        catch
-        {
-            t2 = 0;
-        }
 
-        if(t1 < t2)
+        double D = b * b - 4 * a * c; 
+        if(D > 0)
         {
-            return t1;
+            t1 = -b + (float)Math.Sqrt(D) / (2 * a);
+            t2 = -b - (float)Math.Sqrt(D) / (2 * a);
+            if (t1 < t2) return t1;
+            else return t2;
+        }
+        else if(D == 0) 
+        {
+            t2 = -b / 2 * a;
+            return t2;
         }
         else
         {
-            return t2;
+            return 0;
         }
 
     }
