@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace INFOGR2023Template.Fundamentals
+class Primitive
 {
-    internal class Primitive
+
+    public Primitive()
     {
+
     }
 }
