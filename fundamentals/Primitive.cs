@@ -6,14 +6,10 @@ class Primitive
     public Primitive()
     {
 
-        internal Primitive()
-        {
+        
+    }
+    public virtual void Collision()
+    {
 
-        }
-
-        internal virtual void Collision()
-        {
-
-        }
     }
 }
