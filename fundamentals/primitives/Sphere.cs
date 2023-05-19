@@ -52,7 +52,7 @@ class Sphere : Primitive
 
         try
         {
-            t1 = (-b + (float)Math.Sqrt((double)((b * b) + 4 * a * c))) / 2 * a;
+            t1 = (-b + (float)Math.Sqrt((double)((b * b) - 4 * a * c))) / 2 * a;
         }
         catch
         {
@@ -61,7 +61,7 @@ class Sphere : Primitive
 
         try
         {
-            t2 = (-b - (float)Math.Sqrt((double)((b * b) + 4 * a * c))) / 2 * a;
+            t2 = (-b - (float)Math.Sqrt((double)((b * b) - 4 * a * c))) / 2 * a;
         }
         catch
         {
