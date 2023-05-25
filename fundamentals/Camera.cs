@@ -20,7 +20,7 @@ class Camera
 
     public Vector3 rightDirection;
 
-    float aspectRatio = 16 / 9;
+    float aspectRatio = (float)16 / 9;
 
     public Vector3 planeCenter;
 

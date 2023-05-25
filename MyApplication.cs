@@ -21,7 +21,6 @@ namespace Template
         {
             screen.Clear(0);
             raytracer.Render();
-            //screen.Plot(50, 50, 100000);
         }
     }
 }
