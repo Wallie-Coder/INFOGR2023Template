@@ -1,9 +1,4 @@
-﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 class Plane : Primitive
 {
@@ -17,9 +12,9 @@ class Plane : Primitive
         this.Distance = distance;
     }
 
-    public override bool Collision(Ray ray)
+    public override ValueTuple<bool,float> Collision(Ray ray)
     {
-        return false;
+        return (false, 0);
     }
 }
 

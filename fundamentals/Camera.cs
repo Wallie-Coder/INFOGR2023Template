@@ -1,6 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL;
-using System.Numerics;
-using System.Runtime.CompilerServices;
+﻿using System.Numerics;
 using Template;
 
 class Camera
@@ -44,7 +42,7 @@ class Camera
     public Camera(Surface screen)
     {
         cameraWidth = aspectRatio * cameraHeight;
-        location = Vector3.Zero;
+        location = new Vector3(0,0,0);
         forwardDirection = new Vector3(0, 0, planeDistance);
         upDirection = new Vector3(0, cameraHeight, 0);
         rightDirection = new Vector3(cameraWidth, 0, 0);

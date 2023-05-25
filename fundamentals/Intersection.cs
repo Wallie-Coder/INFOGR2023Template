@@ -19,6 +19,7 @@ class Intersection
         this.ray = ray;
         this.prim = prim;
         this.t = t;
+        t -= 0.0001f; // make sure it doesnt intersect with itself -- only works if its this high? probably did something wrong
         CalculateIntersection(ray, t);
         SetNormal();
     }
