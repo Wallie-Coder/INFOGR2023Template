@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+﻿using System.Numerics;
 using System;
 
 class Ray
@@ -19,7 +19,7 @@ class Ray
     public Ray(Vector3 direction, Vector3 origin)
     {
         this.direction = direction;
-        this.direction.Normalize();
+        Vector3.Normalize(this.direction);
         color = new Vector3(0, 0, 0);
         this.origin = origin;
     }

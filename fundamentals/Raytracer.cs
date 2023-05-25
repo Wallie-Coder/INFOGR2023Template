@@ -1,5 +1,4 @@
-﻿using System;
-using OpenTK.Mathematics;
+﻿using System.Numerics;
 using Template;
 
 class Raytracer
@@ -32,7 +31,7 @@ class Raytracer
                 float u = (float)i / (screen.height - 1);
                 Ray ray = new Ray(camera.p3 + v * camera.rightDirection + u * camera.upDirection - camera.Location, camera.Location);
                 Vector3 temp = ray.Direction;
-                temp.Normalize();
+                Vector3.Normalize(temp);
                 float t = 0.5f * (temp.Y + 1);
                 Vector3 color = (1 - t) * new Vector3(1, 1, 1) + t * new Vector3(0.2f, 0.5f, 1);
                 screen.Plot(j, i, MixColor((int)(color.X * 255), (int)(color.Y * 255), (int)(color.Z * 255)));

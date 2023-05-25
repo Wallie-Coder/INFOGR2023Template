@@ -1,5 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using Template;
 

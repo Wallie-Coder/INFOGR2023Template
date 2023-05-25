@@ -1,6 +1,6 @@
 ﻿using System;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
+using System.Numerics;
 using Template;
 
 class Scene

@@ -1,6 +1,6 @@
-﻿using OpenTK.Mathematics;
+﻿using System.Numerics;
 using System;
-using System.Reflection.Metadata.Ecma335;
+
 
 class Intersection
 {
@@ -34,7 +34,7 @@ class Intersection
         {
             Sphere sphere = (Sphere)prim;
             normal = intersection - sphere.Location;
-            normal.Normalize();
+            Vector3.Normalize(normal);
         }
     }
 }
