@@ -9,7 +9,6 @@ class Raytracer
 
     Camera camera;
 
-
     public Raytracer(Surface screen)
     {
         this.screen = screen;
@@ -39,10 +38,10 @@ class Raytracer
         for (int i = screen.height-1; i >= 0; i--)
         {
             int n = 0;
-            for(int j = 0; j < screen.width; j++) 
+            for(int j = 0; j < screen.width/2; j++) 
             {
                 Intersection intersection;
-                float v = (float)j / (screen.width - 1);
+                float v = (float)j / (screen.width/2 - 1);
                 float u = (float)i / (screen.height - 1);
                 Ray ray = new Ray(camera.p3 + v * camera.rightDirection + u * camera.upDirection - camera.Location, camera.Location);
                 foreach (Primitive p in scene.Primitives)
