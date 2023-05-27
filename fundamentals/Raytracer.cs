@@ -50,55 +50,56 @@ class Raytracer
                     var collide = p.Collision(ray);
                     if (collide.Item1)
                     {
-                        intersection = new Intersection(ray, p, collide.Item2);
-                        
-                        for (int k = 0; k < scene.Lights.Count; k++)
-                        {
-                            // this works for single light environments
-                            ray.Direction = Vector3.Normalize(scene.Lights[0].Location - intersection.IntersectionPoint);
-                            ray.Origin = intersection.IntersectionPoint;
-                            ray.Bounces += 1;
-                            ray.ShadowRay = true;
-                        }
+                        //intersection = new Intersection(ray, p, collide.Item2);
 
-                        
-                        
+                        //for (int k = 0; k < scene.Lights.Count; k++)
+                        //{
+                        //    // this works for single light environments
+                        //    ray.Direction = Vector3.Normalize(scene.Lights[0].Location - intersection.IntersectionPoint);
+                        //    ray.Origin = intersection.IntersectionPoint;
+                        //    ray.Bounces += 1;
+                        //    ray.ShadowRay = true;
+                        //}
 
-                         // color the ray returns
+                        // dit is temp
+                        int location = j + i * screen.width;
+                        screen.Plot(j, i, MixColor(r, g, b));
+
+
+                        // // color the ray returns
                     }
-                    else
-                    {
-                        continue;
-                    }
-                    foreach(Primitive p1 in scene.Primitives)
-                    {
-                        var shadowCollide = p1.Collision(ray);
+                    //else
+                    //{
+                    //    continue;
+                    //}
+                    //foreach(Primitive p1 in scene.Primitives)
+                    //{
+                    //    var shadowCollide = p1.Collision(ray);
 
-                        if (shadowCollide.Item1)
-                        {
-                            if (Math.Acos(Vector3.Dot(p1.OutsideNormal(intersection.IntersectionPoint), ray.Direction)) * (180 / Math.PI) > 89)
-                            {
-                                r = 0;
-                                g = 0;
-                                b = 0;
-                            }
-                            else
-                            {
-                                r = (int)p.Color.X;
-                                b = (int)p.Color.Y;
-                                g = (int)p.Color.Z;
-                            }
-                        }
-                        else
-                        {
-                            r = (int)p.Color.X;
-                            b = (int)p.Color.Y;
-                            g = (int)p.Color.Z;
-                        }
+                    //    if (shadowCollide.Item1)
+                    //    {
+                    //        if (Math.Acos(Vector3.Dot(p1.OutsideNormal(intersection.IntersectionPoint), ray.Direction)) * (180 / Math.PI) > 89)
+                    //        {
+                    //            r = 0;
+                    //            g = 0;
+                    //            b = 0;
+                    //        }
+                    //        else
+                    //        {
+                    //            r = (int)p.Color.X;
+                    //            b = (int)p.Color.Y;
+                    //            g = (int)p.Color.Z;
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        r = (int)p.Color.X;
+                    //        b = (int)p.Color.Y;
+                    //        g = (int)p.Color.Z;
+                    //    }
 
-                    }
-                    int location = j + i * screen.width;
-                    screen.Plot(j, i, MixColor(r, g, b));
+                    //}
+                    
                 }
             }
         }
