@@ -1,24 +1,27 @@
 ﻿using System;
 using System.Numerics;
 
-class Primitive
+namespace RAYTRACER
 {
-    protected Vector3 color;
-
-    public Vector3 Color { get { return color; } }
-
-    public Primitive()
+    public class Primitive
     {
+        protected Vector3 color;
 
-        
-    }
-    public virtual ValueTuple<bool, float> Collision(Ray ray)
-    {
-        return (false, 0);
-    }
+        public Vector3 Color { get { return color; } }
 
-    public virtual Vector3 OutsideNormal(Vector3 point)
-    {
-        return Vector3.Zero;
+        public Primitive()
+        {
+
+
+        }
+        public virtual ValueTuple<double, float, float> Collision(Ray ray)
+        {
+            return (0, 0,0);
+        }
+
+        public virtual Vector3 OutsideNormal(Vector3 point)
+        {
+            return Vector3.Zero;
+        }
     }
 }

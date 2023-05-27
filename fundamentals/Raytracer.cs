@@ -1,104 +1,98 @@
 ﻿using System.Numerics;
+using System.Security.Claims;
 using Template;
 
-class Raytracer
+namespace RAYTRACER
 {
-    Surface screen;
-
-    Scene scene;
-
-    Camera camera;
-
-    public Raytracer(Surface screen)
+    public class Raytracer
     {
-        this.screen = screen;
-        scene = new Scene(screen);
-        camera = new Camera(screen);
-    }
+        Surface screen;
 
-    int MixColor(int red, int green, int blue) { return (red << 16) + (green << 8) + blue; }
+        Scene scene;
 
-    public void DebugRay(Ray r)
-    {
+        Camera camera;
 
-    }
+        public Raytracer(Surface screen)
+        {
+            this.screen = screen;
+            scene = new Scene(screen);
+            camera = new Camera(screen);
+        }
 
-    public void DebugPrimitive(Primitive p)
-    {
-        if(p is Sphere)
+        int MixColor(int red, int green, int blue) { return (red << 16) + (green << 8) + blue; }
+
+        public void DebugRay(Ray r)
         {
 
         }
-    }
 
-    //  CHANGE FOREACH TO FOR LOOPS, BETTER PERFORMANCE
-    public void Render()
-    {
-        int r = 0, g = 0, b = 0;
-        for (int i = screen.height-1; i >= 0; i--)
+        public void DebugPrimitive(Primitive p)
         {
-            int n = 0;
-            for(int j = 0; j < screen.width/2; j++) 
+            if (p is Sphere)
             {
-                Intersection intersection;
-                float v = (float)j / (screen.width/2 - 1);
-                float u = (float)i / (screen.height - 1);
-                Ray ray = new Ray(camera.p3 + v * camera.rightDirection + u * camera.upDirection - camera.Location, camera.Location);
-                foreach (Primitive p in scene.Primitives)
+
+            }
+        }
+
+        //  CHANGE FOREACH TO FOR LOOPS, BETTER PERFORMANCE
+        public void Render()
+        {
+            int r = 0, g = 0, b = 0;
+            for (int i = camera.screenHeight - 1; i >= 0; i--)
+            {
+                int n = 0;
+                for (int j = 0; j < camera.screenWidth; j++)
                 {
-                    var collide = p.Collision(ray);
-                    if (collide.Item1)
+                    Intersection intersection;
+                    float v = (float)j / (camera.screenWidth - 1);
+                    float u = (float)i / (camera.screenHeight - 1);
+                    Ray ray1 = new Ray(camera.p3 + v * camera.rightDirection + u * camera.upDirection - camera.Location, camera.Location);
+                    foreach (Primitive p in scene.Primitives)
                     {
-                        //intersection = new Intersection(ray, p, collide.Item2);
+                        var collide = p.Collision(ray1);
+                        var conclusion = ray1.ConcludeFromCollision(collide.Item1, collide.Item2, collide.Item3);
+                        if (conclusion.Item1)
+                        {
+                            intersection = new Intersection(ray1, p, conclusion.Item2);
 
-                        //for (int k = 0; k < scene.Lights.Count; k++)
-                        //{
-                        //    // this works for single light environments
-                        //    ray.Direction = Vector3.Normalize(scene.Lights[0].Location - intersection.IntersectionPoint);
-                        //    ray.Origin = intersection.IntersectionPoint;
-                        //    ray.Bounces += 1;
-                        //    ray.ShadowRay = true;
-                        //}
+                            //for (int k = 0; k < scene.Lights.Count; k++)
+                            //{
+                            // this works for single light environments
+                            ShadowRay ray2 = new ShadowRay(scene.Lights[0].Location - intersection.IntersectionPoint, intersection.IntersectionPoint, scene.Lights[0]);
+                            //}
+                            foreach (Primitive p1 in scene.Primitives)
+                            {
+                                var shadowCollide = p1.Collision(ray2);
 
-                        // dit is temp
-                        int location = j + i * screen.width;
-                        screen.Plot(j, i, MixColor(r, g, b));
+                                if (ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3))
+                                {
+                                    ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
+                                    p1.Collision(ray2);
+                                    r = 0;
+                                    g = 0;
+                                    b = 0;
+                                    break;
+                                }
+                                else
+                                {
+                                    // temp
+                                    ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
+                                    p1.Collision(ray2);
+                                    // set the color
+                                    r = (int)p.Color.X;
+                                    g = (int)p.Color.Y;
+                                    b = (int)p.Color.Z;
+                                }
 
-
-                        // // color the ray returns
+                            }
+                        }
                     }
-                    //else
-                    //{
-                    //    continue;
-                    //}
-                    //foreach(Primitive p1 in scene.Primitives)
-                    //{
-                    //    var shadowCollide = p1.Collision(ray);
-
-                    //    if (shadowCollide.Item1)
-                    //    {
-                    //        if (Math.Acos(Vector3.Dot(p1.OutsideNormal(intersection.IntersectionPoint), ray.Direction)) * (180 / Math.PI) > 89)
-                    //        {
-                    //            r = 0;
-                    //            g = 0;
-                    //            b = 0;
-                    //        }
-                    //        else
-                    //        {
-                    //            r = (int)p.Color.X;
-                    //            b = (int)p.Color.Y;
-                    //            g = (int)p.Color.Z;
-                    //        }
-                    //    }
-                    //    else
-                    //    {
-                    //        r = (int)p.Color.X;
-                    //        b = (int)p.Color.Y;
-                    //        g = (int)p.Color.Z;
-                    //    }
-
-                    //}
-                    
+                    // change the color of the pixel based on the calculations
+                    int location = j + i * screen.width;
+                    screen.Plot(j, i, MixColor(r, g, b));
+                    r = 0;
+                    g = 0;
+                    b = 0;
                 }
             }
         }

@@ -1,20 +1,23 @@
 ﻿using System.Numerics;
 
-class Plane : Primitive
+namespace RAYTRACER
 {
-    Vector3 Normal;
-
-    float Distance;
-
-    public Plane(Vector3 normal, float distance)
+    public class Plane : Primitive
     {
-        this.Normal = normal;
-        this.Distance = distance;
-    }
+        Vector3 Normal;
 
-    public override ValueTuple<bool,float> Collision(Ray ray)
-    {
-        return (false, 0);
+        float Distance;
+
+        public Plane(Vector3 normal, float distance)
+        {
+            this.Normal = normal;
+            this.Distance = distance;
+        }
+
+        public override ValueTuple<double, float, float> Collision(Ray ray)
+        {
+            return (0, 0, 0);
+        }
     }
 }
 

@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32414.318
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "INFOGR2023Template", "INFOGR2023Template.csproj", "{5DF4789A-96A4-4DA5-9364-FCF2EAB1B414}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "INFOGR2023Template", "INFOGR2023Template.csproj", "{5DF4789A-96A4-4DA5-9364-FCF2EAB1B414}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "..\UnitTest\UnitTest.csproj", "{C692D960-31D1-45C5-A2DA-00D618593B58}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{5DF4789A-96A4-4DA5-9364-FCF2EAB1B414}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DF4789A-96A4-4DA5-9364-FCF2EAB1B414}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DF4789A-96A4-4DA5-9364-FCF2EAB1B414}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C692D960-31D1-45C5-A2DA-00D618593B58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C692D960-31D1-45C5-A2DA-00D618593B58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C692D960-31D1-45C5-A2DA-00D618593B58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C692D960-31D1-45C5-A2DA-00D618593B58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

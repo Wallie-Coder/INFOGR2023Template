@@ -1,3 +1,5 @@
+using RAYTRACER;
+
 namespace Template
 {
     class MyApplication

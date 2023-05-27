@@ -1,42 +1,46 @@
 ﻿using System.Numerics;
 
-class Sphere : Primitive
+namespace RAYTRACER
 {
-    Vector3 location;
-    float radius;
-    
-
-    public Vector3 Location
+    public class Sphere : Primitive
     {
-        get { return location; }
-        private set { location = value; }
-    }
+        Vector3 center;
+        float radius;
+
+        public Vector3 Location
+        {
+            get { return center; }
+            private set { center = value; }
+        }
 
 
-    public Sphere(Vector3 location, float radius, Vector3 color)
-    {
-        this.location = location;
-        this.radius = radius;
-        this.color = color;
-        
-    }
-    public override ValueTuple<bool, float> Collision(Ray ray)
-    {
-        Vector3 CenterOrigin = ray.Origin - location;
-        float a = Vector3.Dot(ray.Direction,ray.Direction);
-        float b = 2 * Vector3.Dot(CenterOrigin,ray.Direction);
-        float c = Vector3.Dot(CenterOrigin, CenterOrigin) - (radius * radius);
-        double D = b * b - 4 * a * c;
-        float p2 = (-b - (float)Math.Sqrt(D)) / 2 * a;
-        float p1 = (-b + (float)Math.Sqrt(D)) / 2 * a;
-        float t;
-        if (p1 < p2) t = p1;
-        else t = p2;
-        return (D > 0, t);
-    }
+        public Sphere(Vector3 center, float radius, Vector3 color)
+        {
+            this.center = center;
+            this.radius = radius;
+            this.color = color;
 
-    public override Vector3 OutsideNormal(Vector3 point)
-    {
-        return Vector3.Normalize(location - point);
+        }
+        public override ValueTuple<double, float, float> Collision(Ray ray)
+        {
+            Vector3 CenterOrigin = ray.Origin - center;
+            float a = Vector3.Dot(ray.Direction, ray.Direction);
+            float b = 2.0f * Vector3.Dot(CenterOrigin, ray.Direction);
+            float c = Vector3.Dot(CenterOrigin, CenterOrigin) - (radius * radius);
+            double D = b * b - 4 * a * c;
+            float p1 = 0, p2 = 0;
+            if (D >= 0)
+            {
+                p2 = (-b - (float)Math.Sqrt(D)) / (2 * a);
+                p1 = (-b + (float)Math.Sqrt(D)) / (2 * a);
+            }
+
+            return (D, p1, p2);
+        }
+
+        public override Vector3 OutsideNormal(Vector3 point)
+        {
+            return Vector3.Normalize(center - point);
+        }
     }
 }
