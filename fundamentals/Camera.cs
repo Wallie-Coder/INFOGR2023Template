@@ -9,7 +9,7 @@ namespace RAYTRACER {
         public Vector3 Location
         {
             get { return location; }
-            private set { location = value; }
+            set { location = value; }
         }
 
         public Vector3 forwardDirection;
@@ -17,6 +17,15 @@ namespace RAYTRACER {
         public Vector3 upDirection;
 
         public Vector3 rightDirection;
+
+        public Vector3 Forward { get { return Vector3.Normalize(-forwardDirection); } }
+        public Vector3 Backward { get { return Vector3.Normalize(forwardDirection); } }
+        public Vector3 Left { get { return Vector3.Normalize(-rightDirection); } }
+        public Vector3 Right { get { return Vector3.Normalize(rightDirection); } }
+        public Vector3 Up { get { return Vector3.Normalize(-upDirection); } }
+        public Vector3 Down { get { return Vector3.Normalize(upDirection); } }
+
+
 
         float aspectRatio = (float)16 / 9;
 
@@ -47,13 +56,13 @@ namespace RAYTRACER {
             cameraWidth = aspectRatio * cameraHeight;
             location = new Vector3(0, 0, 0);
             forwardDirection = new Vector3(0, 0, planeDistance);
-            upDirection = -1 * new Vector3(0, cameraHeight, 0);
+            upDirection = new Vector3(0, -cameraHeight, 0);
             rightDirection = new Vector3(cameraWidth, 0, 0);
             CalculatePlane();
         }
 
         // Calculates the plane center and corners of the plane the camera shows.
-        void CalculatePlane()
+        public void CalculatePlane()
         {
             planeCenter = location + forwardDirection;
             p3 = location - rightDirection / 2 - upDirection / 2 - forwardDirection;

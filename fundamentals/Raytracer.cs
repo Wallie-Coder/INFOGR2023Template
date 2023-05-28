@@ -10,7 +10,7 @@ namespace RAYTRACER
 
         Scene scene;
 
-        Camera camera;
+        public Camera camera;
 
         public Raytracer(Surface screen)
         {
@@ -50,6 +50,14 @@ namespace RAYTRACER
                     Ray ray1 = new Ray(camera.p3 + v * camera.rightDirection + u * camera.upDirection - camera.Location, camera.Location);
                     foreach (Primitive p in scene.Primitives)
                     {
+                        if (p is Sphere)
+                        {
+                            Sphere x = (Sphere)p;
+                            if((camera.Location - x.Location).Length() < x.Radius)
+                            {
+                                continue;
+                            }
+                        }
                         var collide = p.Collision(ray1);
                         var conclusion = ray1.ConcludeFromCollision(collide.Item1, collide.Item2, collide.Item3);
                         if (conclusion.Item1)
