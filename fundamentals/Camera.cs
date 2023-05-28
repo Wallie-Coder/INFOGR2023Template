@@ -46,9 +46,12 @@ namespace RAYTRACER {
         Vector3 p0; // top right
         Vector3 p1; // top left
         Vector3 p2; // bottom right
-        public Vector3 p3; // bottom left
+        Vector3 p3; // bottom left
 
-
+        public Vector3 TopRight { get { return p0; } }
+        public Vector3 TopLeft { get { return p1; } }
+        public Vector3 BottomRight { get { return p2; } }
+        public Vector3 BottomLeft { get { return p3; } }
 
         //constructor
         public Camera(Surface screen)
@@ -65,6 +68,9 @@ namespace RAYTRACER {
         public void CalculatePlane()
         {
             planeCenter = location + forwardDirection;
+            p0 = location + rightDirection / 2 + upDirection / 2 - forwardDirection;
+            p1 = location - rightDirection / 2 + upDirection / 2 - forwardDirection;
+            p2 = location + rightDirection / 2 - upDirection / 2 - forwardDirection;
             p3 = location - rightDirection / 2 - upDirection / 2 - forwardDirection;
         }
 

@@ -47,7 +47,7 @@ namespace RAYTRACER
                     Intersection intersection;
                     float v = (float)j / (camera.screenWidth - 1);
                     float u = (float)i / (camera.screenHeight - 1);
-                    Ray ray1 = new Ray(camera.p3 + v * camera.rightDirection + u * camera.upDirection - camera.Location, camera.Location);
+                    Ray ray1 = new Ray(camera.BottomLeft + v * camera.rightDirection + u * camera.upDirection - camera.Location, camera.Location);
                     foreach (Primitive p in scene.Primitives)
                     {
                         if (p is Sphere)
