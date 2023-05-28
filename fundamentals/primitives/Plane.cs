@@ -8,7 +8,7 @@ namespace RAYTRACER
 
         float Distance;
 
-        public Plane(Vector3 normal, float distance)
+        public Plane(Vector3 normal, float distance) :base(new Vector3(0,0,0), new Vector3(0,0,0))
         {
             this.Normal = normal;
             this.Distance = distance;

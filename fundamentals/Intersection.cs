@@ -13,6 +13,8 @@ namespace RAYTRACER
         Ray ray;
         Primitive prim;
 
+        public Vector3 Normal { get { return normal; } }
+
         public Vector3 IntersectionPoint { get { return intersection; } }
 
         public Intersection(Ray ray, Primitive prim, float t)
@@ -36,7 +38,7 @@ namespace RAYTRACER
             {
                 Sphere sphere = (Sphere)prim;
                 normal = intersection - sphere.Location;
-                Vector3.Normalize(normal);
+                normal = Vector3.Normalize(normal);
             }
         }
     }

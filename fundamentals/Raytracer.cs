@@ -38,11 +38,12 @@ namespace RAYTRACER
         public void Render()
         {
             int r = 0, g = 0, b = 0;
-            for (int i = camera.screenHeight - 1; i >= 0; i--)
+            for (int i = 0; i < camera.screenHeight; i++)
             {
                 int n = 0;
                 for (int j = 0; j < camera.screenWidth; j++)
                 {
+                    Vector3 PixelColor = new Vector3(0,0,0);
                     Intersection intersection;
                     float v = (float)j / (camera.screenWidth - 1);
                     float u = (float)i / (camera.screenHeight - 1);
@@ -79,9 +80,15 @@ namespace RAYTRACER
                                     ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
                                     p1.Collision(ray2);
                                     // set the color
-                                    r = (int)p.Color.X;
-                                    g = (int)p.Color.Y;
-                                    b = (int)p.Color.Z;
+                                    
+                                    ray2.Color = ray2.LightSource.Intensity * (1 / (Vector3.Distance(ray2.Origin, ray2.LightSource.Location) * Vector3.Distance(ray2.Origin, ray2.LightSource.Location) ));
+                                    Vector3 R =  Vector3.Normalize(ray2.Direction - 2 * (Vector3.Dot(ray2.Direction, intersection.Normal) * intersection.Normal));
+                                    Vector3 V = Vector3.Normalize(camera.Location - intersection.IntersectionPoint);
+                                    double q = Math.Pow(Vector3.Dot(R, V), 10);
+                                    PixelColor = ray2.Color * 
+                                        (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, ray2.Direction)) + 
+                                        p.SpecularColor * (float)Math.Max(0, q));
+
                                 }
 
                             }
@@ -89,7 +96,7 @@ namespace RAYTRACER
                     }
                     // change the color of the pixel based on the calculations
                     int location = j + i * screen.width;
-                    screen.Plot(j, i, MixColor(r, g, b));
+                    screen.Plot(j, i, MixColor((int)PixelColor.X,(int)PixelColor.Y, (int)PixelColor.Z));
                     r = 0;
                     g = 0;
                     b = 0;

@@ -11,6 +11,8 @@ namespace RAYTRACER
 
         public Vector3 Location { get { return location; } }
 
+        public Vector3 Intensity { get { return intensity; } }
+
         public Light(Vector3 location, Vector3 intensity)
         {
             this.location = location;

@@ -16,14 +16,15 @@ namespace RAYTRACER
         public Scene(Surface screen)
         {
             lights = new List<Light>
-        {
-            new Light(new Vector3(4, 0, 5), new Vector3(1, 1, 1))
+        {   // position , intensity
+                        // intensity cannot be higher than 1 on any value
+            new Light(new Vector3(1, 1, 2), new Vector3(1f, 1f, 1f))
         };
             primitives = new List<Primitive>
         {
             // keep radius small when placing close to camera
             // x, y, z values are related, x and y can be larger when z is larger
-            new Sphere(new Vector3(0, 0, 5), 2f, new Vector3(131,189,125))
+            new Sphere(new Vector3(0, 0, 5), 2f, new Vector3(131,189,125), new Vector3(131,189,125))
         };
         }
     }

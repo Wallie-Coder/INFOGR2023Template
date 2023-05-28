@@ -47,7 +47,7 @@ namespace RAYTRACER {
             cameraWidth = aspectRatio * cameraHeight;
             location = new Vector3(0, 0, 0);
             forwardDirection = new Vector3(0, 0, planeDistance);
-            upDirection = new Vector3(0, cameraHeight, 0);
+            upDirection = -1 * new Vector3(0, cameraHeight, 0);
             rightDirection = new Vector3(cameraWidth, 0, 0);
             CalculatePlane();
         }

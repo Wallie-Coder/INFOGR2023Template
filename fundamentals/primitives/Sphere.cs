@@ -14,12 +14,10 @@ namespace RAYTRACER
         }
 
 
-        public Sphere(Vector3 center, float radius, Vector3 color)
+        public Sphere(Vector3 center, float radius, Vector3 diffuseColor, Vector3 glossyColor) :base(diffuseColor, glossyColor)
         {
             this.center = center;
             this.radius = radius;
-            this.color = color;
-
         }
         public override ValueTuple<double, float, float> Collision(Ray ray)
         {

@@ -39,6 +39,8 @@ namespace RAYTRACER
     public class ShadowRay : Ray
     {
         Light light;
+
+        public Light LightSource { get { return light; } }
         public ShadowRay(Vector3 direction, Vector3 origin, Light light) : base(direction, origin)
         {
             this.light = light;
