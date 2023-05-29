@@ -26,7 +26,7 @@ namespace Template
         // initialize
         public void Init()
         {
-             
+
         }
         // tick: renders one frame
         public void Tick()
@@ -39,27 +39,27 @@ namespace Template
         public void Input()
         {
             // moving left, rigth, forward, backward, up and down
-            if(window.IsKeyDown(Keys.W))
+            if (window.IsKeyDown(Keys.W))
             {
                 raytracer.camera.Origin += raytracer.camera.Sensitivity * raytracer.camera.Forward;
             }
-            else if(window.IsKeyDown(Keys.S))
+            else if (window.IsKeyDown(Keys.S))
             {
                 raytracer.camera.Origin += raytracer.camera.Sensitivity * raytracer.camera.Backward;
             }
-            else if(window.IsKeyDown(Keys.A))
+            else if (window.IsKeyDown(Keys.A))
             {
                 raytracer.camera.Origin += raytracer.camera.Sensitivity * raytracer.camera.Left;
             }
-            else if(window.IsKeyDown(Keys.D))
+            else if (window.IsKeyDown(Keys.D))
             {
                 raytracer.camera.Origin += raytracer.camera.Sensitivity * raytracer.camera.Right;
             }
-            else if(window.IsKeyDown(Keys.E))
+            else if (window.IsKeyDown(Keys.E))
             {
                 raytracer.camera.Origin += raytracer.camera.Sensitivity * raytracer.camera.Down;
             }
-            else if(window.IsKeyDown(Keys.Q))
+            else if (window.IsKeyDown(Keys.Q))
             {
                 raytracer.camera.Origin += raytracer.camera.Sensitivity * raytracer.camera.Up;
             }
@@ -109,6 +109,7 @@ namespace Template
             {
                 raytracer.camera.Origin = new System.Numerics.Vector3(0, 0, 0);
                 raytracer.camera.CalculateBase(raytracer.CamOrigin, raytracer.CamTarget, raytracer.CamUpView);
+                f = 0;
             }
 
             raytracer.camera.CalculatePlane();

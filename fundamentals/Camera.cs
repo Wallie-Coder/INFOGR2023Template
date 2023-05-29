@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using System.Numerics;
 using Template;
-namespace RAYTRACER {
+namespace RAYTRACER
+{
     public class Camera
     {
         // member variables
@@ -27,12 +28,12 @@ namespace RAYTRACER {
 
         public Vector3 horizontal;
 
-        public Vector3 Forward { get { return Vector3.Normalize(-z); } }
-        public Vector3 Backward { get { return Vector3.Normalize(z); } }
-        public Vector3 Left { get { return Vector3.Normalize(-x); } }
-        public Vector3 Right { get { return Vector3.Normalize(x); } }
-        public Vector3 Up { get { return Vector3.Normalize(-y); } }
-        public Vector3 Down { get { return Vector3.Normalize(y); } }
+        public Vector3 Forward { get { return Vector3.Normalize(screenZ); } }
+        public Vector3 Backward { get { return Vector3.Normalize(-screenZ); } }
+        public Vector3 Left { get { return Vector3.Normalize(-screenX); } }
+        public Vector3 Right { get { return Vector3.Normalize(screenX); } }
+        public Vector3 Up { get { return Vector3.Normalize(screenY); } }
+        public Vector3 Down { get { return Vector3.Normalize(-screenY); } }
 
 
 
@@ -82,10 +83,10 @@ namespace RAYTRACER {
         public void CalculatePlane()
         {
             planeCenter = origin + screenZ;
-            p0 = origin + horizontal / 2 + vertical / 2 - screenZ;
-            p1 = origin - horizontal / 2 + vertical / 2 - screenZ;
-            p2 = origin + horizontal / 2 - vertical / 2 - screenZ;
-            p3 = origin - horizontal / 2 - vertical / 2 - screenZ;
+            p0 = origin + horizontal / 2 + vertical / 2 + screenZ;
+            p1 = origin - horizontal / 2 + vertical / 2 + screenZ;
+            p2 = origin + horizontal / 2 - vertical / 2 + screenZ;
+            p3 = origin - horizontal / 2 - vertical / 2 + screenZ;
         }
 
         public Ray CalculateRay(int x, int y)
@@ -97,19 +98,19 @@ namespace RAYTRACER {
 
         public void CalculateBase(Vector3 lookFrom, Vector3 lookAt, Vector3 viewUp)
         {
-            if(Vector3.Dot(lookFrom, new Vector3(1,1,1)) < 0 && Vector3.Dot(lookAt, new Vector3(1,1,1)) < 0)
+            if (Vector3.Dot(lookFrom, new Vector3(1, 1, 1)) < 0 && Vector3.Dot(lookAt, new Vector3(1, 1, 1)) < 0)
             {
                 lookFrom = Vector3.Abs(lookFrom);
             }
-            screenZ = Vector3.Normalize(lookFrom - lookAt);
+            screenZ = Vector3.Normalize(lookAt - lookFrom);
             screenX = Vector3.Normalize(Vector3.Cross(viewUp, screenZ));
-            screenY = Vector3.Cross(screenX, screenZ);
+            screenY = Vector3.Cross(screenZ, screenX);
             origin = lookFrom;
             this.lookingAt = lookAt;
             horizontal = cameraWidth * screenX;
             vertical = cameraHeight * screenY;
         }
-        
+
         public void LookAt(Vector3 position)
         {
             CalculateBase(origin, position, Vector3.UnitY);
