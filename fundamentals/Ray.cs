@@ -32,6 +32,7 @@ namespace RAYTRACER
         public ValueTuple<bool, float> ConcludeFromCollision(double D, float p1, float p2)
         {
             // check if there is a possible collision, and the resulting t
+            if (p1 < epsilon && p2 < epsilon) D = -1;
             return (D > 0, p1 < p2 ? p1 : p2);
         }
     }
