@@ -14,6 +14,7 @@ namespace RAYTRACER
         }
 
         public float Radius { get { return radius; } }
+        public Vector3 Center { get { return center; } }
 
 
         public Sphere(Vector3 center, float radius, Vector3 diffuseColor, Vector3 glossyColor) :base(diffuseColor, glossyColor)

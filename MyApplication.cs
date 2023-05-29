@@ -11,12 +11,17 @@ namespace Template
         public Surface screen;
         Raytracer raytracer;
         GameWindow window;
+
+        DebugOutput debugOutput;
+
         // constructor
         public MyApplication(Surface screen, OpenTKApp window)
         {
             this.window = window;
             this.screen = screen;
             raytracer = new Raytracer(screen);
+
+            debugOutput = new DebugOutput(raytracer, raytracer.scene, screen);
         }
 
         // initialize
@@ -30,6 +35,7 @@ namespace Template
             screen.Clear(0);
             Input();
             raytracer.Render();
+            debugOutput.Draw();
         }
 
         public void Input()
