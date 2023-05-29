@@ -36,46 +36,45 @@ namespace Template
             screen.Clear(0);
             Input();
             raytracer.Render();
-            Rotate();
         }
 
-        public void Rotate()
-        {
-            window.CursorGrabbed = true;
-            if (firstMove)
-            {
-                lastPos = window.MouseState.Position;
-                firstMove = false;
-            }
-            else
-            {
-                float deltaX = window.MouseState.Delta.X;
-                float deltaY = window.MouseState.Delta.Y;
-                lastPos = window.MouseState.Position;
+        //public void Rotate()
+        //{
+        //    window.CursorGrabbed = true;
+        //    if (firstMove)
+        //    {
+        //        lastPos = window.MouseState.Position;
+        //        firstMove = false;
+        //    }
+        //    else
+        //    {
+        //        float deltaX = window.MouseState.Delta.X;
+        //        float deltaY = window.MouseState.Delta.Y;
+        //        lastPos = window.MouseState.Position;
 
-                raytracer.camera.Yaw += deltaX * raytracer.camera.RotationSpeed;
-                if (raytracer.camera.Pitch > 89.0f)
-                {
-                    raytracer.camera.Pitch = 89.0f;
-                }
-                else if (raytracer.camera.Pitch < -89.0f)
-                {
-                    raytracer.camera.Pitch = -89.0f;
-                }
-                else
-                {
-                    raytracer.camera.Pitch -= deltaX * raytracer.camera.RotationSpeed;
-                }
-            }
+        //        raytracer.camera.Yaw += deltaX * raytracer.camera.RotationSpeed;
+        //        if (raytracer.camera.Pitch > 89.0f)
+        //        {
+        //            raytracer.camera.Pitch = 89.0f;
+        //        }
+        //        else if (raytracer.camera.Pitch < -89.0f)
+        //        {
+        //            raytracer.camera.Pitch = -89.0f;
+        //        }
+        //        else
+        //        {
+        //            raytracer.camera.Pitch -= deltaX * raytracer.camera.RotationSpeed;
+        //        }
+        //    }
 
-            raytracer.camera.screenZ.X = (float)Math.Cos(MathHelper.DegreesToRadians(raytracer.camera.Pitch)) * (float)Math.Cos(MathHelper.DegreesToRadians(raytracer.camera.Yaw));
-            raytracer.camera.screenZ.Y = (float)Math.Sin(MathHelper.DegreesToRadians(raytracer.camera.Pitch));
-            raytracer.camera.screenZ.Z = (float)Math.Cos(MathHelper.DegreesToRadians(raytracer.camera.Pitch)) * (float)Math.Sin(MathHelper.DegreesToRadians(raytracer.camera.Yaw));
-            raytracer.camera.CalculateBase(new System.Numerics.Vector3(0,0,0), raytracer.camera.screenZ, System.Numerics.Vector3.UnitY);
+        //    raytracer.camera.screenZ.X = (float)Math.Cos(MathHelper.DegreesToRadians(raytracer.camera.Pitch)) * (float)Math.Cos(MathHelper.DegreesToRadians(raytracer.camera.Yaw));
+        //    raytracer.camera.screenZ.Y = (float)Math.Sin(MathHelper.DegreesToRadians(raytracer.camera.Pitch));
+        //    raytracer.camera.screenZ.Z = (float)Math.Cos(MathHelper.DegreesToRadians(raytracer.camera.Pitch)) * (float)Math.Sin(MathHelper.DegreesToRadians(raytracer.camera.Yaw));
+        //    raytracer.camera.CalculateBase(new System.Numerics.Vector3(0,0,0), raytracer.camera.screenZ, System.Numerics.Vector3.UnitY);
 
-            window.MousePosition = new OpenTK.Mathematics.Vector2(640 / 2, 360 / 2); 
+        //    window.MousePosition = new OpenTK.Mathematics.Vector2(640 / 2, 360 / 2); 
 
-        }
+        //}
 
         public void Input()
         {
@@ -142,13 +141,6 @@ namespace Template
                     f = 0;
                     raytracer.camera.LookAt(new System.Numerics.Vector3(0, raytracer.camera.LookingAt.Y, 1));
                 }
-            }
-
-            if(window.IsKeyDown(Keys.Right))
-            {
-                float yaw = raytracer.camera.Yaw - raytracer.camera.RotationSpeed;
-                
-                raytracer.camera.Yaw = yaw;
             }
 
 
