@@ -11,7 +11,7 @@ namespace RAYTRACER
         float sensitivity = 0.2f;
         float pitch = 0;
         float yaw = 0;
-        float rotationSpeed = 1f;
+        float rotationSpeed = 0.1f;
 
         public float Sensitivity { get { return sensitivity; } }
         public float Pitch { get { return pitch; } set { pitch = value; } }
