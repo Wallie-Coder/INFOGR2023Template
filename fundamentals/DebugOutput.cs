@@ -58,10 +58,12 @@ namespace RAYTRACER
 
             foreach((Vector2, Vector2) r in  rayLines) 
             {
-                PlotLine(new Vector2(r.Item1.X * xScale, r.Item1.Y * yScale), new Vector2(r.Item2.X * xScale, r.Item2.Y * yScale), MixColor(255, 255, 0));
+                //PlotLine(new Vector2(r.Item1.X * xScale, r.Item1.Y * yScale), new Vector2(r.Item2.X * xScale, r.Item2.Y * yScale), MixColor(255, 255, 0));
             }
 
-            
+            PlotLine(new Vector2(rayLines[12].Item1.X * xScale, rayLines[12].Item1.Y * yScale), new Vector2(rayLines[12].Item2.X * xScale, rayLines[12].Item2.Y * yScale), MixColor(255, 255, 0));
+
+
             //for(float i = 0; i < 360; i += 0.5f)
             //{
             //    int r = (int)((float)(10 * xScale));
@@ -73,7 +75,7 @@ namespace RAYTRACER
 
             //    Vector2 center = new Vector2(-12 * xScale, 16 * yScale);
 
-                
+
             //    SetPixel((int)(x + center.X), (int)(y + center.Y), MixColor(255, 255, 255));
             //}
 
@@ -99,57 +101,59 @@ namespace RAYTRACER
             Vector2 Direction = end - origin;
             Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
 
-            if(Origin.X > screen.width / 4)
+            if(Origin.X > screen.width / 4 && End.X < screen.width / 4)
             {
                 float lessenwith = Origin.X - screen.width / 4;
                 Origin.X = Origin.X + (Direction.X * lessenwith);
                 Origin.Y = Origin.Y + (Direction.Y * lessenwith);
             }
-            if (Origin.X < -screen.width/4)
+            if (Origin.X < -screen.width/4 && End.X > -screen.width/4)
             {
                 float lessenwith = -screen.width/4 - Origin.X;
                 Origin.X = Origin.X + (Direction.X * lessenwith);
                 Origin.Y = Origin.Y + (Direction.Y * lessenwith);
             }
-            if (Origin.Y > screen.height / 2)
+            if (Origin.Y > screen.height / 2 && End.Y < screen.height / 2)
             {
                 float lessenwith = Origin.Y - screen.height / 2;
                 Origin.X = Origin.X + (Direction.X * lessenwith);
                 Origin.Y = Origin.Y + (Direction.Y * lessenwith);
             }
-            if (Origin.Y < -screen.height / 2)
+            if (Origin.Y < -screen.height / 2 && End.Y > -screen.height / 2)
             {
                 float lessenwith = -screen.height / 2 - Origin.Y;
                 Origin.X = Origin.X + (Direction.X * lessenwith);
                 Origin.Y = Origin.Y + (Direction.Y * lessenwith);
             }
 
-            if (End.X > screen.width / 4)
+            if (End.X > screen.width / 4 && Origin.X < screen.width / 4)
             {
                 float lessenwith = End.X - screen.width / 2;
-                End.X = End.X - (Direction.X * lessenwith);
-                End.Y = End.Y - (Direction.Y * lessenwith);
+                End.X = End.X + (Direction.X * lessenwith);
+                End.Y = End.Y + (Direction.Y * lessenwith);
             }
-            if (End.X < -screen.width / 4)
+            if (End.X < -screen.width / 4 && Origin.X > -screen.width / 4)
             {
                 float lessenwith = -screen.width / 4 - End.X;
-                End.X = End.X - (Direction.X * lessenwith);
-                End.Y = End.Y - (Direction.Y * lessenwith);
+                End.X = End.X + (Direction.X * lessenwith);
+                End.Y = End.Y + (Direction.Y * lessenwith);
             }
-            if (End.Y > screen.height / 2)
+            if (End.Y > screen.height / 2 && Origin.Y < screen.height / 2)
             {
                 float lessenwith = End.Y - screen.height / 2;
-                End.X = End.X - (Direction.X * lessenwith);
-                End.Y = End.Y - (Direction.Y * lessenwith);
+                End.X = End.X + (Direction.X * lessenwith);
+                End.Y = End.Y + (Direction.Y * lessenwith);
             }
-            if (End.Y < -screen.height / 2)
+            if (End.Y < -screen.height / 2 && Origin.Y > -screen.width/2)
             {
                 float lessenwith = -screen.height/2 - End.Y;
-                End.X = End.X - (Direction.X * lessenwith);
-                End.Y = End.Y - (Direction.Y * lessenwith);
+                End.X = End.X + (Direction.X * lessenwith);
+                End.Y = End.Y + (Direction.Y * lessenwith);
             }
 
-            screen.Line((int)(Origin.X + screen.width/4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), color);
+            screen.Line((int)(origin.X + screen.width / 4 /*+ screen.width / 2*/), (int)(origin.Y + screen.height / 2), (int)(end.X + screen.width / 4 /*+ screen.width / 2*/), (int)(end.Y + screen.height / 2), MixColor(255, 0, 0));
+
+            screen.Line((int)(Origin.X + screen.width/4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), MixColor(0, 255, 0));
         }
     }
 }
