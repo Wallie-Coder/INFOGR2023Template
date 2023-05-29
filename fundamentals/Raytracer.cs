@@ -89,9 +89,9 @@ namespace RAYTRACER
 
                             }
 
-                            //// add the ray to the DebugOutput
-                            //if (i == 180 && j % 10 == 0)
-                            //    DebugOutput.rayLines.Add((new Vector2(camera.Location.X, camera.Location.Z), new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z)));
+                            // add the ray to the DebugOutput
+                            if (i == 180 && j % 10 == 0)
+                                DebugOutput.rayLines.Add((new Vector2(camera.Location.X, camera.Location.Z), new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z)));
                         }
                     }
                     // change the color of the pixel based on the calculations

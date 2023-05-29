@@ -30,13 +30,6 @@ namespace RAYTRACER
                     circles.Add((new Vector2(P.Center.X, P.Center.Z), P.Radius));
                 }
             }
-
-            Vector2 origin = new Vector2(-111, 200);
-            Vector2 end = new Vector2(800, 200);
-
-            (Vector2 origin, Vector2 end) ray = new (origin, end);
-
-            rayLines.Add((new Vector2(origin.X, origin.Y), new Vector2(end.X, end.Y)));
         }
 
         int MixColor(int red, int green, int blue) { return (red << 16) + (green << 8) + blue; }
@@ -58,26 +51,28 @@ namespace RAYTRACER
 
             foreach((Vector2, Vector2) r in  rayLines) 
             {
-                //PlotLine(new Vector2(r.Item1.X * xScale, r.Item1.Y * yScale), new Vector2(r.Item2.X * xScale, r.Item2.Y * yScale), MixColor(255, 255, 0));
+                PlotLine(new Vector2(r.Item1.X * xScale, r.Item1.Y * yScale), new Vector2(r.Item2.X * xScale, r.Item2.Y * yScale), MixColor(255, 255, 0));
             }
 
-            PlotLine(new Vector2(rayLines[12].Item1.X * xScale, rayLines[12].Item1.Y * yScale), new Vector2(rayLines[12].Item2.X * xScale, rayLines[12].Item2.Y * yScale), MixColor(255, 255, 0));
+            //PlotLine(new Vector2(rayLines[rayLines.Count - 1].Item1.X * xScale, rayLines[rayLines.Count - 1].Item1.Y * yScale), new Vector2(rayLines[rayLines.Count - 1].Item2.X * xScale, rayLines[rayLines.Count - 1].Item2.Y * yScale), MixColor(255, 255, 0));
+
+            foreach ((Vector2 center, float radius) c in circles)
+            {
+                for (float i = 0; i < 360; i += 0.5f)
+                {
+                    float r = (int)((float)(c.radius * xScale));
+                    float x = MathF.Cos(OpenTK.Mathematics.MathHelper.DegreesToRadians(i));
+                    float y = MathF.Sin(OpenTK.Mathematics.MathHelper.DegreesToRadians(i));
+
+                    x = x * r;
+                    y = y * r;
+
+                    Vector2 center = new Vector2(c.center.X * xScale, c.center.Y * yScale);
 
 
-            //for(float i = 0; i < 360; i += 0.5f)
-            //{
-            //    int r = (int)((float)(10 * xScale));
-            //    float x = MathF.Cos(OpenTK.Mathematics.MathHelper.DegreesToRadians(i));
-            //    float y = MathF.Sin(OpenTK.Mathematics.MathHelper.DegreesToRadians(i));
-
-            //    x = x * r;
-            //    y = y * r;
-
-            //    Vector2 center = new Vector2(-12 * xScale, 16 * yScale);
-
-
-            //    SetPixel((int)(x + center.X), (int)(y + center.Y), MixColor(255, 255, 255));
-            //}
+                    SetPixel((int)(x + center.X), (int)(y + center.Y), MixColor(255, 255, 255));
+                }
+            }
 
             SetPixel((int)(raytracer.camera.Location.X * xScale), (int)(raytracer.camera.Location.Z * yScale), MixColor(0, 0, 255));
 
@@ -99,61 +94,78 @@ namespace RAYTRACER
             Vector2 End = end;
 
             Vector2 Direction = end - origin;
-            Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
 
-            if(Origin.X > screen.width / 4 && End.X < screen.width / 4)
+            if (Origin.X > screen.width / 4 && End.X < screen.width / 4)
             {
                 float lessenwith = Origin.X - screen.width / 4;
-                Origin.X = Origin.X + (Direction.X * lessenwith);
-                Origin.Y = Origin.Y + (Direction.Y * lessenwith);
+                Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
+                Origin.X = (int)(Origin.X + (Direction.X * lessenwith));
+                Origin.Y = (int)(Origin.Y + (Direction.Y * lessenwith));
             }
-            if (Origin.X < -screen.width/4 && End.X > -screen.width/4)
+            if (Origin.X < -screen.width / 4 && End.X > -screen.width / 4)
             {
-                float lessenwith = -screen.width/4 - Origin.X;
-                Origin.X = Origin.X + (Direction.X * lessenwith);
-                Origin.Y = Origin.Y + (Direction.Y * lessenwith);
+                float lessenwith = -screen.width / 4 - Origin.X;
+                Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
+                Origin.X = (int)(Origin.X + (Direction.X * lessenwith));
+                Origin.Y = (int)(Origin.Y + (Direction.Y * lessenwith));
             }
             if (Origin.Y > screen.height / 2 && End.Y < screen.height / 2)
             {
                 float lessenwith = Origin.Y - screen.height / 2;
-                Origin.X = Origin.X + (Direction.X * lessenwith);
-                Origin.Y = Origin.Y + (Direction.Y * lessenwith);
+                Direction = new Vector2(Direction.X / Direction.Y, Direction.Y / Direction.Y);
+                Origin.X = (int)(Origin.X + (Direction.X * lessenwith));
+                Origin.Y = (int)(Origin.Y + (Direction.Y * lessenwith));
             }
             if (Origin.Y < -screen.height / 2 && End.Y > -screen.height / 2)
             {
                 float lessenwith = -screen.height / 2 - Origin.Y;
-                Origin.X = Origin.X + (Direction.X * lessenwith);
-                Origin.Y = Origin.Y + (Direction.Y * lessenwith);
+                Direction = new Vector2(Direction.X / Direction.Y, Direction.Y / Direction.Y);
+                Origin.X = (int)(Origin.X + (Direction.X * lessenwith));
+                Origin.Y = (int)(Origin.Y + (Direction.Y * lessenwith));
             }
 
             if (End.X > screen.width / 4 && Origin.X < screen.width / 4)
             {
-                float lessenwith = End.X - screen.width / 2;
-                End.X = End.X + (Direction.X * lessenwith);
-                End.Y = End.Y + (Direction.Y * lessenwith);
+                float lessenwith = End.X - screen.width / 4;
+                Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
+                End.X = (int)(End.X - (Direction.X * lessenwith));
+                End.Y = (int)(End.Y - (Direction.Y * lessenwith));
             }
             if (End.X < -screen.width / 4 && Origin.X > -screen.width / 4)
             {
                 float lessenwith = -screen.width / 4 - End.X;
-                End.X = End.X + (Direction.X * lessenwith);
-                End.Y = End.Y + (Direction.Y * lessenwith);
+                Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
+                End.X = (int)(End.X + (Direction.X * lessenwith));
+                End.Y = (int)(End.Y + (Direction.Y * lessenwith));
             }
             if (End.Y > screen.height / 2 && Origin.Y < screen.height / 2)
             {
                 float lessenwith = End.Y - screen.height / 2;
-                End.X = End.X + (Direction.X * lessenwith);
-                End.Y = End.Y + (Direction.Y * lessenwith);
+                Direction = new Vector2(Direction.X / Direction.Y, Direction.Y / Direction.Y);
+                End.X = (int)(End.X - (Direction.X * lessenwith));
+                End.Y = (int)(End.Y - (Direction.Y * lessenwith));
             }
-            if (End.Y < -screen.height / 2 && Origin.Y > -screen.width/2)
+            if (End.Y < -screen.height / 2 && Origin.Y > -screen.height / 2)
             {
-                float lessenwith = -screen.height/2 - End.Y;
-                End.X = End.X + (Direction.X * lessenwith);
-                End.Y = End.Y + (Direction.Y * lessenwith);
+                float lessenwith = -screen.height / 2 - End.Y;
+                Direction = new Vector2(Direction.X / Direction.Y, Direction.Y / Direction.Y);
+                End.X = (int)(End.X - (Direction.X * lessenwith));
+                End.Y = (int)(End.Y - (Direction.Y * lessenwith));
             }
 
-            screen.Line((int)(origin.X + screen.width / 4 /*+ screen.width / 2*/), (int)(origin.Y + screen.height / 2), (int)(end.X + screen.width / 4 /*+ screen.width / 2*/), (int)(end.Y + screen.height / 2), MixColor(255, 0, 0));
+            //screen.Line((int)(origin.X + screen.width / 4 + screen.width / 2), (int)(origin.Y + screen.height / 2), (int)(end.X + screen.width / 4 + screen.width / 2), (int)(end.Y + screen.height / 2), MixColor(255, 0, 0));
 
-            screen.Line((int)(Origin.X + screen.width/4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), MixColor(0, 255, 0));
+            if (Origin.X <= screen.width / 4 &&
+               Origin.X >= -screen.width / 4 &&
+               Origin.Y <= screen.height / 2 &&
+               Origin.Y >= -screen.height / 2 &&
+               End.X <= screen.width / 4 &&
+               End.X >= -screen.width / 4 &&
+               End.Y <= screen.height / 2 &&
+               End.Y >= -screen.height / 2)
+            {
+                screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), MixColor(0, 255, 0));
+            }
         }
     }
 }
