@@ -82,7 +82,7 @@ namespace RAYTRACER
         void SetPixel(int x, int y, int color)
         {
 
-            y = y;
+            y = -y;
             if (x < screen.width / 4 + screen.width / 2 && x > -screen.width/4 && y < screen.height && y > -screen.height / 2)
             {
                 screen.Plot(x + screen.width / 2 + screen.width / 4, y + screen.height / 2, color);
@@ -94,49 +94,14 @@ namespace RAYTRACER
             Vector2 Origin = origin;
             Vector2 End = end;
 
-            Origin.Y = Origin.Y;
-            End.Y = End.Y;
+            Origin.Y = -Origin.Y;
+            End.Y = -End.Y;
 
-            // cut of the rays at the edge of the screen, does not yet work.
+            origin.Y = -origin.Y;
+            end.Y = -end.Y;
 
             Vector2 Direction = end - origin;
 
-            if (Origin.X > screen.width / 4 && End.X < screen.width / 4)
-            {
-                float lessenwith = Origin.X - screen.width / 4;
-                Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
-                Origin.X = (int)(Origin.X + (Direction.X * lessenwith));
-                Origin.Y = (int)(Origin.Y + (Direction.Y * lessenwith));
-            }
-            if (Origin.X < -screen.width / 4 && End.X > -screen.width / 4)
-            {
-                float lessenwith = -screen.width / 4 - Origin.X;
-                Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
-                Origin.X = (int)(Origin.X + (Direction.X * lessenwith));
-                Origin.Y = (int)(Origin.Y + (Direction.Y * lessenwith));
-            }
-            if (Origin.Y > screen.height / 2 && End.Y < screen.height / 2)
-            {
-                float lessenwith = Origin.Y - screen.height / 2;
-                Direction = new Vector2(Direction.X / Direction.Y, Direction.Y / Direction.Y);
-                Origin.X = (int)(Origin.X + (Direction.X * lessenwith));
-                Origin.Y = (int)(Origin.Y + (Direction.Y * lessenwith));
-            }
-            if (Origin.Y < -screen.height / 2 && End.Y > -screen.height / 2)
-            {
-                float lessenwith = -screen.height / 2 - Origin.Y;
-                Direction = new Vector2(Direction.X / Direction.Y, Direction.Y / Direction.Y);
-                Origin.X = (int)(Origin.X + (Direction.X * lessenwith));
-                Origin.Y = (int)(Origin.Y + (Direction.Y * lessenwith));
-            }
-
-            if (End.X > screen.width / 4 && Origin.X < screen.width / 4)
-            {
-                float lessenwith = End.X - screen.width / 4;
-                Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
-                End.X = (int)(End.X - (Direction.X * lessenwith));
-                End.Y = (int)(End.Y - (Direction.Y * lessenwith));
-            }
             if (End.X < -screen.width / 4 && Origin.X > -screen.width / 4)
             {
                 float lessenwith = -screen.width / 4 - End.X;
@@ -144,34 +109,12 @@ namespace RAYTRACER
                 End.X = (int)(End.X + (Direction.X * lessenwith));
                 End.Y = (int)(End.Y + (Direction.Y * lessenwith));
             }
-            if (End.Y > screen.height / 2 && Origin.Y < screen.height / 2)
-            {
-                float lessenwith = End.Y - screen.height / 2;
-                Direction = new Vector2(Direction.X / Direction.Y, Direction.Y / Direction.Y);
-                End.X = (int)(End.X + (Direction.X * lessenwith));
-                End.Y = (int)(End.Y - (Direction.Y * lessenwith));
-            }
-            if (End.Y < -screen.height / 2 && Origin.Y > -screen.height / 2)
-            {
-                float lessenwith = -screen.height / 2 - End.Y;
-                Direction = new Vector2(Direction.X / Direction.Y, Direction.Y / Direction.Y);
-                End.X = (int)(End.X - (Direction.X * lessenwith));
-                End.Y = (int)(End.Y - (Direction.Y * lessenwith));
-            }
 
-            screen.Line((int)(origin.X + screen.width / 4 + screen.width / 2), (int)(origin.Y + screen.height / 2), (int)(end.X + screen.width / 4 + screen.width / 2), (int)(end.Y + screen.height / 2), MixColor(255, 0, 0));
+            // Draw the original rays.
+            //screen.Line((int)(origin.X + screen.width / 4 + screen.width / 2), (int)(origin.Y + screen.height / 2), (int)(end.X + screen.width / 4 + screen.width / 2), (int)(end.Y + screen.height / 2), MixColor(255, 0, 0));
 
-            if (Origin.X <= screen.width / 4 &&
-               Origin.X >= -screen.width / 4 &&
-               Origin.Y <= screen.height / 2 &&
-               Origin.Y >= -screen.height / 2 &&
-               End.X <= screen.width / 4 &&
-               End.X >= -screen.width / 4 &&
-               End.Y <= screen.height / 2 &&
-               End.Y >= -screen.height / 2)
-            {
-                //screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), MixColor(0, 255, 0));
-            }
+            // Draw the cut rays.
+            screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), MixColor(0, 255, 0));
         }
     }
 }
