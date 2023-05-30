@@ -46,15 +46,15 @@ namespace RAYTRACER
 
         public void Draw()
         {
-            float xScale = 1 / 20f * screen.width / 4;
-            float yScale = 1 / 20f * screen.height / 2;
+            float xScale = 1 / 16f * screen.width / 4;
+            float yScale = 1 / 9f * screen.height / 2;
 
             foreach((Vector2, Vector2) r in  rayLines) 
             {
                 PlotLine(new Vector2(r.Item1.X * xScale, r.Item1.Y * yScale), new Vector2(r.Item2.X * xScale, r.Item2.Y * yScale), MixColor(255, 255, 0));
             }
 
-            //PlotLine(new Vector2(rayLines[rayLines.Count - 1].Item1.X * xScale, rayLines[rayLines.Count - 1].Item1.Y * yScale), new Vector2(rayLines[rayLines.Count - 1].Item2.X * xScale, rayLines[rayLines.Count - 1].Item2.Y * yScale), MixColor(255, 255, 0));
+            PlotLine(new Vector2(rayLines[rayLines.Count/4].Item1.X * xScale, rayLines[rayLines.Count/4].Item1.Y * yScale), new Vector2(rayLines[rayLines.Count - 1].Item2.X * xScale, rayLines[rayLines.Count - 1].Item2.Y * yScale), MixColor(255, 255, 0));
 
             foreach ((Vector2 center, float radius) c in circles)
             {
@@ -82,6 +82,7 @@ namespace RAYTRACER
         void SetPixel(int x, int y, int color)
         {
 
+            y = y;
             if (x < screen.width / 4 + screen.width / 2 && x > -screen.width/4 && y < screen.height && y > -screen.height / 2)
             {
                 screen.Plot(x + screen.width / 2 + screen.width / 4, y + screen.height / 2, color);
@@ -92,6 +93,9 @@ namespace RAYTRACER
         {
             Vector2 Origin = origin;
             Vector2 End = end;
+
+            Origin.Y = Origin.Y;
+            End.Y = End.Y;
 
             Vector2 Direction = end - origin;
 
