@@ -98,13 +98,9 @@ namespace RAYTRACER
 
         public void CalculateBase(Vector3 lookFrom, Vector3 lookAt, Vector3 viewUp)
         {
-            if (Vector3.Dot(lookFrom, new Vector3(1, 1, 1)) < 0 && Vector3.Dot(lookAt, new Vector3(1, 1, 1)) < 0)
-            {
-                lookFrom = Vector3.Abs(lookFrom);
-            }
             screenZ = Vector3.Normalize(lookAt - lookFrom);
             screenX = Vector3.Normalize(Vector3.Cross(viewUp, screenZ));
-            screenY = Vector3.Cross(screenZ, screenX);
+            screenY = Vector3.Normalize(Vector3.Cross(screenZ, screenX));
             origin = lookFrom;
             this.lookingAt = lookAt;
             horizontal = cameraWidth * screenX;

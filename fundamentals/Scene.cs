@@ -22,7 +22,7 @@ namespace RAYTRACER
             lights = new List<Light>
         {   // position , intensity
                         // intensity cannot be higher than 1 on any value
-            new Light(new Vector3(0, 0, 0), new Vector3(2f, 2f, 2f))
+            new Light(new Vector3(0, 2, 0), new Vector3(3f, 3f, 3f))
         };
             primitives = new List<Primitive>
         {
