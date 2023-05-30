@@ -15,7 +15,7 @@ namespace RAYTRACER
         // position the camera is looking at
         Vector3 camTarget = new Vector3(0, 0, 5);
         // position of the camera
-        Vector3 camOrigin = new Vector3(0, 0, 0);
+        Vector3 camOrigin = new Vector3(0, 0, -5);
         // the "up" direction of the camera used to calculate the basis
         Vector3 camUpView = new Vector3(0, 1, 0);
         // vertical FOV
