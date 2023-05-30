@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.Design;
+using System.Linq;
 using System.Numerics;
 using Template;
 namespace RAYTRACER
@@ -11,7 +12,7 @@ namespace RAYTRACER
         float sensitivity = 0.2f;
         float pitch = 0;
         float yaw = 0;
-        float rotationSpeed = 0.1f;
+        float rotationSpeed = 1f;
 
         public float Sensitivity { get { return sensitivity; } }
         public float Pitch { get { return pitch; } set { pitch = value; } }
@@ -77,6 +78,9 @@ namespace RAYTRACER
             this.lookingAt = lookAt;
             CalculateBase(lookFrom, lookAt, viewUp);
             CalculatePlane();
+            // set pitch and yaw according to the x y and z.
+            pitch = (float)Math.Asin(screenZ.Y);
+            yaw = (float)Math.Atan2(screenZ.X, screenZ.Z);
         }
 
         // Calculates the plane center and corners of the plane the camera shows.
@@ -109,9 +113,11 @@ namespace RAYTRACER
 
         public void LookAt(Vector3 direction)
         {
+            
             screenZ = Vector3.Normalize(direction);
-            screenX = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, screenZ));
+            screenX = Vector3.Normalize(Vector3.Cross(lookingAt, screenZ));
             screenY = Vector3.Normalize(Vector3.Cross(screenZ, screenX));
+            lookingAt = direction;
         }
 
         public void LookFrom(Vector3 origin)
