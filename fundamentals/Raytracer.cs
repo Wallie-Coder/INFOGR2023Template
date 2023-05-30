@@ -129,7 +129,7 @@ namespace RAYTRACER
         {
             for(int j = 0; j < camera.screenWidth;j++)
             {
-                RenderX(j, i);
+                RenderX(i, j);
             }
         }
 
