@@ -12,11 +12,24 @@ namespace RAYTRACER
 
         public Camera camera;
 
+        // position the camera is looking at
+        Vector3 camTarget = new Vector3(0, 0, 5);
+        // position of the camera
+        Vector3 camOrigin = new Vector3(0, 0, 0);
+        // the "up" direction of the camera used to calculate the basis
+        Vector3 camUpView = new Vector3(0, 1, 0);
+        // vertical FOV
+        float FOV = 90;
+
+        public Vector3 CamTarget { get { return camTarget; } }
+        public Vector3 CamOrigin { get { return camOrigin; } }
+        public Vector3 CamUpView { get { return camUpView; } }
+
         public Raytracer(Surface screen)
         {
             this.screen = screen;
             scene = new Scene(screen);
-            camera = new Camera(screen);
+            camera = new Camera(camOrigin, camTarget, camUpView, FOV);
         }
 
         int MixColor(int red, int green, int blue) { return (red << 16) + (green << 8) + blue; }
@@ -24,23 +37,19 @@ namespace RAYTRACER
         //  CHANGE FOREACH TO FOR LOOPS, BETTER PERFORMANCE
         public void Render()
         {
-            int r = 0, g = 0, b = 0;
             for (int i = 0; i < camera.screenHeight; i++)
             {
-                int n = 0;
                 for (int j = 0; j < camera.screenWidth; j++)
                 {
-                    Vector3 PixelColor = new Vector3( 25, 25, 25);
-                    Intersection intersection = null;
-                    float v = (float)j / (camera.screenWidth - 1);
-                    float u = (float)i / (camera.screenHeight - 1);
-                    Ray ray1 = new Ray(camera.BottomLeft + v * camera.rightDirection + u * camera.upDirection - camera.Location, camera.Location);
+                    Vector3 PixelColor = new Vector3(20,20,20);
+                    Intersection intersection;
+                    Ray ray1 = camera.CalculateRay(j, i);
                     foreach (Primitive p in scene.Primitives)
                     {
                         if (p is Sphere)
                         {
                             Sphere x = (Sphere)p;
-                            if((camera.Location - x.Location).Length() < x.Radius)
+                            if((camera.Origin - x.Location).Length() < x.Radius)
                             {
                                 continue;
                             }
@@ -65,9 +74,7 @@ namespace RAYTRACER
                                 {
                                     ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
                                     p1.Collision(ray2);
-                                    r = 0;
-                                    g = 0;
-                                    b = 0;
+                                    PixelColor = new Vector3(0, 0, 0);
                                     break;
                                 }
                                 else
@@ -79,11 +86,13 @@ namespace RAYTRACER
                                     
                                     ray2.Color = ray2.LightSource.Intensity * (1 / (Vector3.Distance(ray2.Origin, ray2.LightSource.Location) * Vector3.Distance(ray2.Origin, ray2.LightSource.Location) ));
                                     Vector3 R =  Vector3.Normalize(ray2.Direction - 2 * (Vector3.Dot(ray2.Direction, intersection.Normal) * intersection.Normal));
-                                    Vector3 V = Vector3.Normalize(camera.Location - intersection.IntersectionPoint);
+                                    Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
                                     double q = Math.Pow(Vector3.Dot(R, V), 10);
                                     PixelColor = ray2.Color * 
                                         (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, ray2.Direction)) + 
                                         p.SpecularColor * (float)Math.Max(0, q));
+
+                                    // shadow color p.DiffuseColor * scene.AmbientLighting
 
                                 }
 
@@ -97,16 +106,6 @@ namespace RAYTRACER
                     // change the color of the pixel based on the calculations
                     int location = j + i * screen.width;
                     screen.Plot(j, i, MixColor((int)PixelColor.X,(int)PixelColor.Y, (int)PixelColor.Z));
-                    r = 0;
-                    g = 0;
-                    b = 0;
-
-                    if (intersection == null)
-                    {
-                        // add the ray to the DebugOutput
-                        if (i == 180 && j % 10 == 0)
-                            DebugOutput.rayLines.Add((new Vector2(camera.Location.X, camera.Location.Z), new Vector2(camera.Location.X + ray1.Direction.X * 50, camera.Location.Z + ray1.Direction.Z * 50)));
-                    }
                 }
             }
         }

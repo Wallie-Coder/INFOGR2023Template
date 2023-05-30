@@ -25,6 +25,7 @@ namespace RAYTRACER
             //t -= 0.0001f; // make sure it doesnt intersect with itself -- only works if its this high? probably did something wrong
             CalculateIntersection(ray, t);
             SetNormal();
+            CalculateDistance();
         }
 
         void CalculateIntersection(Ray r, float t)
@@ -40,6 +41,11 @@ namespace RAYTRACER
                 normal = intersection - sphere.Location;
                 normal = Vector3.Normalize(normal);
             }
+        }
+
+        void CalculateDistance()
+        {
+            distance = Vector3.Distance(intersection,ray.Origin);
         }
     }
 }
