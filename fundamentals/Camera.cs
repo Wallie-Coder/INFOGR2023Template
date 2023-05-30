@@ -115,9 +115,12 @@ namespace RAYTRACER
         {
             
             screenZ = Vector3.Normalize(direction);
-            screenX = Vector3.Normalize(Vector3.Cross(lookingAt, screenZ));
+            screenX = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, screenZ));
             screenY = Vector3.Normalize(Vector3.Cross(screenZ, screenX));
             lookingAt = direction;
+            horizontal = cameraWidth * screenX;
+            vertical = cameraHeight * screenY;
+            CalculatePlane();
         }
 
         public void LookFrom(Vector3 origin)
