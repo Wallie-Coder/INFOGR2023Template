@@ -42,7 +42,7 @@ namespace RAYTRACER
                 for (int j = 0; j < camera.screenWidth; j++)
                 {
                     Vector3 PixelColor = new Vector3(20,20,20);
-                    Intersection intersection;
+                    Intersection intersection = null;
                     Ray ray1 = camera.CalculateRay(j, i);
                     foreach (Primitive p in scene.Primitives)
                     {
@@ -100,12 +100,19 @@ namespace RAYTRACER
 
                             // add the ray to the DebugOutput
                             if (i == 180 && j % 10 == 0)
-                                DebugOutput.rayLines.Add((new Vector2(camera.Location.X, camera.Location.Z), new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z)));
+                                DebugOutput.rayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z)));
                         }
                     }
                     // change the color of the pixel based on the calculations
                     int location = j + i * screen.width;
                     screen.Plot(j, i, MixColor((int)PixelColor.X,(int)PixelColor.Y, (int)PixelColor.Z));
+
+                    if (intersection == null)
+                    {
+                        // add the ray to the DebugOutput
+                        if (i == 180 && j % 10 == 0)
+                            DebugOutput.rayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(camera.Origin.X + ray1.Direction.X * 200, camera.Origin.Z + ray1.Direction.Z * 200)));
+                    }
                 }
             }
         }

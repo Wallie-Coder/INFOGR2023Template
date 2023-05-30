@@ -54,7 +54,7 @@ namespace RAYTRACER
                 PlotLine(new Vector2(r.Item1.X * xScale, r.Item1.Y * yScale), new Vector2(r.Item2.X * xScale, r.Item2.Y * yScale), MixColor(255, 255, 0));
             }
 
-            PlotLine(new Vector2(rayLines[rayLines.Count/4].Item1.X * xScale, rayLines[rayLines.Count/4].Item1.Y * yScale), new Vector2(rayLines[rayLines.Count - 1].Item2.X * xScale, rayLines[rayLines.Count - 1].Item2.Y * yScale), MixColor(255, 255, 0));
+            //PlotLine(new Vector2(rayLines[rayLines.Count/4].Item1.X * xScale, rayLines[rayLines.Count/4].Item1.Y * yScale), new Vector2(rayLines[rayLines.Count - 1].Item2.X * xScale, rayLines[rayLines.Count - 1].Item2.Y * yScale), MixColor(255, 255, 0));
 
             foreach ((Vector2 center, float radius) c in circles)
             {
@@ -74,7 +74,7 @@ namespace RAYTRACER
                 }
             }
 
-            SetPixel((int)(raytracer.camera.Location.X * xScale), (int)(raytracer.camera.Location.Z * yScale), MixColor(0, 0, 255));
+            SetPixel((int)(raytracer.camera.Origin.X * xScale), (int)(raytracer.camera.Origin.Z * yScale), MixColor(0, 0, 255));
 
             rayLines.Clear();
         }
@@ -96,6 +96,8 @@ namespace RAYTRACER
 
             Origin.Y = Origin.Y;
             End.Y = End.Y;
+
+            // cut of the rays at the edge of the screen, does not yet work.
 
             Vector2 Direction = end - origin;
 
@@ -146,7 +148,7 @@ namespace RAYTRACER
             {
                 float lessenwith = End.Y - screen.height / 2;
                 Direction = new Vector2(Direction.X / Direction.Y, Direction.Y / Direction.Y);
-                End.X = (int)(End.X - (Direction.X * lessenwith));
+                End.X = (int)(End.X + (Direction.X * lessenwith));
                 End.Y = (int)(End.Y - (Direction.Y * lessenwith));
             }
             if (End.Y < -screen.height / 2 && Origin.Y > -screen.height / 2)
@@ -157,7 +159,7 @@ namespace RAYTRACER
                 End.Y = (int)(End.Y - (Direction.Y * lessenwith));
             }
 
-            //screen.Line((int)(origin.X + screen.width / 4 + screen.width / 2), (int)(origin.Y + screen.height / 2), (int)(end.X + screen.width / 4 + screen.width / 2), (int)(end.Y + screen.height / 2), MixColor(255, 0, 0));
+            screen.Line((int)(origin.X + screen.width / 4 + screen.width / 2), (int)(origin.Y + screen.height / 2), (int)(end.X + screen.width / 4 + screen.width / 2), (int)(end.Y + screen.height / 2), MixColor(255, 0, 0));
 
             if (Origin.X <= screen.width / 4 &&
                Origin.X >= -screen.width / 4 &&
@@ -168,7 +170,7 @@ namespace RAYTRACER
                End.Y <= screen.height / 2 &&
                End.Y >= -screen.height / 2)
             {
-                screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), MixColor(0, 255, 0));
+                //screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), MixColor(0, 255, 0));
             }
         }
     }
