@@ -107,10 +107,11 @@ namespace RAYTRACER
             vertical = cameraHeight * screenY;
         }
 
-        public void LookAt(Vector3 position)
+        public void LookAt(Vector3 direction)
         {
-            CalculateBase(origin, position, Vector3.UnitY);
-            CalculatePlane();
+            screenZ = Vector3.Normalize(direction);
+            screenX = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, screenZ));
+            screenY = Vector3.Normalize(Vector3.Cross(screenZ, screenX));
         }
 
         public void LookFrom(Vector3 origin)

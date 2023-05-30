@@ -40,7 +40,8 @@ namespace Template
         {
             screen.Clear(0);
             Input();
-            raytracer.Render();
+            raytracer.ParallelRender();
+            //raytracer.Render();
             debugOutput.Draw();
         }
 
