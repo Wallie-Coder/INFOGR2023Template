@@ -1,6 +1,4 @@
-﻿using System;
-using System.Numerics;
-using System.Collections.Generic;
+﻿using System.Numerics;
 using Template;
 using System.Diagnostics;
 
@@ -80,6 +78,7 @@ namespace RAYTRACER
 
             // Draw a pixel for the camera
             SetPixel((int)(raytracer.camera.Origin.X * xScale), (int)(raytracer.camera.Origin.Z * yScale), MixColor(0, 0, 255));
+            Info();
 
 
             // Draw the screen plane
@@ -146,6 +145,16 @@ namespace RAYTRACER
 
             // Draw the cut rays.
             screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), color);
+        }
+
+        void Info()
+        {
+            screen.Print("CamZ = " + raytracer.camera.screenZ.ToString(), screen.width / 2, screen.height - 20, MixColor(255, 255, 255));
+            screen.Print("CamY = " + raytracer.camera.screenY.ToString(), screen.width / 2, screen.height - 40, MixColor(255, 255, 255));
+            screen.Print("CamX = " + raytracer.camera.screenX.ToString(), screen.width / 2, screen.height - 60, MixColor(255, 255, 255));
+            screen.Print("CamOrigin = " + raytracer.camera.Origin.ToString(), screen.width / 2, screen.height - 80, MixColor(255, 255, 255));
+            screen.Print("Yaw = " + raytracer.camera.Yaw.ToString(), screen.width / 2, screen.height - 100, MixColor(255, 255, 255));
+            screen.Print("Pitch = " + raytracer.camera.Pitch.ToString(), screen.width / 2, screen.height - 120, MixColor(255, 255, 255));
         }
     }
 }

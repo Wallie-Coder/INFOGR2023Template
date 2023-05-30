@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.Design;
+using System.Linq;
 using System.Numerics;
 using Template;
 namespace RAYTRACER
@@ -11,7 +12,7 @@ namespace RAYTRACER
         float sensitivity = 0.2f;
         float pitch = 0;
         float yaw = 0;
-        float rotationSpeed = 0.1f;
+        float rotationSpeed = 1f;
 
         public float Sensitivity { get { return sensitivity; } }
         public float Pitch { get { return pitch; } set { pitch = value; } }
@@ -77,6 +78,9 @@ namespace RAYTRACER
             this.lookingAt = lookAt;
             CalculateBase(lookFrom, lookAt, viewUp);
             CalculatePlane();
+            // set pitch and yaw according to the x y and z.
+            pitch = (float)Math.Asin(screenZ.Y);
+            yaw = (float)Math.Atan2(screenZ.X, screenZ.Z);
         }
 
         // Calculates the plane center and corners of the plane the camera shows.
@@ -98,22 +102,24 @@ namespace RAYTRACER
 
         public void CalculateBase(Vector3 lookFrom, Vector3 lookAt, Vector3 viewUp)
         {
-            if (Vector3.Dot(lookFrom, new Vector3(1, 1, 1)) < 0 && Vector3.Dot(lookAt, new Vector3(1, 1, 1)) < 0)
-            {
-                lookFrom = Vector3.Abs(lookFrom);
-            }
             screenZ = Vector3.Normalize(lookAt - lookFrom);
             screenX = Vector3.Normalize(Vector3.Cross(viewUp, screenZ));
-            screenY = Vector3.Cross(screenZ, screenX);
+            screenY = Vector3.Normalize(Vector3.Cross(screenZ, screenX));
             origin = lookFrom;
             this.lookingAt = lookAt;
             horizontal = cameraWidth * screenX;
             vertical = cameraHeight * screenY;
         }
 
-        public void LookAt(Vector3 position)
+        public void LookAt(Vector3 direction)
         {
-            CalculateBase(origin, position, Vector3.UnitY);
+            
+            screenZ = Vector3.Normalize(direction);
+            screenX = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, screenZ));
+            screenY = Vector3.Normalize(Vector3.Cross(screenZ, screenX));
+            lookingAt = direction;
+            horizontal = cameraWidth * screenX;
+            vertical = cameraHeight * screenY;
             CalculatePlane();
         }
 
