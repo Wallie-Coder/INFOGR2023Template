@@ -84,27 +84,6 @@ namespace RAYTRACER
             // Draw the screen plane
             PlotLine(new Vector2(raytracer.camera.TopLeft.X * xScale, raytracer.camera.TopLeft.Z * yScale), new Vector2(raytracer.camera.TopRight.X * xScale, raytracer.camera.TopRight.Z * yScale), MixColor(0, 0, 255));
 
-            string campos = "Cam Pos: " +
-                            raytracer.camera.Origin.X.ToString() + ", " +
-                            raytracer.camera.Origin.Y.ToString() + ", " +
-                            raytracer.camera.Origin.Z.ToString();
-            screen.Print(campos, 640, 10, MixColor(255, 255, 255));
-
-            // update every second, always whole number.
-            //if (t.ElapsedMilliseconds >= 1000)
-            //{
-            //    t.Restart();
-            //    FPS = fpsCounter;
-            //    fpsCounter = 0;
-            //}
-
-            // update everey frame, remove "f" behind 1000 to remove decimals.
-            FPS = (1000f / t.ElapsedMilliseconds);
-            t.Restart();
-
-            screen.Print("FPS: " + FPS.ToString(), 640, 30, MixColor(255, 255, 255));
-            fpsCounter++;
-
             rayLines.Clear();
         }
 
@@ -155,6 +134,23 @@ namespace RAYTRACER
             screen.Print("CamOrigin = " + raytracer.camera.Origin.ToString(), screen.width / 2, screen.height - 80, MixColor(255, 255, 255));
             screen.Print("Yaw = " + raytracer.camera.Yaw.ToString(), screen.width / 2, screen.height - 100, MixColor(255, 255, 255));
             screen.Print("Pitch = " + raytracer.camera.Pitch.ToString(), screen.width / 2, screen.height - 120, MixColor(255, 255, 255));
+
+            // print and calculate FPS
+
+            // update every second, always whole number.
+            //if (t.ElapsedMilliseconds >= 1000)
+            //{
+            //    t.Restart();
+            //    FPS = fpsCounter;
+            //    fpsCounter = 0;
+            //}
+
+            // update everey frame, remove "f" behind 1000 to remove decimals.
+            FPS = (1000f / t.ElapsedMilliseconds);
+            t.Restart();
+
+            screen.Print("FPS: " + FPS.ToString(), 640, 30, MixColor(255, 255, 255));
+            fpsCounter++;
         }
     }
 }

@@ -45,7 +45,8 @@ namespace RAYTRACER
 
         void RenderShading(ref ShadowRay ray2, ref Vector3 PixelColor, ref Intersection intersection, ref Primitive p)
         {
-            for(int l = 0; l < scene.Primitives.Count;l++) {
+            for (int l = 0; l < scene.Primitives.Count; l++)
+            {
                 Primitive p1 = scene.Primitives[l];
                 var shadowCollide = p1.Collision(ray2);
 
@@ -73,11 +74,7 @@ namespace RAYTRACER
 
                     // shadow color p.DiffuseColor * scene.AmbientLighting
 
-                                    if(i == 180 && j % 10 == 0)
-                                        DebugOutput.Pixels.Add((new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z), MixColor((int)p.DiffuseColor.X, (int)p.DiffuseColor.Y, (int)p.DiffuseColor.Z)));
-
-                                }
-
+                }
             }
         }
 
