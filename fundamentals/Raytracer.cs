@@ -94,6 +94,9 @@ namespace RAYTRACER
 
                                     // shadow color p.DiffuseColor * scene.AmbientLighting
 
+                                    if(i == 180 && j % 10 == 0)
+                                        DebugOutput.Pixels.Add((new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z), MixColor((int)p.DiffuseColor.X, (int)p.DiffuseColor.Y, (int)p.DiffuseColor.Z)));
+
                                 }
 
                             }

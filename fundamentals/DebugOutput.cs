@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Collections.Generic;
 using Template;
+using System.Diagnostics;
 
 namespace RAYTRACER
 {
@@ -9,12 +10,17 @@ namespace RAYTRACER
     {
 
         static public List<(Vector2, Vector2)> rayLines = new List<(Vector2 origin, Vector2 end)>();
+        static public List<(Vector2, int)> Pixels = new List<(Vector2 Location, int Color)>();
         List<(Vector2, float)> circles = new List<(Vector2 center, float radius)>();
 
         Surface screen;
         Raytracer raytracer;
 
         Vector2 SceneSize = new Vector2(20, 20);
+
+        Stopwatch t = new Stopwatch();
+        float fpsCounter = 0;
+        float FPS = 0;
 
         public DebugOutput(Raytracer raytracer, Scene scene, Surface screen)
         {
@@ -30,19 +36,10 @@ namespace RAYTRACER
                     circles.Add((new Vector2(P.Center.X, P.Center.Z), P.Radius));
                 }
             }
+            t.Start();
         }
 
         int MixColor(int red, int green, int blue) { return (red << 16) + (green << 8) + blue; }
-
-        public void AddRay(Ray ray)
-        {
-            
-        }
-
-        public void Init()
-        {
-
-        }
 
         public void Draw()
         {
@@ -56,6 +53,7 @@ namespace RAYTRACER
 
             //PlotLine(new Vector2(rayLines[rayLines.Count/4].Item1.X * xScale, rayLines[rayLines.Count/4].Item1.Y * yScale), new Vector2(rayLines[rayLines.Count - 1].Item2.X * xScale, rayLines[rayLines.Count - 1].Item2.Y * yScale), MixColor(255, 255, 0));
 
+            // Draw each circle
             foreach ((Vector2 center, float radius) c in circles)
             {
                 for (float i = 0; i < 360; i += 0.5f)
@@ -74,7 +72,39 @@ namespace RAYTRACER
                 }
             }
 
+            // draw pixels
+            foreach((Vector2, int) p in Pixels)
+            {
+                //SetPixel((int)(p.Item1.X * xScale), (int)(p.Item1.Y * yScale), p.Item2);
+            }    
+
+            // Draw a pixel for the camera
             SetPixel((int)(raytracer.camera.Origin.X * xScale), (int)(raytracer.camera.Origin.Z * yScale), MixColor(0, 0, 255));
+
+
+            // Draw the screen plane
+            PlotLine(new Vector2(raytracer.camera.TopLeft.X * xScale, raytracer.camera.TopLeft.Z * yScale), new Vector2(raytracer.camera.TopRight.X * xScale, raytracer.camera.TopRight.Z * yScale), MixColor(0, 0, 255));
+
+            string campos = "Cam Pos: " +
+                            raytracer.camera.Origin.X.ToString() + ", " +
+                            raytracer.camera.Origin.Y.ToString() + ", " +
+                            raytracer.camera.Origin.Z.ToString();
+            screen.Print(campos, 640, 10, MixColor(255, 255, 255));
+
+            // update every second, always whole number.
+            //if (t.ElapsedMilliseconds >= 1000)
+            //{
+            //    t.Restart();
+            //    FPS = fpsCounter;
+            //    fpsCounter = 0;
+            //}
+
+            // update everey frame, remove "f" behind 1000 to remove decimals.
+            FPS = (1000f / t.ElapsedMilliseconds);
+            t.Restart();
+
+            screen.Print("FPS: " + FPS.ToString(), 640, 30, MixColor(255, 255, 255));
+            fpsCounter++;
 
             rayLines.Clear();
         }
@@ -102,7 +132,7 @@ namespace RAYTRACER
 
             Vector2 Direction = end - origin;
 
-            if (End.X < -screen.width / 4 && Origin.X > -screen.width / 4)
+            if (End.X < -screen.width / 4 && origin.X > -screen.width / 4)
             {
                 float lessenwith = -screen.width / 4 - End.X;
                 Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
@@ -110,11 +140,12 @@ namespace RAYTRACER
                 End.Y = (int)(End.Y + (Direction.Y * lessenwith));
             }
 
+
             // Draw the original rays.
             //screen.Line((int)(origin.X + screen.width / 4 + screen.width / 2), (int)(origin.Y + screen.height / 2), (int)(end.X + screen.width / 4 + screen.width / 2), (int)(end.Y + screen.height / 2), MixColor(255, 0, 0));
 
             // Draw the cut rays.
-            screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), MixColor(0, 255, 0));
+            screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), color);
         }
     }
 }
