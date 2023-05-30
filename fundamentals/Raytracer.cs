@@ -54,7 +54,7 @@ namespace RAYTRACER
             {
                 for (int j = 0; j < camera.screenWidth; j++)
                 {
-                    Vector3 PixelColor = new Vector3(0,0,0);
+                    Vector3 PixelColor = new Vector3(20,20,20);
                     Intersection intersection;
                     Ray ray1 = camera.CalculateRay(j, i);
                     foreach (Primitive p in scene.Primitives)
