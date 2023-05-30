@@ -138,18 +138,18 @@ namespace RAYTRACER
             // print and calculate FPS
 
             // update every second, always whole number.
-            //if (t.ElapsedMilliseconds >= 1000)
-            //{
-            //    t.Restart();
-            //    FPS = fpsCounter;
-            //    fpsCounter = 0;
-            //}
+            if (t.ElapsedMilliseconds >= 1000)
+            {
+                t.Restart();
+                FPS = fpsCounter;
+                fpsCounter = 0;
+            }
 
-            // update everey frame, remove "f" behind 1000 to remove decimals.
-            FPS = (1000f / t.ElapsedMilliseconds);
-            t.Restart();
+            // update everey frame
+            //FPS = (1000f / t.ElapsedMilliseconds);
+            //t.Restart();
 
-            screen.Print("FPS: " + FPS.ToString(), 640, 30, MixColor(255, 255, 255));
+            screen.Print("FPS: " + FPS.ToString(), 640, screen.height - 140, MixColor(255, 255, 255));
             fpsCounter++;
         }
     }
