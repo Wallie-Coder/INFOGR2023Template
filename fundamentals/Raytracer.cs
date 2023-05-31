@@ -8,43 +8,46 @@ namespace RAYTRACER
 {
     public class Raytracer
     {
-        Surface screen;
+        // shadow color p.DiffuseColor * scene.AmbientLighting
 
-        public Scene scene;
+        // MEMBER VARIABLES
+        private Surface screen;
+        private Scene scene;
+        public Scene Scene { get { return scene; } }
 
-        public Camera camera;
+        private Camera camera;
+        public Camera Camera { get { return camera; } }
 
-        // position the camera is looking at
-        Vector3 camTarget = new Vector3(0, 0, 5);
-        // position of the camera
-        Vector3 camOrigin = new Vector3(0, 0, 0);
-        // the "up" direction of the camera used to calculate the basis
-        Vector3 camUpView = new Vector3(0, 1, 0);
-        // vertical FOV
-        float FOV = 90;
+
+        private Vector3 camTarget = new Vector3(1, 0, 0);
+        private Vector3 camOrigin = new Vector3(0, 0, 0);
+        private Vector3 camUp = new Vector3(0, 1, 0);
+
+        private float FOV = 90;
 
         public Vector3 CamTarget { get { return camTarget; } }
         public Vector3 CamOrigin { get { return camOrigin; } }
-        public Vector3 CamUpView { get { return camUpView; } }
+        public Vector3 CamUp { get { return camUp; } }
 
+        // CONSTRUCTOR
         public Raytracer(Surface screen)
         {
             this.screen = screen;
             scene = new Scene(screen);
-            camera = new Camera(camOrigin, camTarget, camUpView, FOV);
+            camera = new Camera(camOrigin, camTarget, camUp, FOV);
         }
 
-        int MixColor(int red, int green, int blue) { return (red << 16) + (green << 8) + blue; }
+        // CLASS METHODS
 
         //  CHANGE FOREACH TO FOR LOOPS, BETTER PERFORMANCE
         public void ParallelRender()
         {
             //multithread through the y axis
-            Parallel.For(0, camera.screenHeight, y => RenderY(y));
+            Parallel.For(0, camera.ScreenHeight, RenderY);
 
         }
 
-        void RenderShading(ref ShadowRay ray2, ref Vector3 PixelColor, ref Intersection intersection, ref Primitive p)
+        void RenderShading(ref ShadowRay shadowRay, ref Vector3 pixelColor, ref Intersection intersection, ref Primitive p)
         {
             for (int l = 0; l < scene.Primitives.Count; l++)
             {
@@ -151,14 +154,13 @@ namespace RAYTRACER
             Vector3 PixelColor = new Vector3(20, 20, 20);
             List<Intersection> intersections = new List<Intersection>();
             Intersection intersection = null;
-            Ray ray1 = camera.CalculateRay(j, i);
+            Ray primaryRay = camera.CalculateRay(j, i);
             foreach (Primitive p in scene.Primitives)
             {
                 Primitive prim = p;
-                if (p is Sphere)
+                if (p is Sphere q)
                 {
-                    Sphere x = (Sphere)p;
-                    if ((camera.Origin - x.Location).Length() < x.Radius)
+                    if ((camera.Origin - q.Center).LengthSquared() < q.Radius * q.Radius)
                     {
                         continue;
                     }
@@ -244,17 +246,19 @@ namespace RAYTRACER
 
         void RenderY(int i)
         {
-            for(int j = 0; j < camera.screenWidth;j++)
+            // iterate over the x axis
+            for(int x = 0; x < camera.ScreenWidth;x++)
             {
-                RenderX(i, j);
+                RenderX(i, x);
             }
         }
 
         public void Render()
         {
-            for (int i = 0; i < camera.screenHeight; i++)
+            // iterate over the y axis
+            for (int y = 0; y < camera.ScreenHeight; y++)
             {
-                RenderY(i);
+                RenderY(y);
             }
         }
     }

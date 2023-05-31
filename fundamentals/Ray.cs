@@ -5,22 +5,23 @@ namespace RAYTRACER
 {
     public class Ray
     {
-        // member variables
-        protected Vector3 origin;
-        protected Vector3 direction;
-        protected Vector3 color;
-        protected int bounces;
-        protected int maxBounces = 10;
-        protected float epsilon = 0.0001f;
-
+        // MEMBER VARIABLES
+        protected Vector3 origin, direction, color;
         public Vector3 Origin { get { return origin; } set { origin = value; } }
-
         public Vector3 Direction { get { return direction; } set { direction = value; } }
-
         public Vector3 Color { get { return color; } set { color = value; } }
 
+        // the amount of bounces a ray has done and the amount of bounces a ray is allowed to do.
+        protected int bounces, maxBounces = 10;
+
+
+        protected float epsilon = 0.0001f;
+
+        
         public int Bounces { get { return bounces; } set { bounces = value; } }
 
+
+        // CONSTRUCTOR
         public Ray(Vector3 direction, Vector3 origin)
         {
             this.direction = direction;
@@ -29,6 +30,9 @@ namespace RAYTRACER
             this.origin = origin;
         }
 
+        // CLASS METHODS
+
+        // decides wether a collision with a sphere is valid or not.
         public ValueTuple<bool, float> ConcludeFromCollision(double D, float p1, float p2)
         {
             // check if there is a possible collision, and the resulting t
@@ -39,19 +43,25 @@ namespace RAYTRACER
 
     public class ShadowRay : Ray
     {
+        // MEMBER VARIABLES
         Light light;
-
         public Light LightSource { get { return light; } }
+
+
+        // CONSTRUCTOR
         public ShadowRay(Vector3 direction, Vector3 origin, Light light) : base(direction, origin)
         {
             this.light = light;
         }
+    
+        // CLASS METHODS
 
+        // decides wether a collision with a sphere is valid or not
         public new bool ConcludeFromCollision(double D, float p1, float p2)
         {
             float t = Vector3.Distance(origin, light.Location);
             
-            // make sure p1 and p2 are actually between the point on the primitive and the light source
+            // make sure p1 and p2 are actually between the point on the sphere and the light source
             if (p1 > epsilon && p1 < t - epsilon)
             {
                 return true;

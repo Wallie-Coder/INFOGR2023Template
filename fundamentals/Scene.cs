@@ -6,20 +6,24 @@ namespace RAYTRACER
 {
     public class Scene
     {
-        List<Light> lights;
+        // MEMBER VARIABLES
+        private List<Light> lights; 
+        public List<Light> Lights { get { return lights; } }
+
 
         List<Primitive> primitives;
+        public List<Primitive> Primitives { get { return primitives; } }
 
-        Vector3 ambientLighting = new Vector3(1, 1, 1);
 
-        public Vector3 AmbientLighting { get { return ambientLighting; } }
-
-        public List<Primitive> Primitives { get { return primitives; } private set { primitives = value; } }
-
-        public List<Light> Lights { get { return lights; } private set { lights = value; } }
-
+        Vector3 ambientLightingIntensity = new Vector3(1, 1, 1);
+        public Vector3 AmbientLightingIntensity { get { return ambientLightingIntensity; } }
+        
+        
+        // CONSTRUCTOR
         public Scene(Surface screen)
         {
+            // the color of both lights and spheres can range from 0 to 255 on all RGB values
+            // the RGB values are converted to an RGB value between 0 - 1 in the constructors of their object class
             lights = new List<Light>
         {   // position , intensity
                         // intensity cannot be higher than 1 on any value

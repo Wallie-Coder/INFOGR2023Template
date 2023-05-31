@@ -5,9 +5,9 @@ namespace RAYTRACER
 {
     public class Plane : Primitive
     {
-        Vector3 Normal;
+        // MEMBER VARIABLES
+        private Vector3 normal;
 
-        float Distance;
 
         Vector3 Point;
 

@@ -4,10 +4,8 @@ namespace RAYTRACER
 {
     public class Light
     {
-        // position of the pointlight
-        Vector3 location;
-        // intensity of the light
-        Vector3 intensity;
+        // MEMBER VARIABLES
+        Vector3 location, intensity;
 
         public Vector3 Location { get { return location; } }
 
