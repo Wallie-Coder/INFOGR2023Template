@@ -11,11 +11,24 @@ namespace RAYTRACER
         public Vector3 SpecularColor { get { return specularColor; } }
 
 
+        protected bool specular;
+        public bool Specular { get { return specular; } }
+
+
         // CONSTRUCTOR
-        public Primitive(Vector3 diffuseColor, Vector3 specularColor)
+        public Primitive(Vector3 diffuseColor, Vector3 specularColor, bool specular = false)
         {
-            this.diffuseColor = diffuseColor;
-            this.specularColor = specularColor;
+            this.diffuseColor = diffuseColor / 255;
+
+            this.specular = specular;
+            if (specular)
+            {
+                this.specularColor = specularColor / 255;
+            }
+            else
+            {
+                this.specularColor = this.diffuseColor;
+            }
         }
 
         // CLASS METHODS

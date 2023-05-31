@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using Template;
 using System.Diagnostics;
+using System;
 
 namespace RAYTRACER
 {
@@ -163,6 +164,7 @@ namespace RAYTRACER
 
             screen.Print("fps: " + fps.ToString(), 640, screen.height - 140, MyApplication.MixColor(255, 255, 255));
             fpsCounter++;
+            screen.Print("multithreading: " + MyApplication.Multithreading, 640, screen.height - 160, MyApplication.MixColor(255, 255, 255));
         }
     }
 }

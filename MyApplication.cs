@@ -1,6 +1,7 @@
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using RAYTRACER;
 using SixLabors.ImageSharp;
 
@@ -10,9 +11,10 @@ namespace Template
     {
         // MEMBER VARIABLES
         public Surface screen;
-        Raytracer raytracer;
-        GameWindow window;
-        bool parallelRendering = true;
+        private Raytracer raytracer;
+        private GameWindow window;
+        private static bool multithreading = false;
+        public static bool Multithreading { get { return multithreading; } }
 
         DebugOutput debugOutput;
 
@@ -38,7 +40,7 @@ namespace Template
         {
             screen.Clear(0);
             Input();
-            if (parallelRendering)
+            if (multithreading)
             {
                 raytracer.ParallelRender();
             }
