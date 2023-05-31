@@ -1,4 +1,5 @@
 ﻿using OpenTK.Graphics.ES20;
+using System.ComponentModel;
 using System.Numerics;
 using System.Security.Claims;
 using Template;
@@ -71,9 +72,7 @@ namespace RAYTRACER
                         shadowRay.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
                         s.CollisionSphere(shadowRay);
                         // set the color
-
                         shadowRay.Color = shadowRay.LightSource.Intensity * (1 / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location)));
-
                         Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * (Vector3.Dot(shadowRay.Direction, intersection.Normal) * intersection.Normal));
                         Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
                         double q = Math.Pow(Vector3.Dot(R, V), 10);
@@ -81,7 +80,7 @@ namespace RAYTRACER
                             (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) +
                             p.SpecularColor * (float)Math.Max(0, q));
 
-                        // shadow color p.DiffuseColor * scene.AmbientLighting
+                        //shadow color p.DiffuseColor* scene.AmbientLighting
 
                     }
                 } 
@@ -139,8 +138,17 @@ namespace RAYTRACER
                     float A = (float)Math.Sqrt((x.GetNormal.X * x.GetNormal.X) + (x.GetNormal.Y * x.GetNormal.Y) + (x.GetNormal.Z * x.GetNormal.Z));
                     float B = (float)Math.Sqrt((shadowRay.Direction.X * shadowRay.Direction.X) + (shadowRay.Direction.Y * shadowRay.Direction.Y) + (shadowRay.Direction.Z * shadowRay.Direction.Z));
 
-                    pixelColor = (p.DiffuseColor * scene.Lights[0].Intensity * (1 / Vector3.Distance(scene.Lights[0].Location, intersection.IntersectionPoint) * (float)Math.Pow(Math.Cos((ab / (A * B))), -1)));
+                    //pixelColor = p.DiffuseColor * scene.Lights[0].Intensity * (1 / Vector3.Distance(scene.Lights[0].Location, intersection.IntersectionPoint) * Math.Cos(ab / (A * B));
                     //pixelColor = new Vector3(255, 255, 255);
+
+                    // set the color
+                    shadowRay.Color = shadowRay.LightSource.Intensity * (1 / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location)));
+                    Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * (Vector3.Dot(shadowRay.Direction, intersection.Normal) * intersection.Normal));
+                    Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
+                    double q = Math.Pow(Vector3.Dot(R, V), 10);
+                    pixelColor = shadowRay.Color *
+                        (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) +
+                        p.SpecularColor * (float)Math.Max(0, q));
 
                 }
                 else
@@ -236,7 +244,11 @@ namespace RAYTRACER
 
             // change the color of the pixel based on the calculations
             int location = j + i * screen.width;
-            screen.Plot(j, i, MyApplication.MixColor((int)pixelColor.X, (int)pixelColor.Y, (int)pixelColor.Z));
+
+            int r = (int)(Math.Clamp(pixelColor.X, 0, 1) * 255);
+            int g = (int)(Math.Clamp(pixelColor.Y, 0, 1) * 255);
+            int b = (int)(Math.Clamp(pixelColor.Z, 0, 1) * 255);
+            screen.Plot(j, i, MyApplication.MixColor(r, g, b));
 
             if (intersection == null)
             {
