@@ -13,7 +13,7 @@ namespace Template
         public Surface screen;
         private Raytracer raytracer;
         private GameWindow window;
-        private static bool multithreading = false;
+        private static bool multithreading = true;
         public static bool Multithreading { get { return multithreading; } }
 
         DebugOutput debugOutput;
@@ -88,7 +88,7 @@ namespace Template
             if (window.IsKeyDown(Keys.Right))
             {
                 float yaw = (raytracer.Camera.Yaw + raytracer.Camera.RotationSpeed) * (float)(Math.PI / 180);
-                float pitch = raytracer.Camera.Pitch;
+                float pitch = raytracer.Camera.Pitch * (float)(Math.PI / 180);
                 Quaternion qPitch = Quaternion.CreateFromYawPitchRoll(0, pitch, 0);
                 Quaternion qYaw = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
                 raytracer.Camera.Rotate(qPitch, qYaw);
@@ -101,7 +101,7 @@ namespace Template
             else if (window.IsKeyDown(Keys.Left))
             {
                 float yaw = (raytracer.Camera.Yaw - raytracer.Camera.RotationSpeed) * (float)(Math.PI / 180);
-                float pitch = raytracer.Camera.Pitch;
+                float pitch = raytracer.Camera.Pitch * (float)(Math.PI / 180);
                 Quaternion qPitch = Quaternion.CreateFromYawPitchRoll(0, pitch, 0);
                 Quaternion qYaw = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
                 raytracer.Camera.Rotate(qPitch, qYaw);
@@ -115,7 +115,7 @@ namespace Template
             else if(window.IsKeyDown(Keys.Up))
             {
                 float pitch = (raytracer.Camera.Pitch + raytracer.Camera.RotationSpeed) * (float)(Math.PI / 180);
-                float yaw = raytracer.Camera.Yaw;
+                float yaw = raytracer.Camera.Yaw * (float)(Math.PI / 180);
                 Quaternion qPitch = Quaternion.CreateFromYawPitchRoll(0, pitch, 0);
                 Quaternion qYaw = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
                 raytracer.Camera.Rotate(qPitch, qYaw);
@@ -128,7 +128,7 @@ namespace Template
             else if(window.IsKeyDown(Keys.Down))
             {
                 float pitch = (raytracer.Camera.Pitch - raytracer.Camera.RotationSpeed) * (float)(Math.PI / 180);
-                float yaw = raytracer.Camera.Yaw;
+                float yaw = raytracer.Camera.Yaw * (float)(Math.PI / 180);
                 Quaternion qPitch = Quaternion.CreateFromYawPitchRoll(0, pitch, 0);
                 Quaternion qYaw = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
                 raytracer.Camera.Rotate(qPitch, qYaw);
