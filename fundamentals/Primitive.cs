@@ -5,18 +5,21 @@ namespace RAYTRACER
 {
     public class Primitive
     {
-        protected Vector3 diffuseColor;
-        protected Vector3 specularColor;
-
+        // MEMBER VARIABLES
+        protected Vector3 diffuseColor, specularColor;
         public Vector3 DiffuseColor { get { return diffuseColor; } }
-
         public Vector3 SpecularColor { get { return specularColor; } }
 
+
+        // CONSTRUCTOR
         public Primitive(Vector3 diffuseColor, Vector3 specularColor)
         {
             this.diffuseColor = diffuseColor;
             this.specularColor = specularColor;
         }
+
+        // CLASS METHODS
+
         public virtual ValueTuple<double, float, float> Collision(Ray ray)
         {
             return (0, 0,0);

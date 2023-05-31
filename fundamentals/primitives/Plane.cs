@@ -4,15 +4,21 @@ namespace RAYTRACER
 {
     public class Plane : Primitive
     {
-        Vector3 Normal;
+        // MEMBER VARIABLES
+        private Vector3 normal;
 
-        float Distance;
 
+        private float distance;
+
+
+        // CONSTRUCTOR
         public Plane(Vector3 normal, float distance) :base(new Vector3(0,0,0), new Vector3(0,0,0))
         {
-            this.Normal = normal;
-            this.Distance = distance;
+            this.normal = normal;
+            this.distance = distance;
         }
+        
+        // CLASS METHODS
 
         public override ValueTuple<double, float, float> Collision(Ray ray)
         {

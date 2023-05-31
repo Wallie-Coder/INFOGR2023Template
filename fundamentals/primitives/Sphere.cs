@@ -4,24 +4,25 @@ namespace RAYTRACER
 {
     public class Sphere : Primitive
     {
-        Vector3 center;
-        float radius;
-
-        public Vector3 Location
-        {
-            get { return center; }
-            private set { center = value; }
-        }
-
-        public float Radius { get { return radius; } }
+        // MEMBER VARIABLES
+        private Vector3 center;
         public Vector3 Center { get { return center; } }
 
 
+        private float radius;
+        public float Radius { get { return radius; } }
+
+
+        // CONSTRUCTOR
         public Sphere(Vector3 center, float radius, Vector3 diffuseColor, Vector3 glossyColor) :base(diffuseColor, glossyColor)
         {
             this.center = center;
             this.radius = radius;
         }
+
+        // CLASS METHODS
+
+        // detects collision between a given ray and the sphere
         public override ValueTuple<double, float, float> Collision(Ray ray)
         {
             Vector3 CenterOrigin = ray.Origin - center;
@@ -39,6 +40,7 @@ namespace RAYTRACER
             return (D, p1, p2);
         }
 
+        // returns the normal of a point on the sphere that is pointing outwards
         public override Vector3 OutsideNormal(Vector3 point)
         {
             return Vector3.Normalize(center - point);
