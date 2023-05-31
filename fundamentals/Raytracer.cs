@@ -86,7 +86,7 @@ namespace RAYTRACER
                 Primitive prim = p;
                 if (p is Sphere q)
                 {
-                    if ((camera.Origin - q.Location).LengthSquared() < q.Radius * q.Radius)
+                    if ((camera.Origin - q.Center).LengthSquared() < q.Radius * q.Radius)
                     {
                         continue;
                     }
