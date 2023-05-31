@@ -11,6 +11,8 @@ namespace RAYTRACER
 
         Vector3 Point;
 
+        public Vector3 GetNormal { get { return Normal; } }
+
         public Plane(Vector3 normal, Vector3 point, Vector3 diffuseColor, Vector3 glossyColor) :base(diffuseColor, glossyColor)
         {
             this.Normal = normal;
@@ -31,18 +33,18 @@ namespace RAYTRACER
 
             t = (-b) / a;
 
-            if (t <= 0)
+            if (t <= 0.0001)
             {
                 return 0;
             }
 
-            double Zero = ((E.X + (t * D.X) - Point.X) * Normal.X) + ((E.Y + (t * D.Y) - Point.Y) * Normal.Y) + ((E.Z + (t * D.Z) - Point.Z) * Normal.Z);
+            float Zero = ((E.X + (t * D.X) - Point.X) * Normal.X) + ((E.Y + (t * D.Y) - Point.Y) * Normal.Y) + ((E.Z + (t * D.Z) - Point.Z) * Normal.Z);
 
             double xt = E.X + t * D.X;
             double yt = E.Y + t * D.Y;
             double zt = E.Z + t * D.Z;
 
-            if (Zero == 0)
+            if (Zero > -0.01 && Zero < 0.01)
             {
                 return t;
             }

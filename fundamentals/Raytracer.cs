@@ -69,6 +69,7 @@ namespace RAYTRACER
                         // set the color
 
                         ray2.Color = ray2.LightSource.Intensity * (1 / (Vector3.Distance(ray2.Origin, ray2.LightSource.Location) * Vector3.Distance(ray2.Origin, ray2.LightSource.Location)));
+
                         Vector3 R = Vector3.Normalize(ray2.Direction - 2 * (Vector3.Dot(ray2.Direction, intersection.Normal) * intersection.Normal));
                         Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
                         double q = Math.Pow(Vector3.Dot(R, V), 10);
@@ -127,7 +128,15 @@ namespace RAYTRACER
 
                 if (ClosestPtoLight.Item1 == p)
                 {
-                    PixelColor = new Vector3(255, 255, 255);
+                    Plane x = (Plane)p;
+
+                    float ab = (x.GetNormal.X * ray2.Direction.X) + (x.GetNormal.Y * ray2.Direction.Y) + (x.GetNormal.Z * ray2.Direction.Z);
+                    float A = (float)Math.Sqrt((x.GetNormal.X * x.GetNormal.X) + (x.GetNormal.Y * x.GetNormal.Y) + (x.GetNormal.Z * x.GetNormal.Z));
+                    float B = (float)Math.Sqrt((ray2.Direction.X * ray2.Direction.X) + (ray2.Direction.Y * ray2.Direction.Y) + (ray2.Direction.Z * ray2.Direction.Z));
+
+                    PixelColor = (p.DiffuseColor/255 * scene.Lights[0].Intensity/255 * (1 / Vector3.Distance(scene.Lights[0].Location, intersection.IntersectionPoint) * (float)Math.Pow(Math.Cos((ab / (A * B))), -1)))* 255;
+                    //PixelColor = new Vector3(255, 255, 255);
+
                 }
                 else
                 {
