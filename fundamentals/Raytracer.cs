@@ -55,29 +55,30 @@ namespace RAYTRACER
 
                 if (p1 is Sphere)
                 {
-                    var shadowCollide = p1.CollisionSphere(ray2);
+                    Sphere s = (Sphere)p1;
+                    var shadowCollide = s.CollisionSphere(shadowRay);
 
-                    if (ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3))
+                    if (shadowRay.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3))
                     {
-                        ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
-                        p1.CollisionSphere(ray2);
-                        PixelColor = new Vector3(0, 0, 0);
+                        shadowRay.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
+                        s.CollisionSphere(shadowRay);
+                        pixelColor = new Vector3(0, 0, 0);
                         return;
                     }
                     else
                     {
                         // temp
-                        ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
-                        p1.CollisionSphere(ray2);
+                        shadowRay.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
+                        s.CollisionSphere(shadowRay);
                         // set the color
 
-                        ray2.Color = ray2.LightSource.Intensity * (1 / (Vector3.Distance(ray2.Origin, ray2.LightSource.Location) * Vector3.Distance(ray2.Origin, ray2.LightSource.Location)));
+                        shadowRay.Color = shadowRay.LightSource.Intensity * (1 / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location)));
 
-                        Vector3 R = Vector3.Normalize(ray2.Direction - 2 * (Vector3.Dot(ray2.Direction, intersection.Normal) * intersection.Normal));
+                        Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * (Vector3.Dot(shadowRay.Direction, intersection.Normal) * intersection.Normal));
                         Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
                         double q = Math.Pow(Vector3.Dot(R, V), 10);
-                        PixelColor = ray2.Color *
-                            (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, ray2.Direction)) +
+                        pixelColor = shadowRay.Color *
+                            (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) +
                             p.SpecularColor * (float)Math.Max(0, q));
 
                         // shadow color p.DiffuseColor * scene.AmbientLighting
@@ -87,8 +88,9 @@ namespace RAYTRACER
             }
             if (p is Plane)
             {
+                Plane P = (Plane)p;
                 //list of t of lighrays.
-                (Primitive, float) ClosestPtoLight = (p, p.CollisionPlane(ray2));
+                (Primitive, float) ClosestPtoLight = (p, P.CollisionPlane(shadowRay));
 
 
                 foreach (Primitive p1 in scene.Primitives)
@@ -101,17 +103,17 @@ namespace RAYTRACER
                     {
                         Plane x = (Plane)p1;
 
-                        if (x.CollisionPlane(ray2) > float.Epsilon)
+                        if (x.CollisionPlane(shadowRay) > float.Epsilon)
                         {
-                            if (x.CollisionPlane(ray2) < ClosestPtoLight.Item2)
-                                ClosestPtoLight = (x, x.CollisionPlane(ray2));
+                            if (x.CollisionPlane(shadowRay) < ClosestPtoLight.Item2)
+                                ClosestPtoLight = (x, x.CollisionPlane(shadowRay));
                         }
                     }
                     if (p1 is Sphere)
                     {
                         Sphere x = (Sphere)p1;
-                        var collision = x.CollisionSphere(ray2);
-                        var conclusion = ray2.ConcludeFromCollision(collision.Item1, collision.Item2, collision.Item3);
+                        var collision = x.CollisionSphere(shadowRay);
+                        var conclusion = shadowRay.ConcludeFromCollision(collision.Item1, collision.Item2, collision.Item3);
 
                         if (conclusion)
                         {
@@ -129,21 +131,21 @@ namespace RAYTRACER
                     }
                 }
 
-                if (ClosestPtoLight.Item1 == p)
+                if (ClosestPtoLight.Item1 == P)
                 {
                     Plane x = (Plane)p;
 
-                    float ab = (x.GetNormal.X * ray2.Direction.X) + (x.GetNormal.Y * ray2.Direction.Y) + (x.GetNormal.Z * ray2.Direction.Z);
+                    float ab = (x.GetNormal.X * shadowRay.Direction.X) + (x.GetNormal.Y * shadowRay.Direction.Y) + (x.GetNormal.Z * shadowRay.Direction.Z);
                     float A = (float)Math.Sqrt((x.GetNormal.X * x.GetNormal.X) + (x.GetNormal.Y * x.GetNormal.Y) + (x.GetNormal.Z * x.GetNormal.Z));
-                    float B = (float)Math.Sqrt((ray2.Direction.X * ray2.Direction.X) + (ray2.Direction.Y * ray2.Direction.Y) + (ray2.Direction.Z * ray2.Direction.Z));
+                    float B = (float)Math.Sqrt((shadowRay.Direction.X * shadowRay.Direction.X) + (shadowRay.Direction.Y * shadowRay.Direction.Y) + (shadowRay.Direction.Z * shadowRay.Direction.Z));
 
-                    PixelColor = (p.DiffuseColor/255 * scene.Lights[0].Intensity/255 * (1 / Vector3.Distance(scene.Lights[0].Location, intersection.IntersectionPoint) * (float)Math.Pow(Math.Cos((ab / (A * B))), -1)))* 255;
-                    //PixelColor = new Vector3(255, 255, 255);
+                    pixelColor = (p.DiffuseColor * scene.Lights[0].Intensity * (1 / Vector3.Distance(scene.Lights[0].Location, intersection.IntersectionPoint) * (float)Math.Pow(Math.Cos((ab / (A * B))), -1)));
+                    //pixelColor = new Vector3(255, 255, 255);
 
                 }
                 else
                 {
-                    PixelColor = new Vector3(0, 0, 0);
+                    pixelColor = new Vector3(0, 0, 0);
                 }
             }
         }
@@ -151,7 +153,7 @@ namespace RAYTRACER
        
         void RenderX(int i, int j)
         {
-            Vector3 PixelColor = new Vector3(20, 20, 20);
+            Vector3 pixelColor = new Vector3(20, 20, 20);
             List<Intersection> intersections = new List<Intersection>();
             Intersection intersection = null;
             Ray primaryRay = camera.CalculateRay(j, i);
@@ -165,11 +167,11 @@ namespace RAYTRACER
                         continue;
                     }
 
-                    var collide = p.CollisionSphere(ray1);
-                    var conclusion = ray1.ConcludeFromCollision(collide.Item1, collide.Item2, collide.Item3);
+                    var collide = q.CollisionSphere(primaryRay);
+                    var conclusion = primaryRay.ConcludeFromCollision(collide.Item1, collide.Item2, collide.Item3);
                     if (conclusion.Item1)
                     {
-                        intersection = new Intersection(ray1, p, conclusion.Item2);
+                        intersection = new Intersection(primaryRay, p, conclusion.Item2);
 
                         intersections.Add(intersection);
                     }
@@ -177,13 +179,13 @@ namespace RAYTRACER
                 if (p is Plane)
                 {
                     Plane x = (Plane)p;
-                    if(x.CollisionPlane(ray1) == 0)
+                    if(x.CollisionPlane(primaryRay) == 0)
                     {
                         continue;
                     }
                     else
                     {
-                        intersection = new Intersection(ray1, p, x.CollisionPlane(ray1));
+                        intersection = new Intersection(primaryRay, p, x.CollisionPlane(primaryRay));
                         intersections.Add(intersection);
                     }
                 }
@@ -210,37 +212,37 @@ namespace RAYTRACER
                     //for (int k = 0; k < scene.Lights.Count; k++)
                     //{
                     // this works for single light environments
-                    ShadowRay ray2 = new ShadowRay(scene.Lights[0].Location - Closest.IntersectionPoint, Closest.IntersectionPoint, scene.Lights[0]);
+                    ShadowRay shadowRay = new ShadowRay(scene.Lights[0].Location - Closest.IntersectionPoint, Closest.IntersectionPoint, scene.Lights[0]);
                     //}
-                    RenderShading(ref ray2, ref PixelColor, ref Closest, ref prim);
+                    RenderShading(ref shadowRay, ref pixelColor, ref Closest, ref prim);
 
                     // add the ray to the DebugOutput
                     if (i == 180 && j % 10 == 0)
-                        DebugOutput.rayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(Closest.IntersectionPoint.X, Closest.IntersectionPoint.Z)));
+                        DebugOutput.RayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(Closest.IntersectionPoint.X, Closest.IntersectionPoint.Z)));
                 }
                 if (Closest.GetPrimitive is Plane)
                 {
-                    //PixelColor = Closest.GetPrimitive.DiffuseColor;
-                    ShadowRay ray2 = new ShadowRay(scene.Lights[0].Location - Closest.IntersectionPoint, Closest.IntersectionPoint, scene.Lights[0]);
+                    //pixelColor = Closest.GetPrimitive.DiffuseColor;
+                    ShadowRay shadowRay = new ShadowRay(scene.Lights[0].Location - Closest.IntersectionPoint, Closest.IntersectionPoint, scene.Lights[0]);
 
-                    RenderShading(ref ray2, ref PixelColor, ref Closest, ref prim);
+                    RenderShading(ref shadowRay, ref pixelColor, ref Closest, ref prim);
 
                     // add the ray to the DebugOutput
                     if (i == 180 && j % 10 == 0)
-                        DebugOutput.rayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(Closest.IntersectionPoint.X, Closest.IntersectionPoint.Z)));
+                        DebugOutput.RayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(Closest.IntersectionPoint.X, Closest.IntersectionPoint.Z)));
 
                 }
             }
 
             // change the color of the pixel based on the calculations
             int location = j + i * screen.width;
-            screen.Plot(j, i, MixColor((int)PixelColor.X, (int)PixelColor.Y, (int)PixelColor.Z));
+            screen.Plot(j, i, MyApplication.MixColor((int)pixelColor.X, (int)pixelColor.Y, (int)pixelColor.Z));
 
             if (intersection == null)
             {
                 // add the ray to the DebugOutput
                 //if (i == 180 && j % 10 == 0)
-                    //DebugOutput.rayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(camera.Origin.X + ray1.Direction.X * 200, camera.Origin.Z + ray1.Direction.Z * 200)));
+                    //DebugOutput.rayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(camera.Origin.X + primaryRay.Direction.X * 200, camera.Origin.Z + primaryRay.Direction.Z * 200)));
             }
         }
 
