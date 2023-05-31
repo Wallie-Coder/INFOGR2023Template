@@ -1,17 +1,23 @@
 ﻿using System.Numerics;
 using Template;
+using System.Diagnostics;
 
 namespace RAYTRACER
 {
     class DebugOutput
     {
-        // MEMBER VARIABLES
-        static private List<(Vector2, Vector2)> rayLines = new List<(Vector2 origin, Vector2 end)>();
-        public static List<(Vector2, Vector2)> RayLines { get { return rayLines; } }
+
+        static public List<(Vector2, Vector2)> rayLines = new List<(Vector2 origin, Vector2 end)>();
+        static public List<(Vector2, int)> Pixels = new List<(Vector2 Location, int Color)>();
+        List<(Vector2, float)> circles = new List<(Vector2 center, float radius)>();
+
+        Surface screen;
+        Raytracer raytracer;
 
 
-        private List<(Vector2, float)> circles = new List<(Vector2 center, float radius)>();
-
+        Stopwatch t = new Stopwatch();
+        float fpsCounter = 0;
+        float FPS = 0;
 
         private Surface screen;
         private Raytracer raytracer;
@@ -35,6 +41,7 @@ namespace RAYTRACER
                     circles.Add((new Vector2(P.Center.X, P.Center.Z), P.Radius));
                 }
             }
+            t.Start();
         }
 
         // CLASS METHODS
@@ -52,6 +59,7 @@ namespace RAYTRACER
 
             //PlotLine(new Vector2(rayLines[rayLines.Count/4].Item1.X * xScale, rayLines[rayLines.Count/4].Item1.Y * yScale), new Vector2(rayLines[rayLines.Count - 1].Item2.X * xScale, rayLines[rayLines.Count - 1].Item2.Y * yScale), MyApplication.ixColor(255, 255, 0));
 
+            // Draw each circle
             foreach ((Vector2 center, float radius) c in circles)
             {
                 for (float i = 0; i < 360; i += 0.5f)
@@ -70,8 +78,19 @@ namespace RAYTRACER
                 }
             }
 
-            SetPixel((int)(raytracer.Camera.Origin.X * xScale), (int)(raytracer.Camera.Origin.Z * yScale), MyApplication.MixColor(0, 0, 255));
+            // draw pixels
+            foreach((Vector2, int) p in Pixels)
+            {
+                //SetPixel((int)(p.Item1.X * xScale), (int)(p.Item1.Y * yScale), p.Item2);
+            }    
+
+            // Draw a pixel for the camera
+            SetPixel((int)(raytracer.camera.Origin.X * xScale), (int)(raytracer.camera.Origin.Z * yScale), MixColor(0, 0, 255));
             DebugInfo();
+
+
+            // Draw the screen plane
+            PlotLine(new Vector2(raytracer.camera.TopLeft.X * xScale, raytracer.camera.TopLeft.Z * yScale), new Vector2(raytracer.camera.TopRight.X * xScale, raytracer.camera.TopRight.Z * yScale), MixColor(0, 0, 255));
 
             rayLines.Clear();
         }
@@ -102,7 +121,7 @@ namespace RAYTRACER
 
             Vector2 Direction = end - origin;
 
-            if (End.X < -screen.width / 4 && Origin.X > -screen.width / 4)
+            if (End.X < -screen.width / 4 && origin.X > -screen.width / 4)
             {
                 float lessenwith = -screen.width / 4 - End.X;
                 Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
@@ -110,22 +129,40 @@ namespace RAYTRACER
                 End.Y = (int)(End.Y + (Direction.Y * lessenwith));
             }
 
+
             // Draw the original rays.
             //screen.Line((int)(origin.X + screen.width / 4 + screen.width / 2), (int)(origin.Y + screen.height / 2), (int)(end.X + screen.width / 4 + screen.width / 2), (int)(end.Y + screen.height / 2), MyApplication.MixColor(255, 0, 0));
 
             // Draw the cut rays.
-            screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), MyApplication.MixColor(0, 255, 0));
+            screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), color);
         }
 
         // prints info about the Camera on the debugscreen
         void DebugInfo()
         {
-            screen.Print("CamZ = " + raytracer.Camera.ScreenZ.ToString(), screen.width / 2, screen.height - 20, MyApplication.MixColor(255, 255, 255));
-            screen.Print("CamY = " + raytracer.Camera.ScreenY.ToString(), screen.width / 2, screen.height - 40, MyApplication.MixColor(255, 255, 255));
-            screen.Print("CamX = " + raytracer.Camera.ScreenX.ToString(), screen.width / 2, screen.height - 60, MyApplication.MixColor(255, 255, 255));
-            screen.Print("CamOrigin = " + raytracer.Camera.Origin.ToString(), screen.width / 2, screen.height - 80, MyApplication.MixColor(255, 255, 255));
-            screen.Print("Yaw = " + raytracer.Camera.Yaw.ToString(), screen.width / 2, screen.height - 100, MyApplication.MixColor(255, 255, 255));
-            screen.Print("Pitch = " + raytracer.Camera.Pitch.ToString(), screen.width / 2, screen.height - 120, MyApplication.MixColor(255, 255, 255));
+            screen.Print("CamZ = " + raytracer.camera.screenZ.ToString(), screen.width / 2, screen.height - 20, MixColor(255, 255, 255));
+            screen.Print("CamY = " + raytracer.camera.screenY.ToString(), screen.width / 2, screen.height - 40, MixColor(255, 255, 255));
+            screen.Print("CamX = " + raytracer.camera.screenX.ToString(), screen.width / 2, screen.height - 60, MixColor(255, 255, 255));
+            screen.Print("CamOrigin = " + raytracer.camera.Origin.ToString(), screen.width / 2, screen.height - 80, MixColor(255, 255, 255));
+            screen.Print("Yaw = " + raytracer.camera.Yaw.ToString(), screen.width / 2, screen.height - 100, MixColor(255, 255, 255));
+            screen.Print("Pitch = " + raytracer.camera.Pitch.ToString(), screen.width / 2, screen.height - 120, MixColor(255, 255, 255));
+
+            // print and calculate FPS
+
+            // update every second, always whole number.
+            if (t.ElapsedMilliseconds >= 1000)
+            {
+                t.Restart();
+                FPS = fpsCounter;
+                fpsCounter = 0;
+            }
+
+            // update everey frame
+            //FPS = (1000f / t.ElapsedMilliseconds);
+            //t.Restart();
+
+            screen.Print("FPS: " + FPS.ToString(), 640, screen.height - 140, MixColor(255, 255, 255));
+            fpsCounter++;
         }
     }
 }

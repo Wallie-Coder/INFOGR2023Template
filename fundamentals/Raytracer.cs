@@ -48,7 +48,8 @@ namespace RAYTRACER
 
         void RenderShading(ref ShadowRay shadowRay, ref Vector3 pixelColor, ref Intersection intersection, ref Primitive p)
         {
-            for(int l = 0; l < scene.Primitives.Count;l++) {
+            for (int l = 0; l < scene.Primitives.Count; l++)
+            {
                 Primitive p1 = scene.Primitives[l];
                 var shadowCollide = p1.Collision(shadowRay);
 
@@ -71,7 +72,6 @@ namespace RAYTRACER
                         (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) +
                         p.SpecularColor * (float)Math.Max(0, q));
                 }
-
             }
         }
 
