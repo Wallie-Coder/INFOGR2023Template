@@ -17,22 +17,20 @@ namespace RAYTRACER
         public Camera Camera { get { return camera; } }
 
 
-        private Vector3 camTarget = new Vector3(0, 0, 1);
-        private Vector3 camOrigin = new Vector3(0, 0, 0);
-        private Vector3 camUp = new Vector3(0, 1, 0);
+        private Vector3 camTarget = new Vector3(0, -1, 1);
+        private Vector3 camOrigin = new Vector3(0, -1, 0);
 
         private float FOV = 45;
 
         public Vector3 CamTarget { get { return camTarget; } }
         public Vector3 CamOrigin { get { return camOrigin; } }
-        public Vector3 CamUp { get { return camUp; } }
 
         // CONSTRUCTOR
         public Raytracer(Surface screen)
         {
             this.screen = screen;
             scene = new Scene(screen);
-            camera = new Camera(camOrigin, camTarget, camUp, FOV);
+            camera = new Camera(camOrigin, camTarget, FOV);
         }
 
         // CLASS METHODS
@@ -113,11 +111,7 @@ namespace RAYTRACER
                         }
                     }
 
-                    if (ClosestPtoLight.Item1 != P)
-                    {
-                        continue;
-                    }
-                    else
+                    if (ClosestPtoLight.Item1 == P)
                     {
                         // set the color
                         shadowRay.Color = shadowRay.LightSource.Intensity * (1 / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location)));
@@ -212,7 +206,6 @@ namespace RAYTRACER
                     // add the ray to the DebugOutput
                     if (i == 180 && j % 10 == 0)
                         DebugOutput.RayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(closest.IntersectionPoint.X, closest.IntersectionPoint.Z)));
-
                 }
             }
 

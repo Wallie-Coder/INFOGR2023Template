@@ -19,7 +19,7 @@ namespace RAYTRACER
         public float RotationSpeed { get { return rotationSpeed; } }
 
         
-        private float pitch, yaw;
+        private float pitch, yaw, roll;
         public float Pitch { get { return pitch; } set { pitch = value; } }
         public float Yaw { get { return yaw; } set { yaw = value; } }
        
@@ -64,17 +64,18 @@ namespace RAYTRACER
 
 
         // CONSTRUCTOR
-        public Camera(Vector3 lookFrom, Vector3 lookAt, Vector3 viewUp, float fov)
+        public Camera(Vector3 lookFrom, Vector3 lookAt, float fov)
         {
             // calculate the screens size based on vertical FOV
             float theta = (float)Math.Tan(fov * (float)(Math.PI / 180) / 2);
             cameraHeight = theta * 2;
             cameraWidth = aspectRatio * cameraHeight;
-            CalculateBase(lookFrom, lookAt, viewUp);
+            CalculateBase(lookFrom, lookAt, Vector3.UnitY);
             CalculatePlane();
             // set pitch and yaw according to the x y and z.
             pitch = (float)Math.Asin(screenZ.Y) * (float)(180 / Math.PI);
             yaw = (float)Math.Atan2(screenZ.X, screenZ.Z) * (float)(180 / Math.PI);
+            roll = (float)Math.Asin(screenX.Z) * (float)(180 / Math.PI);
         }
 
         // CLASS METHODS
