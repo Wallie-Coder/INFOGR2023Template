@@ -73,7 +73,7 @@ namespace RAYTRACER
             // draw pixels
             foreach((Vector2, int) p in Pixels)
             {
-                //SetPixel((int)(p.Item1.X * xScale), (int)(p.Item1.Y * yScale), p.Item2);
+                SetPixel((int)(p.Item1.X * xScale), (int)(p.Item1.Y * yScale), p.Item2);
             }    
 
             // Draw a pixel for the camera

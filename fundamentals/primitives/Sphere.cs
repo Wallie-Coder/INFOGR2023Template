@@ -22,7 +22,7 @@ namespace RAYTRACER
             this.center = center;
             this.radius = radius;
         }
-        public override ValueTuple<double, float, float> Collision(Ray ray)
+        public override ValueTuple<double, float, float> CollisionSphere(Ray ray)
         {
             Vector3 CenterOrigin = ray.Origin - center;
             double D;

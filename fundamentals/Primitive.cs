@@ -17,9 +17,14 @@ namespace RAYTRACER
             this.diffuseColor = diffuseColor;
             this.specularColor = specularColor;
         }
-        public virtual ValueTuple<double, float, float> Collision(Ray ray)
+        public virtual ValueTuple<double, float, float> CollisionSphere(Ray ray)
         {
-            return (0, 0,0);
+            return (0, 0, 0);
+        }
+
+        public virtual float CollisionPlane(Ray ray)
+        {
+            return 0f;
         }
 
         public virtual Vector3 OutsideNormal(Vector3 point)

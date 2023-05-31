@@ -29,9 +29,10 @@ namespace RAYTRACER
             // keep radius small when placing close to camera
             // x, y, z values are related, x and y can be larger when z is larger
             new Sphere(new Vector3(0, 0, 5), 2f, new Vector3(131,189,125), new Vector3(131,189,125)),
-            //new Sphere(new Vector3(5, 0, 0), 2f, new Vector3(0,255,0), new Vector3(0,255,0)),
+                //new Sphere(new Vector3(5, 0, 0), 2f, new Vector3(0,255,0), new Vector3(0,255,0)),
             new Sphere(new Vector3(0, 0, -5), 2f, new Vector3(255,0,0), new Vector3(131,0,0)),
-            //new Sphere(new Vector3(-5, 0, 0), 2f, new Vector3(180,180,255), new Vector3(180,180,255))
+                //new Sphere(new Vector3(-5, 0, 0), 2f, new Vector3(180,180,255), new Vector3(180,180,255))
+            new Plane(new Vector3(0, 1, 0), new Vector3(0, 5, 0), new Vector3 (255, 255, 255), new Vector3(255,255,255))
         };
         }
     }

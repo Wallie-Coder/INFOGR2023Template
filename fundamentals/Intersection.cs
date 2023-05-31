@@ -17,6 +17,10 @@ namespace RAYTRACER
 
         public Vector3 IntersectionPoint { get { return intersection; } }
 
+        public Primitive GetPrimitive { get { return prim; } }
+
+        public float GetT { get { return t; } }
+
         public Intersection(Ray ray, Primitive prim, float t)
         {
             this.ray = ray;
