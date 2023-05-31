@@ -134,13 +134,6 @@ namespace RAYTRACER
                 {
                     Plane x = (Plane)p;
 
-                    float ab = (x.GetNormal.X * shadowRay.Direction.X) + (x.GetNormal.Y * shadowRay.Direction.Y) + (x.GetNormal.Z * shadowRay.Direction.Z);
-                    float A = (float)Math.Sqrt((x.GetNormal.X * x.GetNormal.X) + (x.GetNormal.Y * x.GetNormal.Y) + (x.GetNormal.Z * x.GetNormal.Z));
-                    float B = (float)Math.Sqrt((shadowRay.Direction.X * shadowRay.Direction.X) + (shadowRay.Direction.Y * shadowRay.Direction.Y) + (shadowRay.Direction.Z * shadowRay.Direction.Z));
-
-                    //pixelColor = p.DiffuseColor * scene.Lights[0].Intensity * (1 / Vector3.Distance(scene.Lights[0].Location, intersection.IntersectionPoint) * Math.Cos(ab / (A * B));
-                    //pixelColor = new Vector3(255, 255, 255);
-
                     // set the color
                     shadowRay.Color = shadowRay.LightSource.Intensity * (1 / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location)));
                     Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * (Vector3.Dot(shadowRay.Direction, intersection.Normal) * intersection.Normal));
