@@ -42,6 +42,7 @@ namespace RAYTRACER
                     circles.Add((new Vector2(P.Center.X, P.Center.Z), P.Radius));
                 }
             }
+
             t.Start();
         }
 
@@ -148,7 +149,7 @@ namespace RAYTRACER
             screen.Print("Yaw = " + raytracer.Camera.Yaw.ToString(), screen.width / 2, screen.height - 100, MyApplication.MixColor(255, 255, 255));
             screen.Print("Pitch = " + raytracer.Camera.Pitch.ToString(), screen.width / 2, screen.height - 120, MyApplication.MixColor(255, 255, 255));
 
-            // print and calculate fps
+            
 
             // update every second, always whole number.
             if (t.ElapsedMilliseconds >= 1000)
@@ -158,13 +159,9 @@ namespace RAYTRACER
                 fpsCounter = 0;
             }
 
-            // update everey frame
-            //fps = (1000f / t.ElapsedMilliseconds);
-            //t.Restart();
-
             screen.Print("fps: " + fps.ToString(), 640, screen.height - 140, MyApplication.MixColor(255, 255, 255));
-            fpsCounter++;
             screen.Print("multithreading: " + MyApplication.Multithreading, 640, screen.height - 160, MyApplication.MixColor(255, 255, 255));
+            fpsCounter++;
         }
     }
 }

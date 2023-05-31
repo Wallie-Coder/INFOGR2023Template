@@ -1,9 +1,6 @@
-﻿using OpenTK.Graphics.ES20;
-using System.ComponentModel;
-using System.Numerics;
-using System.Security.Claims;
+﻿using System.Numerics;
+using OpenTK.Graphics.GL;
 using Template;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace RAYTRACER
 {
@@ -24,7 +21,7 @@ namespace RAYTRACER
         private Vector3 camOrigin = new Vector3(0, 0, 0);
         private Vector3 camUp = new Vector3(0, 1, 0);
 
-        private float FOV = 90;
+        private float FOV = 45;
 
         public Vector3 CamTarget { get { return camTarget; } }
         public Vector3 CamOrigin { get { return camOrigin; } }
@@ -40,113 +37,95 @@ namespace RAYTRACER
 
         // CLASS METHODS
 
-        //  CHANGE FOREACH TO FOR LOOPS, BETTER PERFORMANCE
         public void ParallelRender()
         {
             //multithread through the y axis
             Parallel.For(0, camera.ScreenHeight, RenderY);
-
         }
 
-        void RenderShading(ref ShadowRay shadowRay, ref Vector3 pixelColor, ref Intersection intersection, ref Primitive p)
+        void RenderShading(ref List<ShadowRay> shadows, ref Vector3 pixelColor, ref Intersection intersection, ref Primitive p)
         {
-            for (int l = 0; l < scene.Primitives.Count; l++)
+            for(int i = 0; i < shadows.Count; i++)
             {
-                Primitive p1 = scene.Primitives[l];
-
-                if (p1 is Sphere)
+                ShadowRay shadowRay = shadows[i];
+                if (p is Sphere s)
                 {
-                    Sphere s = (Sphere)p1;
                     var shadowCollide = s.CollisionSphere(shadowRay);
 
                     if (shadowRay.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3))
                     {
-                        shadowRay.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
-                        s.CollisionSphere(shadowRay);
-                        pixelColor = new Vector3(0, 0, 0);
-                        return;
+                        continue;
                     }
                     else
                     {
-                        // temp
-                        shadowRay.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
-                        s.CollisionSphere(shadowRay);
                         // set the color
                         shadowRay.Color = shadowRay.LightSource.Intensity * (1 / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location)));
                         Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * (Vector3.Dot(shadowRay.Direction, intersection.Normal) * intersection.Normal));
                         Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
                         double q = Math.Pow(Vector3.Dot(R, V), 10);
-                        pixelColor = shadowRay.Color *
-                            (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) +
-                            p.SpecularColor * (float)Math.Max(0, q));
-
+                        pixelColor += shadowRay.Color * (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) + p.SpecularColor * (float)Math.Max(0, q));
                         //shadow color p.DiffuseColor* scene.AmbientLighting
-
                     }
-                } 
-            }
-            if (p is Plane)
-            {
-                Plane P = (Plane)p;
-                //list of t of lighrays.
-                (Primitive, float) ClosestPtoLight = (p, P.CollisionPlane(shadowRay));
-
-
-                foreach (Primitive p1 in scene.Primitives)
+                }
+                else if (p is Plane P)
                 {
-                    if (p1 == p)
+                    (Primitive, float) ClosestPtoLight = (p, P.CollisionPlane(shadowRay));
+
+
+                    foreach (Primitive p1 in scene.Primitives)
+                    {
+                        if (p1 == p)
+                        {
+                            continue;
+                        }
+
+                        if (p1 is Plane)
+                        {
+                            Plane x = (Plane)p1;
+
+                            if (x.CollisionPlane(shadowRay) > float.Epsilon)
+                            {
+                                if (x.CollisionPlane(shadowRay) < ClosestPtoLight.Item2)
+                                    ClosestPtoLight = (x, x.CollisionPlane(shadowRay));
+                            }
+                        }
+
+                        if (p1 is Sphere)
+                        {
+                            Sphere x = (Sphere)p1;
+                            var collision = x.CollisionSphere(shadowRay);
+                            var conclusion =
+                                shadowRay.ConcludeFromCollision(collision.Item1, collision.Item2, collision.Item3);
+
+                            if (conclusion)
+                            {
+                                if (collision.Item2 < collision.Item3)
+                                {
+                                    if (collision.Item2 < ClosestPtoLight.Item2)
+                                        ClosestPtoLight = (x, collision.Item2);
+                                }
+                                else
+                                {
+                                    if (collision.Item3 < ClosestPtoLight.Item2)
+                                        ClosestPtoLight = (x, collision.Item3);
+                                }
+                            }
+                        }
+                    }
+
+                    if (ClosestPtoLight.Item1 != P)
                     {
                         continue;
                     }
-                    if (p1 is Plane)
+                    else
                     {
-                        Plane x = (Plane)p1;
-
-                        if (x.CollisionPlane(shadowRay) > float.Epsilon)
-                        {
-                            if (x.CollisionPlane(shadowRay) < ClosestPtoLight.Item2)
-                                ClosestPtoLight = (x, x.CollisionPlane(shadowRay));
-                        }
+                        // set the color
+                        shadowRay.Color = shadowRay.LightSource.Intensity * (1 / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location)));
+                        Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * (Vector3.Dot(shadowRay.Direction, intersection.Normal) * intersection.Normal));
+                        Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
+                        double q = Math.Pow(Vector3.Dot(R, V), 10);
+                        pixelColor += shadowRay.Color * (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) + p.SpecularColor * (float)Math.Max(0, q));
                     }
-                    if (p1 is Sphere)
-                    {
-                        Sphere x = (Sphere)p1;
-                        var collision = x.CollisionSphere(shadowRay);
-                        var conclusion = shadowRay.ConcludeFromCollision(collision.Item1, collision.Item2, collision.Item3);
-
-                        if (conclusion)
-                        {
-                            if (collision.Item2 < collision.Item3)
-                            {
-                                if (collision.Item2 < ClosestPtoLight.Item2)
-                                    ClosestPtoLight = (x, collision.Item2);
-                            }
-                            else
-                            {
-                                if (collision.Item3 < ClosestPtoLight.Item2)
-                                    ClosestPtoLight = (x, collision.Item3);
-                            }
-                        }
-                    }
-                }
-
-                if (ClosestPtoLight.Item1 == P)
-                {
-                    Plane x = (Plane)p;
-
-                    // set the color
-                    shadowRay.Color = shadowRay.LightSource.Intensity * (1 / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location)));
-                    Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * (Vector3.Dot(shadowRay.Direction, intersection.Normal) * intersection.Normal));
-                    Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
-                    double q = Math.Pow(Vector3.Dot(R, V), 10);
-                    pixelColor = shadowRay.Color *
-                        (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) +
-                        p.SpecularColor * (float)Math.Max(0, q));
-
-                }
-                else
-                {
-                    pixelColor = new Vector3(0, 0, 0);
                 }
             }
         }
@@ -154,7 +133,8 @@ namespace RAYTRACER
        
         void RenderX(int i, int j)
         {
-            Vector3 pixelColor = new Vector3(20, 20, 20);
+            List<ShadowRay> shadows = new List<ShadowRay>();
+            Vector3 pixelColor = new Vector3(0, 0, 0);
             List<Intersection> intersections = new List<Intersection>();
             Intersection intersection = null;
             Ray primaryRay = camera.CalculateRay(j, i);
@@ -177,60 +157,61 @@ namespace RAYTRACER
                         intersections.Add(intersection);
                     }
                 }
-                if (p is Plane)
+                if (p is Plane x)
                 {
-                    Plane x = (Plane)p;
+                    
                     if(x.CollisionPlane(primaryRay) == 0)
                     {
                         continue;
                     }
-                    else
-                    {
-                        intersection = new Intersection(primaryRay, p, x.CollisionPlane(primaryRay));
-                        intersections.Add(intersection);
-                    }
+
+                    intersection = new Intersection(primaryRay, p, x.CollisionPlane(primaryRay));
+                    intersections.Add(intersection);
                 }
             }
 
-            Intersection Closest = null;
+            Intersection closest = null;
             if (intersections.Count > 0)
             {
-                Closest = intersections[0];
+                closest = intersections[0];
                 foreach (Intersection I in intersections)
                 {
-                    if (I.GetT < Closest.GetT && I.GetT != 0)
+                    if (I.GetT < closest.GetT && I.GetT != 0)
                     {
-                        Closest = I;
+                        closest = I;
                     }
                 }
             }
 
-            if (Closest != null)
+            if (closest != null)
             {
-                Primitive prim = Closest.GetPrimitive;
-                if (Closest.GetPrimitive is Sphere)
+                Primitive prim = closest.GetPrimitive;
+                if (closest.GetPrimitive is Sphere)
                 {
-                    //for (int k = 0; k < scene.Lights.Count; k++)
-                    //{
-                    // this works for single light environments
-                    ShadowRay shadowRay = new ShadowRay(scene.Lights[0].Location - Closest.IntersectionPoint, Closest.IntersectionPoint, scene.Lights[0]);
-                    //}
-                    RenderShading(ref shadowRay, ref pixelColor, ref Closest, ref prim);
+                    for (int k = 0; k < scene.Lights.Count; k++)
+                    {
+                        ShadowRay shadowRay = new ShadowRay(scene.Lights[k].Location - closest.IntersectionPoint, closest.IntersectionPoint, scene.Lights[k]);
+                        shadows.Add(shadowRay);
+                    }
+                    RenderShading(ref shadows, ref pixelColor, ref closest, ref prim);
 
                     // add the ray to the DebugOutput
                     if (i == 180 && j % 10 == 0)
-                        DebugOutput.RayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(Closest.IntersectionPoint.X, Closest.IntersectionPoint.Z)));
+                        DebugOutput.RayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(closest.IntersectionPoint.X, closest.IntersectionPoint.Z)));
                 }
-                if (Closest.GetPrimitive is Plane)
+                if (closest.GetPrimitive is Plane)
                 {
                     //pixelColor = Closest.GetPrimitive.DiffuseColor;
-                    ShadowRay shadowRay = new ShadowRay(scene.Lights[0].Location - Closest.IntersectionPoint, Closest.IntersectionPoint, scene.Lights[0]);
-
-                    RenderShading(ref shadowRay, ref pixelColor, ref Closest, ref prim);
+                    for (int k = 0; k < scene.Lights.Count; k++)
+                    {
+                        ShadowRay shadowRay = new ShadowRay(scene.Lights[k].Location - closest.IntersectionPoint, closest.IntersectionPoint, scene.Lights[k]);
+                        shadows.Add(shadowRay);
+                    }
+                    RenderShading(ref shadows, ref pixelColor, ref closest, ref prim);
 
                     // add the ray to the DebugOutput
                     if (i == 180 && j % 10 == 0)
-                        DebugOutput.RayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(Closest.IntersectionPoint.X, Closest.IntersectionPoint.Z)));
+                        DebugOutput.RayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(closest.IntersectionPoint.X, closest.IntersectionPoint.Z)));
 
                 }
             }
@@ -269,5 +250,4 @@ namespace RAYTRACER
             }
         }
     }
-    
 }
