@@ -51,7 +51,7 @@ namespace Template
             debugOutput.Draw();
         }
 
-        // mix a color to 24-bit from rgb
+        // mix a color to 24-bit from rgb: from P0
         public static int MixColor(int red, int green, int blue) { return (red << 16) + (green << 8) + blue; }
 
         // handle all input from the user

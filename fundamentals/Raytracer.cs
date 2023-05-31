@@ -56,21 +56,22 @@ namespace RAYTRACER
                 // determine if a point on a sphere has light
                 if (shadowRay.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3))
                 {
-                    shadowRay.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
-                    p1.Collision(shadowRay);
                     pixelColor = new Vector3(0, 0, 0);
                     return;
                 }
                 else
                 {
                     // set the color
-                    shadowRay.Color = shadowRay.LightSource.Intensity * (1 / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location)));
-                    Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * (Vector3.Dot(shadowRay.Direction, intersection.Normal) * intersection.Normal));
+                    float distance = Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location);
+                    float distanceSquared = distance * distance;
+                    shadowRay.Color = shadowRay.LightSource.Intensity / distanceSquared;
+                    float dot = (Vector3.Dot(shadowRay.Direction, intersection.Normal));
+                    Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * dot * intersection.Normal);
                     Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
                     double q = Math.Pow(Vector3.Dot(R, V), 10);
                     pixelColor = shadowRay.Color *
-                        (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) +
-                        p.SpecularColor * (float)Math.Max(0, q));
+                                 (p.DiffuseColor * Math.Max(0, dot) + 
+                                  p.SpecularColor * (float)Math.Max(0, q));
                 }
             }
         }
@@ -78,7 +79,8 @@ namespace RAYTRACER
        
         void RenderX(int i, int j)
         {
-            Vector3 pixelColor = new Vector3(20, 20, 20);
+            bool collision = false;
+            Vector3 pixelColor = new Vector3(0, 0, 0);
             Intersection intersection = null;
             Ray primaryRay = camera.CalculateRay(j, i);
             foreach (Primitive p in scene.Primitives)
@@ -95,7 +97,7 @@ namespace RAYTRACER
                 var conclusion = primaryRay.ConcludeFromCollision(collide.Item1, collide.Item2, collide.Item3);
                 if (!conclusion.Item1) continue;
                 intersection = new Intersection(primaryRay, p, conclusion.Item2);
-
+                collision = true;
                 //for (int k = 0; k < scene.Lights.Count; k++)
                 //{
                 // this works for single light environments
@@ -108,7 +110,18 @@ namespace RAYTRACER
                     DebugOutput.RayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z)));
             }
             // change the color of the pixel based on the calculations
-            screen.Plot(j, i, MyApplication.MixColor((int)pixelColor.X, (int)pixelColor.Y, (int)pixelColor.Z));
+            if (!collision)
+            {
+                screen.Plot(j, i, MyApplication.MixColor(100,100,100));
+            }
+            else
+            {
+                Vector3.Clamp(pixelColor, new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+                int r = (int)(pixelColor.X * 255);
+                int g = (int)(pixelColor.Y * 255);
+                int b = (int)(pixelColor.Z * 255);
+                screen.Plot(j, i, MyApplication.MixColor(r, g, b));
+            }
 
             if (intersection != null) return;
             // add the ray to the DebugOutput

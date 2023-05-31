@@ -43,7 +43,7 @@ namespace RAYTRACER
         {
             if (prim is Sphere sphere)
             {
-                normal = sphere.OutsideNormal(intersection);
+                normal = -sphere.OutsideNormal(intersection);
             }
         }
 

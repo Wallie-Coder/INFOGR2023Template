@@ -26,15 +26,15 @@ namespace RAYTRACER
             // the RGB values are converted to an RGB value between 0 - 1 in the constructors of their object class
             lights = new List<Light>
             {   
-                new Light(new Vector3(0, 0, 0), new Vector3(255, 255, 255)),
+                new Light(new Vector3(0, 3, 0), new Vector3(10, 10, 10)),
                 //new Light(new Vector3(0, 2, 0), new Vector3(255, 0f, 0f))
             };
             primitives = new List<Primitive>
             {
-                new Sphere(new Vector3(5, 0, 5), 2f, new Vector3(255,0,0), new Vector3(255,0,0)), 
+                new Sphere(new Vector3(3, 0, 3), 2f, new Vector3(255,0,0), new Vector3(255,0,0)), 
                 new Sphere(new Vector3(5, 0, 0), 2f, new Vector3(0,0,255), new Vector3(0,255,0)),
                 //new Sphere(new Vector3(0, -5, 0), 2f, new Vector3(255,0,0), new Vector3(255,0,0)),
-                new Sphere(new Vector3(0, 0, 5), 1f, new Vector3(0,255,0), new Vector3(0,255,0))
+                new Sphere(new Vector3(0, 0, 2), 1f, new Vector3(0,255,0), new Vector3(0,255,0))
             };
         }
     }
