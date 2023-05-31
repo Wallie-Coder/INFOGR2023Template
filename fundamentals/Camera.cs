@@ -58,6 +58,10 @@ namespace RAYTRACER
         // the center and corners of the screen plane
         private Vector3 planeCenter, topRight, topLeft, bottomRight, bottomLeft;
 
+        public Vector3 PlaneCenter { get { return planeCenter; } }
+        public Vector3 TopRight { get { return topRight; } }
+        public Vector3 TopLeft { get { return topLeft; } }
+
 
         // CONSTRUCTOR
         public Camera(Vector3 lookFrom, Vector3 lookAt, Vector3 viewUp, float fov)
