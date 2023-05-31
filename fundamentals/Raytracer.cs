@@ -19,7 +19,7 @@ namespace RAYTRACER
         public Camera Camera { get { return camera; } }
 
 
-        private Vector3 camTarget = new Vector3(1, 0, 0);
+        private Vector3 camTarget = new Vector3(0, 0, 1);
         private Vector3 camOrigin = new Vector3(0, 0, 0);
         private Vector3 camUp = new Vector3(0, 1, 0);
 
