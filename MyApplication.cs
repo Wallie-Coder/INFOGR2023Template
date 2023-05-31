@@ -2,15 +2,13 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Numerics;
 using RAYTRACER;
-using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL;
-using System.Reflection.Metadata.Ecma335;
+using SixLabors.ImageSharp;
 
 namespace Template
 {
     class MyApplication
     {
-        // member variables
+        // MEMBER VARIABLES
         public Surface screen;
         Raytracer raytracer;
         GameWindow window;
@@ -18,22 +16,24 @@ namespace Template
 
         DebugOutput debugOutput;
 
-        // constructor
+        // CONSTRUCTOR
         public MyApplication(Surface screen, OpenTKApp window)
         {
             this.window = window;
             this.screen = screen;
             raytracer = new Raytracer(screen);
 
-            debugOutput = new DebugOutput(raytracer, raytracer.scene, screen);
+            debugOutput = new DebugOutput(raytracer, raytracer.Scene, screen);
         }
+
+        // CLASS METHODS
 
         // initialize
         public void Init()
         {
 
         }
-        // tick: renders one frame
+        // renders one frame
         public void Tick()
         {
             screen.Clear(0);
@@ -49,96 +49,106 @@ namespace Template
             debugOutput.Draw();
         }
 
-        ValueTuple<float, float> UnitCirclePositions(float angle)
-        {
-            angle *= (float)(Math.PI / 180);
-            return ((float)Math.Cos(angle), (float)Math.Sin(angle));
-        }
+        // mix a color to 24-bit from rgb
+        public static int MixColor(int red, int green, int blue) { return (red << 16) + (green << 8) + blue; }
 
+        // handle all input from the user
         public void Input()
         {
-            // moving left, rigth, forward, backward, up and down
+            // moving forward, backward, right, left, up and down
             if (window.IsKeyDown(Keys.W))
             {
-                raytracer.camera.Origin += raytracer.camera.Sensitivity * raytracer.camera.Forward;
+                raytracer.Camera.Origin += raytracer.Camera.MovementSpeed * raytracer.Camera.Forward;
             }
             else if (window.IsKeyDown(Keys.S))
             {
-                raytracer.camera.Origin += raytracer.camera.Sensitivity * raytracer.camera.Backward;
+                raytracer.Camera.Origin += raytracer.Camera.MovementSpeed * raytracer.Camera.Backward;
             }
             else if (window.IsKeyDown(Keys.A))
             {
-                raytracer.camera.Origin += raytracer.camera.Sensitivity * raytracer.camera.Left;
+                raytracer.Camera.Origin += raytracer.Camera.MovementSpeed * raytracer.Camera.Left;
             }
             else if (window.IsKeyDown(Keys.D))
             {
-                raytracer.camera.Origin += raytracer.camera.Sensitivity * raytracer.camera.Right;
+                raytracer.Camera.Origin += raytracer.Camera.MovementSpeed * raytracer.Camera.Right;
             }
             else if (window.IsKeyDown(Keys.E))
             {
-                raytracer.camera.Origin += raytracer.camera.Sensitivity * raytracer.camera.Down;
+                raytracer.Camera.Origin += raytracer.Camera.MovementSpeed * raytracer.Camera.Down;
             }
             else if (window.IsKeyDown(Keys.Q))
             {
-                raytracer.camera.Origin += raytracer.camera.Sensitivity * raytracer.camera.Up;
+                raytracer.Camera.Origin += raytracer.Camera.MovementSpeed * raytracer.Camera.Up;
             }
+
 
             //rotate the camera around the x an y axis.
             if (window.IsKeyDown(Keys.Right))
             {
-                float yaw = raytracer.camera.Yaw + raytracer.camera.RotationSpeed;
-                var coords = UnitCirclePositions(yaw);
-                raytracer.camera.LookAt(new System.Numerics.Vector3(coords.Item2, raytracer.camera.LookingAt.Y, coords.Item1)); 
-                if (yaw > 359 || yaw < -359)
+                float yaw = (raytracer.Camera.Yaw + raytracer.Camera.RotationSpeed) * (float)(Math.PI / 180);
+                float pitch = raytracer.Camera.Pitch;
+                Quaternion qPitch = Quaternion.CreateFromYawPitchRoll(0, pitch, 0);
+                Quaternion qYaw = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+                raytracer.Camera.Rotate(qPitch, qYaw);
+                raytracer.Camera.Yaw += raytracer.Camera.RotationSpeed;
+                if (raytracer.Camera.Yaw > 359 || raytracer.Camera.Yaw < -359)
                 {
-                    yaw = 0;
+                    raytracer.Camera.Yaw = 0;
                 }
-                raytracer.camera.Yaw = yaw;
             }
             else if (window.IsKeyDown(Keys.Left))
             {
-                float yaw = raytracer.camera.Yaw - raytracer.camera.RotationSpeed;
-                var coords = UnitCirclePositions(yaw);
-                raytracer.camera.LookAt(new System.Numerics.Vector3(coords.Item2, raytracer.camera.LookingAt.Y, coords.Item1));
-                if (yaw > 359 || yaw < -359)
+                float yaw = (raytracer.Camera.Yaw - raytracer.Camera.RotationSpeed) * (float)(Math.PI / 180);
+                float pitch = raytracer.Camera.Pitch;
+                Quaternion qPitch = Quaternion.CreateFromYawPitchRoll(0, pitch, 0);
+                Quaternion qYaw = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+                raytracer.Camera.Rotate(qPitch, qYaw);
+                raytracer.Camera.Yaw -= raytracer.Camera.RotationSpeed;
+                if (raytracer.Camera.Yaw > 359 || raytracer.Camera.Yaw < -359)
                 {
-                    yaw = 0;
+                    raytracer.Camera.Yaw = 0;
                 }
-                raytracer.camera.Yaw = yaw;
+                
             }
             else if(window.IsKeyDown(Keys.Up))
             {
-                float pitch = raytracer.camera.Pitch - raytracer.camera.RotationSpeed;
-                var coords = UnitCirclePositions(pitch);
-                raytracer.camera.LookAt(new System.Numerics.Vector3(raytracer.camera.LookingAt.X, coords.Item2, coords.Item1));
-                if (pitch > 359 || pitch < -359)
+                float pitch = (raytracer.Camera.Pitch + raytracer.Camera.RotationSpeed) * (float)(Math.PI / 180);
+                float yaw = raytracer.Camera.Yaw;
+                Quaternion qPitch = Quaternion.CreateFromYawPitchRoll(0, pitch, 0);
+                Quaternion qYaw = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+                raytracer.Camera.Rotate(qPitch, qYaw);
+                raytracer.Camera.Pitch += raytracer.Camera.RotationSpeed;
+                if (raytracer.Camera.Pitch > 359 || raytracer.Camera.Pitch < -359)
                 {
-                    pitch = 0;
+                    raytracer.Camera.Pitch = 0;
                 }
-                raytracer.camera.Pitch = pitch;
             }
             else if(window.IsKeyDown(Keys.Down))
             {
-                float pitch = raytracer.camera.Pitch + raytracer.camera.RotationSpeed;
-                var coords = UnitCirclePositions(pitch);
-                raytracer.camera.LookAt(new System.Numerics.Vector3(raytracer.camera.LookingAt.X, coords.Item2, coords.Item1));
-                if (pitch > 359 || pitch < -359)
+                float pitch = (raytracer.Camera.Pitch - raytracer.Camera.RotationSpeed) * (float)(Math.PI / 180);
+                float yaw = raytracer.Camera.Yaw;
+                Quaternion qPitch = Quaternion.CreateFromYawPitchRoll(0, pitch, 0);
+                Quaternion qYaw = Quaternion.CreateFromYawPitchRoll(yaw, 0, 0);
+                raytracer.Camera.Rotate(qPitch, qYaw);
+                raytracer.Camera.Pitch -= raytracer.Camera.RotationSpeed;
+                if (raytracer.Camera.Pitch > 359 || raytracer.Camera.Pitch < -359)
                 {
-                    pitch = 0;
+                    raytracer.Camera.Pitch = 0;
                 }
-                raytracer.camera.Pitch = pitch;
+                
             }
 
-            // set the camera to the starting base and position.
+            // set the Camera to the starting orientation and position.
             if (window.IsKeyDown(Keys.R))
             {
-                raytracer.camera.Origin = new System.Numerics.Vector3(0, 0, 0);
-                raytracer.camera.CalculateBase(raytracer.CamOrigin, raytracer.CamTarget, raytracer.CamUpView);
-                raytracer.camera.Yaw = 0;
-                raytracer.camera.Pitch = 0;
+                raytracer.Camera.Origin = new System.Numerics.Vector3(0, 0, 0);
+                raytracer.Camera.CalculateBase(raytracer.CamOrigin, raytracer.CamTarget, raytracer.CamUp);
+                raytracer.Camera.Yaw = (float)Math.Atan2(raytracer.Camera.ScreenZ.X, raytracer.Camera.ScreenZ.Z) * (float)(180 / Math.PI);
+                raytracer.Camera.Pitch = (float)Math.Asin(raytracer.Camera.ScreenZ.Y) * (float)(180 / Math.PI);
             }
 
-            raytracer.camera.CalculatePlane();
+            // factor in the changed base and position of the camera to recalculate the camera screen
+            raytracer.Camera.CalculatePlane();
         }
     }
 }

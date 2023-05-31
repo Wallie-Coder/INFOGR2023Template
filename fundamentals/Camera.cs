@@ -1,34 +1,33 @@
 ﻿using System.ComponentModel.Design;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Template;
 namespace RAYTRACER
 {
     public class Camera
     {
-        // member variables
-        Vector3 origin;
+        // MEMBER VARIABLES
 
-        float sensitivity = 0.2f;
-        float pitch = 0;
-        float yaw = 0;
-        float rotationSpeed = 1f;
+        private Vector3 origin;
+        public Vector3 Origin { get { return origin; } set { origin = value; } }
 
-        public float Sensitivity { get { return sensitivity; } }
-        public float Pitch { get { return pitch; } set { pitch = value; } }
-        public float Yaw { get { return yaw; } set { yaw = value; } }
+
+        private float movementSpeed = 0.2f;
+        private float rotationSpeed = 1f;
+        public float MovementSpeed { get { return movementSpeed; } }
         public float RotationSpeed { get { return rotationSpeed; } }
 
-        public Vector3 Origin
-        {
-            get { return origin; }
-            set { origin = value; }
-        }
+        
+        private float pitch, yaw;
+        public float Pitch { get { return pitch; } set { pitch = value; } }
+        public float Yaw { get { return yaw; } set { yaw = value; } }
+       
+        // the horizontal and vertical vectors of the screen plane
+        private Vector3 vertical, horizontal;
 
-        public Vector3 vertical;
 
-        public Vector3 horizontal;
-
+        // the vectors for movement
         public Vector3 Forward { get { return Vector3.Normalize(screenZ); } }
         public Vector3 Backward { get { return Vector3.Normalize(-screenZ); } }
         public Vector3 Left { get { return Vector3.Normalize(-screenX); } }
@@ -36,96 +35,89 @@ namespace RAYTRACER
         public Vector3 Up { get { return Vector3.Normalize(screenY); } }
         public Vector3 Down { get { return Vector3.Normalize(-screenY); } }
 
+        // aspect ratio of the real screen
+        private float aspectRatio = (float)16 / 9;
+
+        // the width and height of the real screen
+        private int screenWidth = 640;
+        private int screenHeight = 360;
+        public int ScreenWidth { get { return screenWidth; } }
+        public int ScreenHeight { get { return screenHeight; } }
 
 
-        float aspectRatio = (float)16 / 9;
+        // the height and width of the camera screen plane
+        private float cameraHeight, cameraWidth;
 
-        public float AspectRatio { get { return aspectRatio; } }
+        // the basis of the camera
+        private Vector3 screenZ, screenY, screenX;
+        public Vector3 ScreenZ { get { return screenZ; } }
+        public Vector3 ScreenY { get { return screenY; } }
+        public Vector3 ScreenX { get { return screenX; } }
 
-        public int screenWidth = 640;
-        public int screenHeight = 360;
 
-        public Vector3 planeCenter;
+        // the center and corners of the screen plane
+        private Vector3 planeCenter, topRight, topLeft, bottomRight, bottomLeft;
 
-        float cameraHeight;
-        float cameraWidth;
-        float planeDistance = -1;
 
-        public Vector3 screenZ, screenY, screenX;
-        public float PlaneDistance
-        {
-            get { return planeDistance; }
-        }
-
-        Vector3 p0; // top right
-        Vector3 p1; // top left
-        Vector3 p2; // bottom right
-        Vector3 p3; // bottom left
-
-        public Vector3 TopRight { get { return p0; } }
-        public Vector3 TopLeft { get { return p1; } }
-        public Vector3 BottomRight { get { return p2; } }
-        public Vector3 BottomLeft { get { return p3; } }
-
-        Vector3 lookingAt;
-        public Vector3 LookingAt { get { return lookingAt; } }
-        //constructor
+        // CONSTRUCTOR
         public Camera(Vector3 lookFrom, Vector3 lookAt, Vector3 viewUp, float fov)
         {
+            // calculate the screens size based on vertical FOV
             float theta = (float)Math.Tan(fov * (float)(Math.PI / 180) / 2);
             cameraHeight = theta * 2;
             cameraWidth = aspectRatio * cameraHeight;
-            this.lookingAt = lookAt;
             CalculateBase(lookFrom, lookAt, viewUp);
             CalculatePlane();
             // set pitch and yaw according to the x y and z.
-            pitch = (float)Math.Asin(screenZ.Y);
-            yaw = (float)Math.Atan2(screenZ.X, screenZ.Z);
+            pitch = (float)Math.Asin(screenZ.Y) * (float)(180 / Math.PI);
+            yaw = (float)Math.Atan2(screenZ.X, screenZ.Z) * (float)(180 / Math.PI);
         }
+
+        // CLASS METHODS
 
         // Calculates the plane center and corners of the plane the camera shows.
         public void CalculatePlane()
         {
             planeCenter = origin + screenZ;
-            p0 = origin + horizontal / 2 + vertical / 2 + screenZ;
-            p1 = origin - horizontal / 2 + vertical / 2 + screenZ;
-            p2 = origin + horizontal / 2 - vertical / 2 + screenZ;
-            p3 = origin - horizontal / 2 - vertical / 2 + screenZ;
+            topRight = origin + horizontal / 2 + vertical / 2 + screenZ;
+            topLeft = origin - horizontal / 2 + vertical / 2 + screenZ;
+            bottomRight = origin + horizontal / 2 - vertical / 2 + screenZ;
+            bottomLeft = origin - horizontal / 2 - vertical / 2 + screenZ;
         }
 
+        // returns a ray through a given pixel on the real screen.
         public Ray CalculateRay(int x, int y)
         {
             float v = (float)x / (screenWidth - 1);
             float u = (float)y / (screenHeight - 1);
-            return new Ray(BottomLeft + v * horizontal + u * vertical - origin, origin);
+            return new Ray(bottomLeft + v * horizontal + u * vertical - origin, origin);
         }
 
+        //  calculates the basis for the camera
         public void CalculateBase(Vector3 lookFrom, Vector3 lookAt, Vector3 viewUp)
         {
             screenZ = Vector3.Normalize(lookAt - lookFrom);
             screenX = Vector3.Normalize(Vector3.Cross(viewUp, screenZ));
             screenY = Vector3.Normalize(Vector3.Cross(screenZ, screenX));
             origin = lookFrom;
-            this.lookingAt = lookAt;
             horizontal = cameraWidth * screenX;
             vertical = cameraHeight * screenY;
         }
 
-        public void LookAt(Vector3 direction)
+        // rotates the camera basis according to a pitch and yaw.
+        public void Rotate(Quaternion pitch, Quaternion yaw)
         {
-            
-            screenZ = Vector3.Normalize(direction);
-            screenX = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, screenZ));
-            screenY = Vector3.Normalize(Vector3.Cross(screenZ, screenX));
-            lookingAt = direction;
+            Vector3 tempZ = Vector3.Transform(Vector3.UnitZ, pitch);
+            screenZ = Vector3.Transform(tempZ, yaw);
+            Vector3 tempX = Vector3.Transform(Vector3.UnitX, pitch);
+            screenX = Vector3.Transform(tempX, yaw);
+            Vector3 tempY = Vector3.Transform(Vector3.UnitY, pitch);
+            screenY = Vector3.Transform(tempY, yaw);
+            screenZ = Vector3.Normalize(screenZ);
+            screenX = Vector3.Normalize(screenX);
+            screenY = Vector3.Normalize(screenY);
             horizontal = cameraWidth * screenX;
             vertical = cameraHeight * screenY;
-            CalculatePlane();
-        }
-
-        public void LookFrom(Vector3 origin)
-        {
-            CalculateBase(origin, lookingAt, Vector3.UnitY);
             CalculatePlane();
         }
     }
