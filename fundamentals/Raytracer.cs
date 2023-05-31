@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using OpenTK.Graphics.ES20;
+using System.Numerics;
 using System.Security.Claims;
 using Template;
 using static System.Formats.Asn1.AsnWriter;
@@ -48,32 +49,89 @@ namespace RAYTRACER
             for (int l = 0; l < scene.Primitives.Count; l++)
             {
                 Primitive p1 = scene.Primitives[l];
-                var shadowCollide = p1.CollisionSphere(ray2);
 
-                if (ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3))
+                if (p1 is Sphere)
                 {
-                    ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
-                    p1.CollisionSphere(ray2);
-                    PixelColor = new Vector3(0, 0, 0);
-                    return;
+                    var shadowCollide = p1.CollisionSphere(ray2);
+
+                    if (ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3))
+                    {
+                        ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
+                        p1.CollisionSphere(ray2);
+                        PixelColor = new Vector3(0, 0, 0);
+                        return;
+                    }
+                    else
+                    {
+                        // temp
+                        ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
+                        p1.CollisionSphere(ray2);
+                        // set the color
+
+                        ray2.Color = ray2.LightSource.Intensity * (1 / (Vector3.Distance(ray2.Origin, ray2.LightSource.Location) * Vector3.Distance(ray2.Origin, ray2.LightSource.Location)));
+                        Vector3 R = Vector3.Normalize(ray2.Direction - 2 * (Vector3.Dot(ray2.Direction, intersection.Normal) * intersection.Normal));
+                        Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
+                        double q = Math.Pow(Vector3.Dot(R, V), 10);
+                        PixelColor = ray2.Color *
+                            (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, ray2.Direction)) +
+                            p.SpecularColor * (float)Math.Max(0, q));
+
+                        // shadow color p.DiffuseColor * scene.AmbientLighting
+
+                    }
+                } 
+            }
+            if (p is Plane)
+            {
+                //list of t of lighrays.
+                (Primitive, float) ClosestPtoLight = (p, p.CollisionPlane(ray2));
+
+
+                foreach (Primitive p1 in scene.Primitives)
+                {
+                    if (p1 == p)
+                    {
+                        continue;
+                    }
+                    if (p1 is Plane)
+                    {
+                        Plane x = (Plane)p1;
+
+                        if (x.CollisionPlane(ray2) > float.Epsilon)
+                        {
+                            if (x.CollisionPlane(ray2) < ClosestPtoLight.Item2)
+                                ClosestPtoLight = (x, x.CollisionPlane(ray2));
+                        }
+                    }
+                    if (p1 is Sphere)
+                    {
+                        Sphere x = (Sphere)p1;
+                        var collision = x.CollisionSphere(ray2);
+                        var conclusion = ray2.ConcludeFromCollision(collision.Item1, collision.Item2, collision.Item3);
+
+                        if (conclusion)
+                        {
+                            if (collision.Item2 < collision.Item3)
+                            {
+                                if (collision.Item2 < ClosestPtoLight.Item2)
+                                    ClosestPtoLight = (x, collision.Item2);
+                            }
+                            else
+                            {
+                                if (collision.Item3 < ClosestPtoLight.Item2)
+                                    ClosestPtoLight = (x, collision.Item3);
+                            }
+                        }
+                    }
+                }
+
+                if (ClosestPtoLight.Item1 == p)
+                {
+                    PixelColor = new Vector3(255, 255, 255);
                 }
                 else
                 {
-                    // temp
-                    ray2.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3);
-                    p1.CollisionSphere(ray2);
-                    // set the color
-
-                    ray2.Color = ray2.LightSource.Intensity * (1 / (Vector3.Distance(ray2.Origin, ray2.LightSource.Location) * Vector3.Distance(ray2.Origin, ray2.LightSource.Location)));
-                    Vector3 R = Vector3.Normalize(ray2.Direction - 2 * (Vector3.Dot(ray2.Direction, intersection.Normal) * intersection.Normal));
-                    Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
-                    double q = Math.Pow(Vector3.Dot(R, V), 10);
-                    PixelColor = ray2.Color *
-                        (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, ray2.Direction)) +
-                        p.SpecularColor * (float)Math.Max(0, q));
-
-                    // shadow color p.DiffuseColor * scene.AmbientLighting
-
+                    PixelColor = new Vector3(0, 0, 0);
                 }
             }
         }
@@ -151,7 +209,10 @@ namespace RAYTRACER
                 }
                 if (Closest.GetPrimitive is Plane)
                 {
-                    PixelColor = Closest.GetPrimitive.DiffuseColor;
+                    //PixelColor = Closest.GetPrimitive.DiffuseColor;
+                    ShadowRay ray2 = new ShadowRay(scene.Lights[0].Location - Closest.IntersectionPoint, Closest.IntersectionPoint, scene.Lights[0]);
+
+                    RenderShading(ref ray2, ref PixelColor, ref Closest, ref prim);
 
                     // add the ray to the DebugOutput
                     if (i == 180 && j % 10 == 0)

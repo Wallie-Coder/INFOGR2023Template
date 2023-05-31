@@ -14,7 +14,7 @@ namespace Template
         public Surface screen;
         Raytracer raytracer;
         GameWindow window;
-        bool parallelRendering = true;
+        bool parallelRendering = false;
 
         DebugOutput debugOutput;
 
