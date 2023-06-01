@@ -52,6 +52,11 @@ namespace RAYTRACER
             return 0f;
 
         }
+
+        public Vector3 GetColor(Vector3 location)
+        {
+            return Vector3.Zero;
+        }
     }
 }
 
