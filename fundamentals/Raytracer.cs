@@ -62,7 +62,7 @@ namespace RAYTRACER
         }
 
 
-        Vector3 RenderShading(Intersection intersection, Primitive p)
+        Vector3 RenderShading(Intersection intersection, Primitive p, int i1, int j1)
         {
             Vector3 pixelColor = new Vector3(0, 0, 0);
             List<ShadowRay> shadows = new List<ShadowRay>();
@@ -92,6 +92,10 @@ namespace RAYTRACER
                         pixelColor += shadowRay.Color * (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) + p.SpecularColor * (float)Math.Max(0, q));
                         //shadow color p.DiffuseColor* scene.AmbientLighting
                     }
+
+                    if (i1 == 180 && j1 % 20 == 0)
+                        DebugOutput.RayLines.Add((new Vector2(shadowRay.Origin.X, shadowRay.Origin.Z), new Vector2(shadowRay.LightSource.Location.X, shadowRay.LightSource.Location.Z), new Vector3(255, 0, 0)));
+
                 }
                 else if (p is Plane P)
                 {
@@ -208,7 +212,7 @@ namespace RAYTRACER
             
             if (intersection != null)
             {
-                if (i == 180 && j % 10 == 0)
+                if (i == 180 && j % 20 == 0 && (intersection.GetPrimitive is Sphere || ray.Origin != camera.Origin))
                 {
                     Vector3 Color;
                     if(ray.Origin != camera.Origin)
@@ -228,7 +232,7 @@ namespace RAYTRACER
                 }
                 else
                 {
-                    finalColor = RenderShading(intersection, intersection.GetPrimitive);
+                    finalColor = RenderShading(intersection, intersection.GetPrimitive, i, j);
                 }
             }
 
