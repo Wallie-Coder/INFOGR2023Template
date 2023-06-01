@@ -141,11 +141,9 @@ namespace RAYTRACER
                     if (ClosestPtoLight.Item1 == P)
                     {
                         // set the color
-                        shadowRay.Color = shadowRay.LightSource.Intensity * (1 / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location)));
-                        Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * (Vector3.Dot(shadowRay.Direction, intersection.Normal) * intersection.Normal));
-                        Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
-                        double q = Math.Pow(Vector3.Dot(R, V), 10);
-                        pixelColor += shadowRay.Color * (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) + p.SpecularColor * (float)Math.Max(0, q));
+                        shadowRay.Color = (shadowRay.LightSource.Intensity) * (1 / (Vector3.Distance(shadowRay.Origin, new Vector3(shadowRay.LightSource.Location.X, shadowRay.LightSource.Location.Y, shadowRay.LightSource.Location.Z) * Vector3.Distance(shadowRay.Origin, new Vector3(shadowRay.LightSource.Location.X, shadowRay.LightSource.Location.Y, shadowRay.LightSource.Location.Z)))));
+                        shadowRay.Color = shadowRay.Color * p.DiffuseColor / 3;
+                        pixelColor = shadowRay.Color;
                     }
                 }
             }

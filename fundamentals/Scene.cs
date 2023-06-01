@@ -25,7 +25,7 @@ namespace RAYTRACER
             lights = new List<Light>
             {
                 //new Light(new Vector3(0, -2, 0), new Vector3(10f, 10f, 10f)),
-                new Light(new Vector3(0, 0, 0), new Vector3(15, 15, 15))
+                new Light(new Vector3(0, -2, 0), new Vector3(5, 5, 5))
             };
             
             primitives = new List<Primitive>
