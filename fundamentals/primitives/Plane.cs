@@ -68,11 +68,25 @@ namespace RAYTRACER
             bool x = false;
             bool y = false;
 
+
             if (normal.X == 0 || normal.Y == 0 || normal.Z == 0)
             {
                 (bool, bool) xy = Getxy(intersection);
                 x = xy.Item1;
                 y = xy.Item2;
+            }
+            else
+            {
+                Vector3 first = new Vector3((-N.Y) / N.X, 1, 0);
+                first = Vector3.Normalize(first);
+
+                Vector3 second = new Vector3(0, 1, (-N.Y) / N.Z);
+                second = Vector3.Normalize(second);
+
+                float x1 = ((int)(Math.Abs(intersection.X / first.X)) / 1) % 2;
+                x = x1 == 0;
+                float y1 = ((int)(Math.Abs(intersection.Y / first.Y)) / 1) % 2;
+                y = y1 == 0;
             }
 
             if (x && y)
