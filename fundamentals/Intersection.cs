@@ -49,6 +49,11 @@ namespace RAYTRACER
             {
                 normal = -sphere.OutsideNormal(intersection);
             }
+            else if (prim is Plane plane)
+            {
+                normal = plane.GetNormal;
+                normal.Y *= -1;
+            }
         }
 
         // calculates the distance between the origin of the ray and the intersection
