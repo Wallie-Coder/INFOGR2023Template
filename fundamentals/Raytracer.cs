@@ -146,7 +146,7 @@ namespace RAYTRACER
                         shadowRay.Color = shadowRay.LightSource.Intensity / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location));
                         float dot = Vector3.Dot(intersection.Normal, shadowRay.Direction);
                         shadowRay.Color = shadowRay.Color * (p.DiffuseColor * Math.Max(0, dot));
-                        pixelColor = shadowRay.Color;
+                        pixelColor += shadowRay.Color;
                     }
                 }
             }
