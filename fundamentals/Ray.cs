@@ -27,7 +27,7 @@ namespace RAYTRACER
 
         // CLASS METHODS
 
-        // decides wether a collision with a sphere is valid or not.
+        // decides wether a collision with a sphere is valid or not
         public ValueTuple<bool, float> ConcludeFromCollision(double D, float p1, float p2)
         {
             // check if there is a possible collision, and the resulting t

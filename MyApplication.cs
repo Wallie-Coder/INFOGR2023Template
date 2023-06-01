@@ -42,7 +42,7 @@ namespace Template
             Input();
             if (multithreading)
             {
-                raytracer.ParallelRender();
+                raytracer.MultithreadedRender();
             }
             else 
             {

@@ -107,7 +107,7 @@ namespace RAYTRACER
             vertical = cameraHeight * screenY;
         }
 
-        // rotates the camera basis according to a pitch and yaw.
+        // rotates the camera basis according to a pitch and yaw quaternion.
         public void Rotate(Quaternion pitch, Quaternion yaw)
         {
             Vector3 tempZ = Vector3.Transform(Vector3.UnitZ, pitch);

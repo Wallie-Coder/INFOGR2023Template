@@ -59,8 +59,6 @@ namespace RAYTRACER
                 PlotLine(new Vector2(r.Item1.X * xScale, r.Item1.Y * yScale), new Vector2(r.Item2.X * xScale, r.Item2.Y * yScale), MyApplication.MixColor(255, 255, 0));
             }
 
-            //PlotLine(new Vector2(rayLines[rayLines.Count/4].Item1.X * xScale, rayLines[rayLines.Count/4].Item1.Y * yScale), new Vector2(rayLines[rayLines.Count - 1].Item2.X * xScale, rayLines[rayLines.Count - 1].Item2.Y * yScale), MyApplication.ixColor(255, 255, 0));
-
             // Draw each circle
             foreach ((Vector2 center, float radius) c in circles)
             {
@@ -80,18 +78,18 @@ namespace RAYTRACER
                 }
             }
 
-            // draw pixels
-            foreach((Vector2, int) p in Pixels)
+            // NEEDS COMMENT
+            foreach ((Vector2, int) p in Pixels)
             {
                 SetPixel((int)(p.Item1.X * xScale), (int)(p.Item1.Y * yScale), p.Item2);
-            }    
+            }
 
-            // Draw a pixel for the Camera
+            // draw a pixel for the camera
             SetPixel((int)(raytracer.Camera.Origin.X * xScale), (int)(raytracer.Camera.Origin.Z * yScale), MyApplication.MixColor(0, 0, 255));
             DebugInfo();
 
 
-            // Draw the screen plane
+            // draw the screen plane
             PlotLine(new Vector2(raytracer.Camera.TopLeft.X * xScale, raytracer.Camera.TopLeft.Z * yScale), new Vector2(raytracer.Camera.TopRight.X * xScale, raytracer.Camera.TopRight.Z * yScale), MyApplication.MixColor(0, 0, 255));
 
             rayLines.Clear();
@@ -131,15 +129,11 @@ namespace RAYTRACER
                 End.Y = (int)(End.Y + (Direction.Y * lessenwith));
             }
 
-
-            // Draw the original rays.
-            //screen.Line((int)(origin.X + screen.width / 4 + screen.width / 2), (int)(origin.Y + screen.height / 2), (int)(end.X + screen.width / 4 + screen.width / 2), (int)(end.Y + screen.height / 2), MyApplication.MixColor(255, 0, 0));
-
             // Draw the cut rays.
             screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), color);
         }
 
-        // prints info about the Camera on the debugscreen
+        // prints info about the camera etc. on the debugscreen
         void DebugInfo()
         {
             screen.Print("CamZ = " + raytracer.Camera.ScreenZ.ToString(), screen.width / 2, screen.height - 20, MyApplication.MixColor(255, 255, 255));
@@ -149,9 +143,7 @@ namespace RAYTRACER
             screen.Print("Yaw = " + raytracer.Camera.Yaw.ToString(), screen.width / 2, screen.height - 100, MyApplication.MixColor(255, 255, 255));
             screen.Print("Pitch = " + raytracer.Camera.Pitch.ToString(), screen.width / 2, screen.height - 120, MyApplication.MixColor(255, 255, 255));
 
-            
-
-            // update every second, always whole number.
+            // update every second, always a whole number.
             if (t.ElapsedMilliseconds >= 1000)
             {
                 t.Restart();

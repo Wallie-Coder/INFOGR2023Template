@@ -6,8 +6,8 @@ namespace RAYTRACER
     public class Intersection
     {
         // MEMBER VARIABLES
-        private float distance;
         private float t;
+        public float GetT { get { return t; } }
 
 
         private Vector3 intersection, normal;
@@ -16,22 +16,19 @@ namespace RAYTRACER
 
 
         private Ray ray;
-        private Primitive prim;
+        private Primitive primitive;
 
-        public Primitive GetPrimitive { get { return prim; } }
-
-        public float GetT { get { return t; } }
+        public Primitive GetPrimitive { get { return primitive; } }
 
         
         // CONSTRUCTOR
-        public Intersection(Ray ray, Primitive prim, float t)
+        public Intersection(Ray ray, Primitive primitive, float t)
         {
             this.ray = ray;
-            this.prim = prim;
+            this.primitive = primitive;
             this.t = t;
             CalculateIntersection(ray, t);
             SetNormal();
-            CalculateDistance();
         }
 
         // CLASS METHODS
@@ -45,21 +42,14 @@ namespace RAYTRACER
         // sets the normal of an intersection
         void SetNormal()
         {
-            if (prim is Sphere sphere)
+            if (primitive is Sphere sphere)
             {
-                normal = -sphere.OutsideNormal(intersection);
+                normal = sphere.OutsideNormal(intersection);
             }
-            else if (prim is Plane plane)
+            else if (primitive is Plane plane)
             {
-                normal = plane.GetNormal;
-                normal.Y *= -1;
+                normal = plane.OutsideNormal(intersection);
             }
-        }
-
-        // calculates the distance between the origin of the ray and the intersection
-        void CalculateDistance()
-        {
-            distance = Vector3.Distance(intersection,ray.Origin);
         }
     }
 }

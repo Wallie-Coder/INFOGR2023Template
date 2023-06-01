@@ -8,8 +8,6 @@ namespace RAYTRACER
 {
     public class Raytracer
     {
-        // shadow color p.DiffuseColor * scene.AmbientLighting
-
         // MEMBER VARIABLES
         private Surface screen;
         private Scene scene;
@@ -18,10 +16,12 @@ namespace RAYTRACER
         private Camera camera;
         public Camera Camera { get { return camera; } }
 
-
+        // position the camera will look at
         private Vector3 camTarget = new Vector3(0, 0, 1);
         private Vector3 camOrigin = new Vector3(0, 0, 0);
 
+
+        // vertical fov
         private float FOV = 45;
 
         public Vector3 CamTarget { get { return camTarget; } }
@@ -37,10 +37,10 @@ namespace RAYTRACER
 
         // CLASS METHODS
 
-        public void ParallelRender()
+        // multithreaded for loop over y-axis
+        public void MultithreadedRender()
         {
-            //multithread through the y axis
-            Parallel.For(0, camera.ScreenHeight, RenderY);
+            Parallel.For(0, camera.ScreenHeight, IterateOverX);
         }
 
         Intersection FindClosestIntersection(List<Intersection> intersections)
@@ -61,7 +61,7 @@ namespace RAYTRACER
         }
 
 
-        Vector3 RenderShading(Intersection intersection, Primitive p)
+        Vector3 CalculateColorByLighting(Intersection intersection, Primitive p)
         {
             Vector3 pixelColor = new Vector3(0, 0, 0);
             List<ShadowRay> shadows = new List<ShadowRay>();
@@ -73,9 +73,9 @@ namespace RAYTRACER
             for(int i = 0; i < shadows.Count; i++)
             {
                 ShadowRay shadowRay = shadows[i];
-                if (p is Sphere s)
+                if (p is Sphere sphere)
                 {
-                    var shadowCollide = s.CollisionSphere(shadowRay);
+                    var shadowCollide = sphere.CollisionSphere(shadowRay);
 
                     if (shadowRay.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3))
                     {
@@ -89,13 +89,12 @@ namespace RAYTRACER
                         Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
                         double q = Math.Pow(Vector3.Dot(R, V), 10);
                         pixelColor += shadowRay.Color * (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) + p.SpecularColor * (float)Math.Max(0, q));
-                        //shadow color p.DiffuseColor* scene.AmbientLighting
                     }
                 }
-                else if (p is Plane P)
+                else if (p is Plane plane)
                 {
 
-                    (Primitive, float) ClosestPtoLight = (p, P.CollisionPlane(shadowRay));
+                    (Primitive, float) ClosestPtoLight = (p, plane.CollisionPlane(shadowRay));
 
                     shadowRay.Direction = Vector3.Normalize(shadowRay.Direction);
 
@@ -140,22 +139,19 @@ namespace RAYTRACER
                         }
                     }
 
-                    if (ClosestPtoLight.Item1 == P)
+                    if (ClosestPtoLight.Item1 == plane)
                     {
                         // set the color
-
-                        // for plane with texture use P.getColor(intersection.intersectionpoint instead of p.DiffuseColor
-
                         shadowRay.Color = shadowRay.LightSource.Intensity / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location));
                         float dot = Vector3.Dot(intersection.Normal, shadowRay.Direction);
                         Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * dot * intersection.Normal);
                         Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
                         double q = Math.Pow(Vector3.Dot(R, V), 10);
-                        pixelColor += shadowRay.Color * ((P.GetColor(intersection.IntersectionPoint) * Math.Max(0, dot)) + p.SpecularColor * (float)Math.Max(0, q));
-                       
+                        pixelColor += shadowRay.Color * ((plane.GetColor(intersection.IntersectionPoint) * Math.Max(0, dot)) + p.SpecularColor * (float)Math.Max(0, q));
                     }
                 }
             }
+
             return pixelColor + p.DiffuseColor * scene.AmbientLightingIntensity;
         }
 
@@ -205,7 +201,7 @@ namespace RAYTRACER
                     }
                 else
                 {
-                    finalColor = RenderShading(intersection, intersection.GetPrimitive);
+                    finalColor = CalculateColorByLighting(intersection, intersection.GetPrimitive);
                 }
             }
 
@@ -217,18 +213,13 @@ namespace RAYTRACER
             return incomingRay.Direction - 2 * Vector3.Dot(incomingRay.Direction, intersection.Normal) * intersection.Normal;
         }
 
-        void RenderX(int i, int j)
+        void CalculatePixelColor(int i, int j)
         {
-            List<ShadowRay> shadows = new List<ShadowRay>();
             Vector3 pixelColor = new Vector3(0, 0, 0);
 
             Ray primaryRay = camera.CalculateRay(j, i);
 
             pixelColor = TraceRay(primaryRay, i , j, ref pixelColor);
-            
-
-            // change the color of the pixel based on the calculations
-            int location = j + i * screen.width;
 
             int r = (int)(Math.Clamp(pixelColor.X, 0, 1) * 255);
             int g = (int)(Math.Clamp(pixelColor.Y, 0, 1) * 255);
@@ -236,12 +227,12 @@ namespace RAYTRACER
             screen.Plot(j, i, MyApplication.MixColor(r, g, b));
         }
 
-        void RenderY(int i)
+        void IterateOverX(int i)
         {
             // iterate over the x axis
             for(int x = 0; x < camera.ScreenWidth;x++)
             {
-                RenderX(i, x);
+                CalculatePixelColor(i, x);
             }
         }
 
@@ -250,7 +241,7 @@ namespace RAYTRACER
             // iterate over the y axis
             for (int y = 0; y < camera.ScreenHeight; y++)
             {
-                RenderY(y);
+                IterateOverX(y);
             }
         }
     }

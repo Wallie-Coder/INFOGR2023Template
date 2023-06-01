@@ -18,6 +18,7 @@ namespace RAYTRACER
         // CONSTRUCTOR
         public Primitive(Vector3 diffuseColor, Vector3 specularColor, bool specular)
         {
+            // correct for 0 - 1 range on colors
             this.diffuseColor = diffuseColor / 255;
 
             this.specular = specular;
@@ -30,6 +31,8 @@ namespace RAYTRACER
                 this.specularColor = diffuseColor / 255;
             }
         }
+
+        // CLASS METHODS
 
         public virtual Vector3 OutsideNormal(Vector3 point)
         {

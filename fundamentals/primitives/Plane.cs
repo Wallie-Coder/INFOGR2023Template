@@ -7,29 +7,36 @@ namespace RAYTRACER
     {
         // MEMBER VARIABLES
         private Vector3 normal;
-
-
-        Vector3 point;
-
         public Vector3 GetNormal { get { return normal; } }
 
+        // a given point on the plane
+        Vector3 point;
+
+
+        // CONSTRUCTOR
         public Plane(Vector3 normal, Vector3 point, Vector3 diffuseColor, Vector3 glossyColor, bool specular = false) :base(diffuseColor, glossyColor, specular)
         {
             this.normal = Vector3.Normalize(normal);
             this.point = point;
         }
 
+        // CLASS METHODS
+        public override Vector3 OutsideNormal(Vector3 point)
+        {
+            normal.Y *= -1;
+            return normal;
+        }
+
+        // detects collision between a given ray and the plane if there is a collision and where along the ray it is
         public float CollisionPlane(Ray ray)
         {
             float t = 0;
-            Vector3 E = ray.Origin;
-            Vector3 D = ray.Direction;
+            Vector3 rayOrigin = ray.Origin;
+            Vector3 rayDirection = ray.Direction;
 
-            //float zero = (xt - E.X) * Normal.X + (yt - E.Y) * Normal.Y + (zt - E.Z) * Normal.Z;
-            //-t((D.X * Normal.X) + (D.Y * Normal.Y) + (D.Y * Normal.Z)) = (E.X - E.X) * Normal.X + (E.Y - E.Y) * Normal.Y + (E.Z - E.Z) * Normal.Z;
 
-            float a = ((D.X * normal.X) + (D.Y * normal.Y) + (D.Z * normal.Z));
-            float b = (E.X - point.X) * normal.X + (E.Y - point.Y) * normal.Y + (E.Z - point.Z) * normal.Z;
+            float a = ((rayDirection.X * normal.X) + (rayDirection.Y * normal.Y) + (rayDirection.Z * normal.Z));
+            float b = (rayOrigin.X - point.X) * normal.X + (rayOrigin.Y - point.Y) * normal.Y + (rayOrigin.Z - point.Z) * normal.Z;
 
             t = (-b) / a;
 
@@ -38,13 +45,13 @@ namespace RAYTRACER
                 return 0;
             }
 
-            float Zero = ((E.X + (t * D.X) - point.X) * normal.X) + ((E.Y + (t * D.Y) - point.Y) * normal.Y) + ((E.Z + (t * D.Z) - point.Z) * normal.Z);
+            float zero = ((rayOrigin.X + (t * rayDirection.X) - point.X) * normal.X) + ((rayOrigin.Y + (t * rayDirection.Y) - point.Y) * normal.Y) + ((rayOrigin.Z + (t * rayDirection.Z) - point.Z) * normal.Z);
 
-            double xt = E.X + t * D.X;
-            double yt = E.Y + t * D.Y;
-            double zt = E.Z + t * D.Z;
+            double xt = rayOrigin.X + t * rayDirection.X;
+            double yt = rayOrigin.Y + t * rayDirection.Y;
+            double zt = rayOrigin.Z + t * rayDirection.Z;
 
-            if (Zero > -0.01 && Zero < 0.01)
+            if (zero > -0.01 && zero < 0.01)
             {
                 return t;
             }
@@ -53,15 +60,10 @@ namespace RAYTRACER
 
         }
 
-
+        // get the color of a 3D location from a texture or formula
         public Vector3 GetColor(Vector3 location)
         {
             Vector3 intersection = location - point;
-
-
-            Vector3 N = Vector3.Normalize(normal);
-
-            //intersection = new Vector3(intersection.X * (1 - N.X), intersection.Y * (1 - N.Y), intersection.Z * (1 - N.Z));
 
             float s = intersection.X / intersection.X / (float)(Math.Sqrt((normal.X * normal.X) + (normal.Y * normal.Y)));
 
@@ -76,17 +78,26 @@ namespace RAYTRACER
             }
 
             if (x && y)
+            {
                 return new Vector3(1, 1, 1);
+            }
             else if (!x && y)
+            {
                 return new Vector3(0, 0, 0);
+            }
             else if (x && !y)
+            {
                 return new Vector3(0, 0, 0);
+            }
             else
+            {
                 return new Vector3(1, 1, 1);
-
-
+            }
+                
         }
 
+
+        // NEEDS COMMENT
         public (bool, bool) Getxy(Vector3 intersection)
         {
             bool x = false;

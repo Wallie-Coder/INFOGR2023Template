@@ -23,7 +23,7 @@ namespace RAYTRACER
 
         // CLASS METHODS
 
-        // detects collision between a given ray and the sphere
+        // detects collision between a given ray and the sphere if there is a collision and where along the ray it is
         public ValueTuple<double, float, float> CollisionSphere(Ray ray)
         {
             Vector3 CenterOrigin = ray.Origin - center;
@@ -44,7 +44,7 @@ namespace RAYTRACER
         // returns the normal of a point on the sphere that is pointing outwards
         public override Vector3 OutsideNormal(Vector3 point)
         {
-            return Vector3.Normalize(center - point);
+            return -Vector3.Normalize(center - point);
         }
     }
 }
