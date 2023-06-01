@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Runtime.CompilerServices;
 using Microsoft.VisualBasic;
 using OpenTK.Graphics.ES20;
 using OpenTK.Graphics.GL;
@@ -61,7 +62,7 @@ namespace RAYTRACER
         }
 
 
-        Vector3 CalculateColorByLighting(Intersection intersection, Primitive p)
+        Vector3 CalculateColorByLighting(Intersection intersection, Primitive p, int i1, int j1)
         {
             Vector3 pixelColor = new Vector3(0, 0, 0);
             List<ShadowRay> shadows = new List<ShadowRay>();
@@ -90,6 +91,10 @@ namespace RAYTRACER
                         double q = Math.Pow(Vector3.Dot(R, V), 10);
                         pixelColor += shadowRay.Color * (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) + p.SpecularColor * (float)Math.Max(0, q));
                     }
+
+                    if (i1 == 180 && j1 % 20 == 0)
+                        DebugOutput.RayLines.Add((new Vector2(shadowRay.Origin.X, shadowRay.Origin.Z), new Vector2(shadowRay.LightSource.Location.X, shadowRay.LightSource.Location.Z), new Vector3(255, 0, 0)));
+
                 }
                 else if (p is Plane plane)
                 {
@@ -157,6 +162,16 @@ namespace RAYTRACER
 
         Vector3 TraceRay(Ray ray, int i , int j, ref Vector3 finalColor)
         {
+
+            if(ray.Origin != camOrigin)
+            {
+                int ook = 0;
+            }
+            if(ray.Origin == camOrigin)
+            {
+                int asd = 0;
+            }
+
             Intersection intersection = null;
             List<Intersection> result = new List<Intersection>();
             foreach (Primitive p in scene.Primitives)
@@ -191,17 +206,29 @@ namespace RAYTRACER
             }
             intersection = FindClosestIntersection(result);
             
-                if (intersection != null)
+            if (intersection != null)
+            {
+                if (i == 180 && j % 20 == 0 && (intersection.GetPrimitive is Sphere || ray.Origin != camera.Origin))
                 {
-                    if (i == 180 && j % 10 == 0)
-                        DebugOutput.RayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z)));
-                    if (intersection.GetPrimitive.Specular)
+                    Vector3 Color;
+                    if(ray.Origin != camera.Origin)
                     {
-                        finalColor = intersection.GetPrimitive.DiffuseColor * TraceRay(new Ray(FindReflectionDirection(ray, intersection), intersection.IntersectionPoint), i, j, ref finalColor);
+                        Color = new Vector3(0, 0, 255);
                     }
+                    else
+                    {
+                        Color = new Vector3(255, 255, 0);
+                    }
+                    DebugOutput.RayLines.Add((new Vector2(ray.Origin.X, ray.Origin.Z), new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z), Color));
+
+                }
+                if (intersection.GetPrimitive.Specular)
+                {
+                    finalColor = intersection.GetPrimitive.DiffuseColor * TraceRay(new Ray(FindReflectionDirection(ray, intersection), intersection.IntersectionPoint), i, j, ref finalColor);
+                }
                 else
                 {
-                    finalColor = CalculateColorByLighting(intersection, intersection.GetPrimitive);
+                    finalColor = CalculateColorByLighting(intersection, intersection.GetPrimitive, i, j);
                 }
             }
 
