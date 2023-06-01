@@ -2,15 +2,19 @@
 using Template;
 using System.Diagnostics;
 using System;
+using System.Collections.Concurrent;
 
 namespace RAYTRACER
 {
     class DebugOutput
     {
 
-        static private List<(Vector2, Vector2)> rayLines = new List<(Vector2 origin, Vector2 end)>();
-        static private List<(Vector2, int)> Pixels = new List<(Vector2 Location, int Color)>();
-        public static List<(Vector2, Vector2)> RayLines { get { return rayLines; } }
+        private static ConcurrentBag<(Vector2, Vector2)> rayLines = new ConcurrentBag<(Vector2 origin, Vector2 end)>();
+        private static List<(Vector2, int)> Pixels = new List<(Vector2 Location, int Color)>();
+        private static ConcurrentBag<(Vector2, Vector2)> shadowRayLines = new ConcurrentBag<(Vector2, Vector2)>();
+
+        public static ConcurrentBag<(Vector2, Vector2)> ShadowRayLines { get { return shadowRayLines; } }
+        public static ConcurrentBag<(Vector2, Vector2)> RayLines { get { return rayLines; } }
 
         private List<(Vector2, float)> circles = new List<(Vector2 center, float radius)>();
 
@@ -57,6 +61,11 @@ namespace RAYTRACER
             foreach((Vector2, Vector2) r in  rayLines) 
             {
                 PlotLine(new Vector2(r.Item1.X * xScale, r.Item1.Y * yScale), new Vector2(r.Item2.X * xScale, r.Item2.Y * yScale), MyApplication.MixColor(255, 255, 0));
+            }
+
+            foreach ((Vector2, Vector2) r in shadowRayLines)
+            {
+                PlotLine(new Vector2(r.Item1.X * xScale, r.Item1.Y * yScale), new Vector2(r.Item2.X * xScale, r.Item2.Y * yScale), MyApplication.MixColor(0, 0, 255));
             }
 
             //PlotLine(new Vector2(rayLines[rayLines.Count/4].Item1.X * xScale, rayLines[rayLines.Count/4].Item1.Y * yScale), new Vector2(rayLines[rayLines.Count - 1].Item2.X * xScale, rayLines[rayLines.Count - 1].Item2.Y * yScale), MyApplication.ixColor(255, 255, 0));
@@ -109,7 +118,7 @@ namespace RAYTRACER
 
         }
 
-        // NEEDS COMMENT
+        // draws the line between 2 vectors clamped to the debug output window size
         void PlotLine(Vector2 origin, Vector2 end, int color)
         {
             Vector2 Origin = origin;
