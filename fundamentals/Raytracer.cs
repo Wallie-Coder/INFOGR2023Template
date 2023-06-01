@@ -145,7 +145,10 @@ namespace RAYTRACER
                         // set the color
                         shadowRay.Color = shadowRay.LightSource.Intensity / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location));
                         float dot = Vector3.Dot(intersection.Normal, shadowRay.Direction);
-                        shadowRay.Color = shadowRay.Color * (p.DiffuseColor * Math.Max(0, dot));
+                        Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * (Vector3.Dot(shadowRay.Direction, intersection.Normal) * intersection.Normal));
+                        Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
+                        double q = Math.Pow(Vector3.Dot(R, V), 10);
+                        shadowRay.Color = shadowRay.Color * (p.DiffuseColor * Math.Max(0, dot)) + p.SpecularColor * (float)Math.Max(0, q);
                         pixelColor += shadowRay.Color;
                     }
                 }
