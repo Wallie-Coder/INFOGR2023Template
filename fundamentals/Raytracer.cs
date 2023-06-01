@@ -94,8 +94,10 @@ namespace RAYTRACER
                 }
                 else if (p is Plane P)
                 {
+
                     (Primitive, float) ClosestPtoLight = (p, P.CollisionPlane(shadowRay));
 
+                    shadowRay.Direction = Vector3.Normalize(shadowRay.Direction);
 
                     foreach (Primitive p1 in scene.Primitives)
                     {
@@ -124,14 +126,14 @@ namespace RAYTRACER
 
                             if (conclusion)
                             {
-                                if (collision.Item2 < collision.Item3)
+                                if (collision.Item2 > collision.Item3)
                                 {
-                                    if (collision.Item2 < ClosestPtoLight.Item2)
+                                    if (collision.Item2 > ClosestPtoLight.Item2)
                                         ClosestPtoLight = (x, collision.Item2);
                                 }
                                 else
                                 {
-                                    if (collision.Item3 < ClosestPtoLight.Item2)
+                                    if (collision.Item3 > ClosestPtoLight.Item2)
                                         ClosestPtoLight = (x, collision.Item3);
                                 }
                             }
@@ -192,11 +194,11 @@ namespace RAYTRACER
                     if (i == 180 && j % 10 == 0)
                         DebugOutput.RayLines.Add((new Vector2(camera.Origin.X, camera.Origin.Z), new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z)));
                     if (intersection.GetPrimitive.Specular)
-                {
+                    {
                     finalColor = intersection.GetPrimitive.DiffuseColor * TraceRay(
                         new Ray(FindReflectionDirection(ray, intersection), intersection.IntersectionPoint), i, j,
                         ref finalColor);
-                }
+                    }
                 else
                 {
                     finalColor = RenderShading(intersection, intersection.GetPrimitive);
