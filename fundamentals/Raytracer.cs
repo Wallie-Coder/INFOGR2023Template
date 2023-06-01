@@ -148,12 +148,12 @@ namespace RAYTRACER
                         Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * dot * intersection.Normal);
                         Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
                         double q = Math.Pow(Vector3.Dot(R, V), 10);
-                        shadowRay.Color = shadowRay.Color * ((p.DiffuseColor * Math.Max(0, dot)) + p.SpecularColor * (float)Math.Max(0, q));
-                        pixelColor += shadowRay.Color;
+                        pixelColor += shadowRay.Color * ((p.DiffuseColor * Math.Max(0, dot)) + p.SpecularColor * (float)Math.Max(0, q));
+                       
                     }
                 }
             }
-            return pixelColor;
+            return pixelColor + p.DiffuseColor * scene.AmbientLightingIntensity;
         }
 
         Vector3 TraceRay(Ray ray, int i , int j, ref Vector3 finalColor)
