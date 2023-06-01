@@ -15,6 +15,7 @@ namespace Template
         public static bool Multithreading { get { return multithreading; } }
 
         DebugOutput debugOutput;
+        int lookatTargetNR = 0;
 
         // CONSTRUCTOR
         public MyApplication(Surface screen, OpenTKApp window)
@@ -164,6 +165,26 @@ namespace Template
                     raytracer.getsetFOV = 30;
                 raytracer.Camera.SetFOV(raytracer.getsetFOV, raytracer.CamOrigin, raytracer.CamTarget);
             }
+
+            // change target to look at (only looks at spheres, will skip the planes)
+            if (window.IsKeyPressed(Keys.T))
+            {
+                if (raytracer.Scene.Primitives[lookatTargetNR] is Sphere)
+                {
+                    Sphere s = (Sphere)raytracer.Scene.Primitives[lookatTargetNR];
+                    Vector3 lookat = s.Center;
+                    lookat = Vector3.Normalize(lookat);
+                    raytracer.Camera.CalculateBase(raytracer.Camera.Origin, lookat, new Vector3(0, 1, 0));
+                }
+
+                lookatTargetNR++;
+                if(lookatTargetNR + 1 >= raytracer.Scene.Primitives.Count)
+                {
+                    lookatTargetNR = 0;
+                }
+            }
+
+
 
             // factor in the changed base and position of the camera to recalculate the camera screen
             raytracer.Camera.CalculatePlane();
