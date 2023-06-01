@@ -96,7 +96,7 @@ namespace RAYTRACER
                         Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * (Vector3.Dot(shadowRay.Direction, intersection.Normal) * intersection.Normal));
                         Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
                         double q = Math.Pow(Vector3.Dot(R, V), 10);
-                        pixelColor += shadowRay.Color * (p.DiffuseColor * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) + p.SpecularColor * (float)Math.Max(0, q));
+                        pixelColor += shadowRay.Color * (p.GetDiffuseColor(intersection.IntersectionPoint) * Math.Max(0, Vector3.Dot(intersection.Normal, shadowRay.Direction)) + p.GetSpecularColor(intersection.IntersectionPoint) * (float)Math.Max(0, q));
                     }
 
                     if (i1 == 180 && j1 % 20 == 0)
@@ -159,12 +159,12 @@ namespace RAYTRACER
                         Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * dot * intersection.Normal);
                         Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
                         double q = Math.Pow(Vector3.Dot(R, V), 10);
-                        pixelColor += shadowRay.Color * ((plane.GetColor(intersection.IntersectionPoint) * Math.Max(0, dot)) + p.SpecularColor * (float)Math.Max(0, q));
+                        pixelColor += shadowRay.Color * ((plane.GetDiffuseColor(intersection.IntersectionPoint) * Math.Max(0, dot)) + p.GetSpecularColor(intersection.IntersectionPoint) * (float)Math.Max(0, q));
                     }
                 }
             }
 
-            return pixelColor + p.DiffuseColor * scene.AmbientLightingIntensity;
+            return pixelColor + p.GetDiffuseColor(intersection.IntersectionPoint) * scene.AmbientLightingIntensity;
         }
 
         Vector3 ColorFromSamples(Vector3 color, int samplePerPixel)
@@ -183,16 +183,6 @@ namespace RAYTRACER
 
         Vector3 TraceRay(Ray ray, int i , int j, ref Vector3 finalColor)
         {
-
-            if(ray.Origin != camOrigin)
-            {
-                int ook = 0;
-            }
-            if(ray.Origin == camOrigin)
-            {
-                int asd = 0;
-            }
-
             Intersection intersection = null;
             List<Intersection> result = new List<Intersection>();
             foreach (Primitive p in scene.Primitives)
@@ -246,7 +236,7 @@ namespace RAYTRACER
                 if (intersection.GetPrimitive.Specular)
                 {
                     if(ray.Bounces < Ray.RecursionDepth)
-                        finalColor = intersection.GetPrimitive.DiffuseColor * TraceRay(new Ray(FindReflectionDirection(ray, intersection), intersection.IntersectionPoint, ray.Bounces + 1), i, j, ref finalColor);
+                        finalColor = intersection.GetPrimitive.GetDiffuseColor(intersection.IntersectionPoint) * TraceRay(new Ray(FindReflectionDirection(ray, intersection), intersection.IntersectionPoint, ray.Bounces + 1), i, j, ref finalColor);
                 }
                 else
                 {

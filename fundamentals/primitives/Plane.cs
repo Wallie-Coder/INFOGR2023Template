@@ -6,17 +6,23 @@ namespace RAYTRACER
     {
         // MEMBER VARIABLES
         private Vector3 normal;
+        private Vector3 u;
+        private Vector3 v;
         public Vector3 GetNormal { get { return normal; } }
 
+        private Object func;
         // a given point on the plane
         Vector3 point;
-
+        private bool checkerboard;
 
         // CONSTRUCTOR
-        public Plane(Vector3 normal, Vector3 point, Vector3 diffuseColor, Vector3 glossyColor, bool specular = false) :base(diffuseColor, glossyColor, specular)
+        public Plane(Vector3 u, Vector3 v, Vector3 point, Vector3 diffuseColor, Vector3 glossyColor, bool checkerboard = false, bool specular = false) :base(diffuseColor, glossyColor, specular)
         {
-            this.normal = Vector3.Normalize(normal);
+            this.normal = Vector3.Normalize(Vector3.Cross(u, v));
             this.point = point;
+            this.u = u;
+            this.v = v;
+            this.checkerboard = checkerboard;
         }
 
         // CLASS METHODS
@@ -59,135 +65,14 @@ namespace RAYTRACER
             return 0f;
         }
 
-        // get the color of a 3D location from a texture or formula
-        public Vector3 GetColor(Vector3 location)
+        public override Vector3 GetDiffuseColor(Vector3 input)
         {
-            Vector3 intersection = location - point;
-
-            float s = intersection.X / intersection.X / (float)(Math.Sqrt((normal.X * normal.X) + (normal.Y * normal.Y)));
-
-            bool x = false;
-            bool y = false;
-
-            if (normal.X == 0 || normal.Y == 0 || normal.Z == 0)
+            if (checkerboard)
             {
-                (bool, bool) xy = Getxy(intersection);
-                x = xy.Item1;
-                y = xy.Item2;
+                return Checkerboard(input, point, u, v);
             }
 
-            if (x && y)
-            {
-                return new Vector3(1, 1, 1);
-            }
-            else if (!x && y)
-            {
-                return new Vector3(0, 0, 0);
-            }
-            else if (x && !y)
-            {
-                return new Vector3(0, 0, 0);
-            }
-            else
-            {
-                return new Vector3(1, 1, 1);
-            }
-                
-        }
-
-
-        // NEEDS COMMENT
-        public (bool, bool) Getxy(Vector3 intersection)
-        {
-            bool x = false;
-            bool y = false;
-
-            if (normal.X != 0 && normal.Y == 0 && normal.Z != 0)
-            {
-                x = ((int)Math.Abs(intersection.Y * normal.X)) % 2 == 0;
-                y = ((int)Math.Abs(intersection.Z * normal.Z)) % 2 == 0;
-
-                if (intersection.Y < 0)
-                {
-                    x = !x;
-                }
-                if (intersection.Z < 0)
-                {
-                    y = !y;
-                }
-            }
-            if (normal.X == 0 && normal.Y != 0 && normal.Z != 0)
-            {
-                x = ((int)Math.Abs(intersection.X * normal.Y)) % 2 == 0;
-                y = ((int)Math.Abs(intersection.Z * normal.Z)) % 2 == 0;
-
-                if (intersection.X < 0)
-                {
-                    x = !x;
-                }
-                if (intersection.Z < 0)
-                {
-                    y = !y;
-                }
-            }
-            if (normal.X != 0 && normal.Y != 0 && normal.Z == 0)
-            {
-                x = ((int)Math.Abs(intersection.X * normal.X)) % 2 == 0;
-                y = ((int)Math.Abs(intersection.Z * normal.Y)) % 2 == 0;
-
-                if (intersection.X < 0)
-                {
-                    x = !x;
-                }
-                if (intersection.Z < 0)
-                {
-                    y = !y;
-                }
-            }
-            if (normal.X == 0 && normal.Y != 0 && normal.Z == 0)
-            {
-                x = ((int)Math.Abs(intersection.X)) % 2 == 0;
-                y = ((int)Math.Abs(intersection.Z)) % 2 == 0;
-
-                if (intersection.X < 0)
-                {
-                    x = !x;
-                }
-                if (intersection.Z < 0)
-                {
-                    y = !y;
-                }
-            }
-            if (normal.X == 0 && normal.Y == 0 && normal.Z != 0)
-            {
-                x = ((int)Math.Abs(intersection.X)) % 2 == 0;
-                y = ((int)Math.Abs(intersection.Y)) % 2 == 0;
-
-                if (intersection.X < 0)
-                {
-                    x = !x;
-                }
-                if (intersection.Y < 0)
-                {
-                    y = !y;
-                }
-            }
-            if (normal.X != 0 && normal.Y == 0 && normal.Z == 0)
-            {
-                x = ((int)Math.Abs(intersection.Y)) % 2 == 0;
-                y = ((int)Math.Abs(intersection.Z)) % 2 == 0;
-
-                if (intersection.Y < 0)
-                {
-                    x = !x;
-                }
-                if (intersection.Z < 0)
-                {
-                    y = !y;
-                }
-            }
-
-            return (x, y);
+            return base.GetDiffuseColor(input);
         }
     }
 }

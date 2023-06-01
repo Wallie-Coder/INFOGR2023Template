@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using OpenTK.Windowing.GraphicsLibraryFramework;
+using System.Numerics;
 
 namespace RAYTRACER
 {
@@ -6,12 +7,14 @@ namespace RAYTRACER
     {
         // MEMBER VARIABLES
         protected Vector3 diffuseColor, specularColor;
-        public Vector3 DiffuseColor { get { return diffuseColor; } }
-        public Vector3 SpecularColor { get { return specularColor; } }
 
 
         protected bool specular;
-        public bool Specular { get { return specular; } }
+
+        public bool Specular
+        {
+            get { return specular; }
+        }
 
 
         // CONSTRUCTOR
@@ -36,6 +39,30 @@ namespace RAYTRACER
         public virtual Vector3 OutsideNormal(Vector3 point)
         {
             return Vector3.Zero;
+        }
+
+        // TEXTURE MAP FUNCTIONS
+        protected Vector3 Checkerboard(Vector3 input, Vector3 point, Vector3 u, Vector3 v)
+        {
+            if (this is Plane)
+            {
+                float x = Vector3.Dot(input - point, u);
+                float y = Vector3.Dot(input - point, v);
+                float c = ((int)y + (int)x) & 1;
+                return new Vector3(c, c, c);
+            }
+
+            return diffuseColor;
+        }
+
+        public virtual Vector3 GetDiffuseColor(Vector3 input)
+        {
+            return diffuseColor;
+        }
+
+        public virtual Vector3 GetSpecularColor(Vector3 input)
+        {
+            return specularColor;
         }
     }
 }
