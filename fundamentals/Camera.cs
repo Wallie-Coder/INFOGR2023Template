@@ -24,6 +24,10 @@ namespace RAYTRACER
         private Vector3 vertical, horizontal;
 
 
+        // random for stochastic sampling
+        private Random random = new Random();
+
+
         // the vectors for movement
         public Vector3 Forward { get { return Vector3.Normalize(screenZ); } }
         public Vector3 Backward { get { return Vector3.Normalize(-screenZ); } }
@@ -91,8 +95,10 @@ namespace RAYTRACER
         // returns a ray through a given pixel on the real screen.
         public Ray CalculateRay(int x, int y)
         {
-            float v = (float)x / (screenWidth - 1);
-            float u = (float)y / (screenHeight - 1);
+            float v = (x + (float)random.NextDouble());
+            float u = (y + (float)random.NextDouble());
+            v /= (screenWidth - 1);
+            u /= (screenHeight - 1);
             return new Ray(bottomLeft + v * horizontal + u * vertical - origin, origin);
         }
 

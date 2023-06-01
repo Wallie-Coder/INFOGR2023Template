@@ -21,6 +21,10 @@ namespace RAYTRACER
         // vertical fov
         private float FOV = 45;
 
+
+        // samples per pixel
+        private const int samplesPerPixel = 10;
+
         public Vector3 CamTarget { get { return camTarget; } }
         public Vector3 CamOrigin { get { return camOrigin; } }
 
@@ -156,6 +160,20 @@ namespace RAYTRACER
             return pixelColor + p.DiffuseColor * scene.AmbientLightingIntensity;
         }
 
+        Vector3 ColorFromSamples(Vector3 color, int samplePerPixel)
+        {
+            float r = color.X;
+            float g = color.Y;
+            float b = color.Z;
+
+            float sampleScale = 1f / samplePerPixel;
+            r = Math.Clamp(r * sampleScale, 0, 1);
+            g = Math.Clamp(g * sampleScale, 0, 1);
+            b = Math.Clamp(b * sampleScale, 0, 1);
+            Vector3 result = new Vector3(r, g, b);
+            return result;
+        }
+
         Vector3 TraceRay(Ray ray, int i , int j, ref Vector3 finalColor)
         {
 
@@ -237,7 +255,7 @@ namespace RAYTRACER
             return incomingRay.Direction - 2 * Vector3.Dot(incomingRay.Direction, intersection.Normal) * intersection.Normal;
         }
 
-        void CalculatePixelColor(int i, int j)
+        Vector3 CalculatePixelColor(int i, int j)
         {
             Vector3 pixelColor = new Vector3(0, 0, 0);
 
@@ -245,19 +263,34 @@ namespace RAYTRACER
 
             pixelColor = TraceRay(primaryRay, i , j, ref pixelColor);
 
-            int r = (int)(Math.Clamp(pixelColor.X, 0, 1) * 255);
-            int g = (int)(Math.Clamp(pixelColor.Y, 0, 1) * 255);
-            int b = (int)(Math.Clamp(pixelColor.Z, 0, 1) * 255);
-            screen.Plot(j, i, MyApplication.MixColor(r, g, b));
+            
+            return new Vector3(pixelColor.X, pixelColor.Y, pixelColor.Z);
         }
 
+        // iterates over the x axis
         void IterateOverX(int i)
         {
             // iterate over the x axis
             for(int x = 0; x < camera.ScreenWidth;x++)
             {
-                CalculatePixelColor(i, x);
+                SampledPixelColor(i, x);
             }
+        }
+
+        // iterates samplePerPixel times over a single pixel for stochastic sampling
+        void SampledPixelColor(int i, int j)
+        {
+            Vector3 sampledColorTotal = new Vector3(0, 0, 0);
+            for (int s = 0; s < samplesPerPixel; s++)
+            {
+                sampledColorTotal += CalculatePixelColor(i, j);
+            }
+
+            Vector3 pixelColor = ColorFromSamples(sampledColorTotal, samplesPerPixel);
+            int r = (int)(Math.Clamp(pixelColor.X, 0, 1) * 255);
+            int g = (int)(Math.Clamp(pixelColor.Y, 0, 1) * 255);
+            int b = (int)(Math.Clamp(pixelColor.Z, 0, 1) * 255);
+            screen.Plot(j, i, MyApplication.MixColor(r, g, b));
         }
 
         public void Render()
