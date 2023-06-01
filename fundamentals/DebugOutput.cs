@@ -8,9 +8,9 @@ namespace RAYTRACER
     class DebugOutput
     {
 
-        static private List<(Vector2, Vector2)> rayLines = new List<(Vector2 origin, Vector2 end)>();
+        static private List<(Vector2, Vector2, Vector3)> rayLines = new List<(Vector2 origin, Vector2 end, Vector3 color)>();
         static private List<(Vector2, int)> Pixels = new List<(Vector2 Location, int Color)>();
-        public static List<(Vector2, Vector2)> RayLines { get { return rayLines; } }
+        public static List<(Vector2, Vector2, Vector3)> RayLines { get { return rayLines; } }
 
         private List<(Vector2, float)> circles = new List<(Vector2 center, float radius)>();
 
@@ -54,9 +54,9 @@ namespace RAYTRACER
             float xScale = 1 / 16f * screen.width / 4;
             float yScale = 1 / 9f * screen.height / 2;
 
-            foreach((Vector2, Vector2) r in  rayLines) 
+            foreach((Vector2, Vector2, Vector3) r in  rayLines) 
             {
-                PlotLine(new Vector2(r.Item1.X * xScale, r.Item1.Y * yScale), new Vector2(r.Item2.X * xScale, r.Item2.Y * yScale), MyApplication.MixColor(255, 255, 0));
+                PlotLine(new Vector2(r.Item1.X * xScale, r.Item1.Y * yScale), new Vector2(r.Item2.X * xScale, r.Item2.Y * yScale), MyApplication.MixColor((int)r.Item3.X, (int)r.Item3.Y, (int)r.Item3.Z));
             }
 
             //PlotLine(new Vector2(rayLines[rayLines.Count/4].Item1.X * xScale, rayLines[rayLines.Count/4].Item1.Y * yScale), new Vector2(rayLines[rayLines.Count - 1].Item2.X * xScale, rayLines[rayLines.Count - 1].Item2.Y * yScale), MyApplication.ixColor(255, 255, 0));
