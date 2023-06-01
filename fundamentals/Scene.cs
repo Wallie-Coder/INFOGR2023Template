@@ -34,7 +34,7 @@ namespace RAYTRACER
                 //new Sphere(new Vector3(5, 0, 0), 2f, new Vector3(0,255,0), new Vector3(0,255,0)),
                 new Sphere(new Vector3(-2, 0, 5), 2f, new Vector3(255,0,0), new Vector3(131,0,0)),
                 //new Sphere(new Vector3(-5, 0, 0), 2f, new Vector3(180,180,255), new Vector3(180,180,255))
-                new Plane(new Vector3(0, 1, 0), new Vector3(0, 4, 0), new Vector3 (0, 0, 255), new Vector3(0,0,255)),
+                new Plane(new Vector3(0, 1, 0), new Vector3(0, 4, 0), new Vector3 (0, 0, 0), new Vector3(0,0,255)),
                 //new Plane(new Vector3(1, 0, 0), new Vector3(5, 0, 0), new Vector3 (0, 0, 255), new Vector3(0,0,255))
             };
         }

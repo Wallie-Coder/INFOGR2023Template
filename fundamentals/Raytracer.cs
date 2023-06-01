@@ -143,12 +143,15 @@ namespace RAYTRACER
                     if (ClosestPtoLight.Item1 == P)
                     {
                         // set the color
+
+                        // for plane with texture use P.getColor(intersection.intersectionpoint instead of p.DiffuseColor
+
                         shadowRay.Color = shadowRay.LightSource.Intensity / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location));
                         float dot = Vector3.Dot(intersection.Normal, shadowRay.Direction);
                         Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * dot * intersection.Normal);
                         Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
                         double q = Math.Pow(Vector3.Dot(R, V), 10);
-                        pixelColor += shadowRay.Color * ((p.DiffuseColor * Math.Max(0, dot)) + p.SpecularColor * (float)Math.Max(0, q));
+                        pixelColor += shadowRay.Color * ((P.GetColor(intersection.IntersectionPoint) * Math.Max(0, dot)) + p.SpecularColor * (float)Math.Max(0, q));
                        
                     }
                 }
