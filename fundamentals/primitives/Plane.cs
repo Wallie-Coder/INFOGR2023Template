@@ -15,7 +15,7 @@ namespace RAYTRACER
 
         public Plane(Vector3 normal, Vector3 point, Vector3 diffuseColor, Vector3 glossyColor, bool specular = false) :base(diffuseColor, glossyColor, specular)
         {
-            this.normal = normal;
+            this.normal = Vector3.Normalize(normal);
             this.point = point;
         }
 
