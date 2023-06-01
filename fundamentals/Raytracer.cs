@@ -33,7 +33,7 @@ namespace RAYTRACER
         {
             this.screen = screen;
             scene = new Scene(screen);
-            camera = new Camera(camOrigin, camTarget, FOV);
+            camera = new Camera(camOrigin, camTarget, FOV, screen.width, screen.height);
         }
 
         // CLASS METHODS
@@ -210,21 +210,22 @@ namespace RAYTRACER
             {
                 if (i == 180 && j % 20 == 0 && (intersection.GetPrimitive is Sphere || ray.Origin != camera.Origin))
                 {
-                    Vector3 Color;
+                    Vector3 color;
                     if(ray.Origin != camera.Origin)
                     {
-                        Color = new Vector3(0, 0, 255);
+                        color = new Vector3(0, 0, 255);
                     }
                     else
                     {
-                        Color = new Vector3(255, 255, 0);
+                        color = new Vector3(255, 255, 0);
                     }
-                    DebugOutput.RayLines.Add((new Vector2(ray.Origin.X, ray.Origin.Z), new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z), Color));
+                    DebugOutput.RayLines.Add((new Vector2(ray.Origin.X, ray.Origin.Z), new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z), color));
 
                 }
                 if (intersection.GetPrimitive.Specular)
                 {
-                    finalColor = intersection.GetPrimitive.DiffuseColor * TraceRay(new Ray(FindReflectionDirection(ray, intersection), intersection.IntersectionPoint), i, j, ref finalColor);
+                    if(ray.Bounces < Ray.RecursionDepth)
+                        finalColor = intersection.GetPrimitive.DiffuseColor * TraceRay(new Ray(FindReflectionDirection(ray, intersection), intersection.IntersectionPoint, ray.Bounces + 1), i, j, ref finalColor);
                 }
                 else
                 {

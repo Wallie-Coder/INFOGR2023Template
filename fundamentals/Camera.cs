@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using OpenTK.Graphics.OpenGL;
 using Template;
 namespace RAYTRACER
 {
@@ -36,11 +37,11 @@ namespace RAYTRACER
         public Vector3 Down { get { return Vector3.Normalize(screenY); } }
 
         // aspect ratio of the real screen
-        private float aspectRatio = (float)16 / 9;
+        private float aspectRatio;
 
         // the width and height of the real screen
-        private int screenWidth = 640;
-        private int screenHeight = 360;
+        private int screenWidth;
+        private int screenHeight;
         public int ScreenWidth { get { return screenWidth; } }
         public int ScreenHeight { get { return screenHeight; } }
 
@@ -62,8 +63,11 @@ namespace RAYTRACER
 
 
         // CONSTRUCTOR
-        public Camera(Vector3 lookFrom, Vector3 lookAt, float fov)
+        public Camera(Vector3 lookFrom, Vector3 lookAt, float fov, int screenWidth, int screenHeight)
         {
+            this.screenHeight = screenHeight;
+            this.screenWidth = screenWidth / 2;
+            aspectRatio = (float)this.screenWidth / this.screenHeight;
             // calculate the screens size based on vertical FOV
             float theta = (float)Math.Tan(fov * (float)(Math.PI / 180) / 2);
             cameraHeight = theta * 2;

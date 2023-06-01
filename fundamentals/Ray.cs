@@ -11,14 +11,20 @@ namespace RAYTRACER
         public Vector3 Direction { get { return direction; } set { direction = value; } }
         public Vector3 Color { get { return color; } set { color = value; } }
 
-        protected int recursionDepth = 10;
+        private static int recursionDepth = 10;
+        public static int RecursionDepth { get { return recursionDepth; } }
+
+
+        private int bounces = 0;
+        public int Bounces { get { return bounces; } set { bounces = value; } }
 
         protected float epsilon = 0.0001f;
 
 
         // CONSTRUCTOR
-        public Ray(Vector3 direction, Vector3 origin)
+        public Ray(Vector3 direction, Vector3 origin, int bounces = 0)
         {
+            this.bounces = bounces;
             this.direction = direction;
             this.direction = Vector3.Normalize(this.direction);
             color = new Vector3(0, 0, 0);
