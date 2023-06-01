@@ -144,7 +144,7 @@ namespace Template
             if (window.IsKeyDown(Keys.R))
             {
                 raytracer.Camera.Origin = new System.Numerics.Vector3(0, 0, 0);
-                raytracer.Camera.CalculateBase(raytracer.CamOrigin, raytracer.CamTarget, raytracer.CamUp);
+                raytracer.Camera.CalculateBase(raytracer.CamOrigin, raytracer.CamTarget, Vector3.UnitY);
                 raytracer.Camera.Yaw = (float)Math.Atan2(raytracer.Camera.ScreenZ.X, raytracer.Camera.ScreenZ.Z) * (float)(180 / Math.PI);
                 raytracer.Camera.Pitch = (float)Math.Asin(raytracer.Camera.ScreenZ.Y) * (float)(180 / Math.PI);
             }

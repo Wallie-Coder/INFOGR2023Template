@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using OpenTK.Graphics.OpenGL;
+using System.Numerics;
 
 namespace RAYTRACER
 {
@@ -14,7 +15,7 @@ namespace RAYTRACER
 
 
         // CONSTRUCTOR
-        public Sphere(Vector3 center, float radius, Vector3 diffuseColor, Vector3 glossyColor) :base(diffuseColor, glossyColor)
+        public Sphere(Vector3 center, float radius, Vector3 diffuseColor, Vector3 glossyColor, bool specular = false) :base(diffuseColor, glossyColor, specular)
         {
             this.center = center;
             this.radius = radius;

@@ -16,7 +16,7 @@ namespace RAYTRACER
 
 
         // CONSTRUCTOR
-        public Primitive(Vector3 diffuseColor, Vector3 specularColor, bool specular = false)
+        public Primitive(Vector3 diffuseColor, Vector3 specularColor, bool specular)
         {
             this.diffuseColor = diffuseColor / 255;
 

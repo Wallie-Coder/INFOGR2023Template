@@ -13,7 +13,7 @@ namespace RAYTRACER
 
         public Vector3 GetNormal { get { return normal; } }
 
-        public Plane(Vector3 normal, Vector3 point, Vector3 diffuseColor, Vector3 glossyColor) :base(diffuseColor, glossyColor)
+        public Plane(Vector3 normal, Vector3 point, Vector3 diffuseColor, Vector3 glossyColor, bool specular = false) :base(diffuseColor, glossyColor, specular)
         {
             this.normal = normal;
             this.point = point;

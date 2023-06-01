@@ -11,14 +11,9 @@ namespace RAYTRACER
         public Vector3 Direction { get { return direction; } set { direction = value; } }
         public Vector3 Color { get { return color; } set { color = value; } }
 
-        // the amount of bounces a ray has done and the amount of bounces a ray is allowed to do.
-        protected int bounces, maxBounces = 10;
-
+        protected int recursionDepth = 10;
 
         protected float epsilon = 0.0001f;
-
-        
-        public int Bounces { get { return bounces; } set { bounces = value; } }
 
 
         // CONSTRUCTOR

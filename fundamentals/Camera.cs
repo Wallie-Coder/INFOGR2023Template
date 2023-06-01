@@ -32,8 +32,8 @@ namespace RAYTRACER
         public Vector3 Backward { get { return Vector3.Normalize(-screenZ); } }
         public Vector3 Left { get { return Vector3.Normalize(-screenX); } }
         public Vector3 Right { get { return Vector3.Normalize(screenX); } }
-        public Vector3 Up { get { return Vector3.Normalize(screenY); } }
-        public Vector3 Down { get { return Vector3.Normalize(-screenY); } }
+        public Vector3 Up { get { return Vector3.Normalize(-screenY); } }
+        public Vector3 Down { get { return Vector3.Normalize(screenY); } }
 
         // aspect ratio of the real screen
         private float aspectRatio = (float)16 / 9;
@@ -57,8 +57,6 @@ namespace RAYTRACER
 
         // the center and corners of the screen plane
         private Vector3 planeCenter, topRight, topLeft, bottomRight, bottomLeft;
-
-        public Vector3 PlaneCenter { get { return planeCenter; } }
         public Vector3 TopRight { get { return topRight; } }
         public Vector3 TopLeft { get { return topLeft; } }
 
