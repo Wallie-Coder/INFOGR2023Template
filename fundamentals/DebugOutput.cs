@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using Template;
 using System.Diagnostics;
+using SixLabors.ImageSharp;
 
 namespace RAYTRACER
 {
@@ -87,6 +88,7 @@ namespace RAYTRACER
             SetPixel((int)(raytracer.Camera.Origin.X * xScale), (int)(raytracer.Camera.Origin.Z * yScale), MyApplication.MixColor(0, 0, 255));
             DebugInfo();
 
+            int o = MyApplication.MixColor(255, 255, 255);
 
             // draw the screen plane
             PlotLine(new Vector2(raytracer.Camera.TopLeft.X * xScale, raytracer.Camera.TopLeft.Z * yScale), new Vector2(raytracer.Camera.TopRight.X * xScale, raytracer.Camera.TopRight.Z * yScale), MyApplication.MixColor(0, 0, 255));
@@ -151,6 +153,7 @@ namespace RAYTRACER
             }
 
             screen.Print("fps: " + fps.ToString(), 640, screen.height - 140, MyApplication.MixColor(255, 255, 255));
+            screen.Print("FOV = " + raytracer.getsetFOV.ToString(), screen.width / 2, screen.height - 180, MyApplication.MixColor(255, 255, 255));
             screen.Print("multithreading: " + MyApplication.Multithreading, 640, screen.height - 160, MyApplication.MixColor(255, 255, 255));
             fpsCounter++;
         }

@@ -21,6 +21,9 @@ namespace RAYTRACER
         // vertical fov
         private float FOV = 45;
 
+        // get or set field of view
+        public float getsetFOV { get { return FOV; } set { FOV = value; } }
+
 
         // samples per pixel
         private const int samplesPerPixel = 1;
