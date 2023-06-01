@@ -23,7 +23,7 @@ namespace RAYTRACER
 
 
         // samples per pixel
-        private const int samplesPerPixel = 10;
+        private const int samplesPerPixel = 1;
 
         public Vector3 CamTarget { get { return camTarget; } }
         public Vector3 CamOrigin { get { return camOrigin; } }
@@ -84,6 +84,13 @@ namespace RAYTRACER
                     }
                     else
                     {
+                        if (shadowRay.LightSource is Spotlight spotlight)
+                        {
+                            if (!spotlight.RayInSpotlight(shadowRay))
+                            {
+                                continue;
+                            }
+                        }
                         // set the color
                         shadowRay.Color = shadowRay.LightSource.Intensity * (1 / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location)));
                         Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * (Vector3.Dot(shadowRay.Direction, intersection.Normal) * intersection.Normal));

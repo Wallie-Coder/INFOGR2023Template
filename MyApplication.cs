@@ -11,7 +11,7 @@ namespace Template
         public Surface screen;
         private Raytracer raytracer;
         private GameWindow window;
-        private static bool multithreading = false;
+        private static bool multithreading = true;
         public static bool Multithreading { get { return multithreading; } }
 
         DebugOutput debugOutput;

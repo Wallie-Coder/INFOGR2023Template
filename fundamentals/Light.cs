@@ -17,4 +17,26 @@ namespace RAYTRACER
             this.intensity = intensity;
         }
     }
+
+    public class Spotlight : Light
+    {
+        // MEMBER VARIABLES
+        private Vector3 centerDirection;
+        private float cosAngle;
+        public Spotlight(Vector3 location, Vector3 intensity, Vector3 centerDirection, int openingAngle) : base(location, intensity)
+        {
+            this.centerDirection = Vector3.Normalize(centerDirection);
+            cosAngle = (float)Math.Cos(openingAngle * (Math.PI / 180));
+        }
+
+        public bool RayInSpotlight(Ray ray)
+        {
+            float rayCos = Vector3.Dot(ray.Direction, centerDirection);
+            if (rayCos < 0 - cosAngle || rayCos > 0 + cosAngle)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
 }
