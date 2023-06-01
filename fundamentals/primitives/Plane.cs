@@ -22,8 +22,9 @@ namespace RAYTRACER
         // CLASS METHODS
         public override Vector3 OutsideNormal(Vector3 point)
         {
-            normal.Y *= -1;
-            return normal;
+            Vector3 temp = normal;
+            temp.Y *= -1;
+            return temp;
         }
 
         // detects collision between a given ray and the plane if there is a collision and where along the ray it is
@@ -56,7 +57,6 @@ namespace RAYTRACER
             }
 
             return 0f;
-
         }
 
         // get the color of a 3D location from a texture or formula
