@@ -1,5 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace RAYTRACER
 {

@@ -1,8 +1,4 @@
 ﻿using System.Numerics;
-using System.Runtime.CompilerServices;
-using Microsoft.VisualBasic;
-using OpenTK.Graphics.ES20;
-using OpenTK.Graphics.GL;
 using Template;
 
 namespace RAYTRACER
@@ -32,7 +28,7 @@ namespace RAYTRACER
         public Raytracer(Surface screen)
         {
             this.screen = screen;
-            scene = new Scene(screen);
+            scene = new Scene();
             camera = new Camera(camOrigin, camTarget, FOV, screen.width, screen.height);
         }
 

@@ -1,5 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL;
-using System.Numerics;
+﻿using System.Numerics;
 using Template;
 
 namespace RAYTRACER
@@ -20,7 +19,7 @@ namespace RAYTRACER
         
         
         // CONSTRUCTOR
-        public Scene(Surface screen)
+        public Scene()
         {
             lights = new List<Light>
             {

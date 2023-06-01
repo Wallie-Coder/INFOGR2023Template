@@ -3,7 +3,6 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System;
 
 // The template provides you with a window which displays a 'linear frame buffer', i.e.
 // a 1D array of pixels that represents the graphical contents of the window.
@@ -145,7 +144,6 @@ namespace Template
                 GL.BindTexture(TextureTarget.Texture2D, screenID);
                 GL.Uniform1(GL.GetUniformLocation(programID, "pixels"), 0);
             }
-            app.Init();
         }
         protected override void OnUnload()
         {

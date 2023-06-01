@@ -1,9 +1,7 @@
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using RAYTRACER;
-using SixLabors.ImageSharp;
 
 namespace Template
 {
@@ -30,11 +28,6 @@ namespace Template
 
         // CLASS METHODS
 
-        // initialize
-        public void Init()
-        {
-
-        }
         // renders one frame
         public void Tick()
         {

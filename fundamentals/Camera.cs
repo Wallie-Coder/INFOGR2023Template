@@ -1,9 +1,5 @@
-﻿using System.ComponentModel.Design;
-using System.Linq;
-using System.Numerics;
-using System.Runtime.CompilerServices;
-using OpenTK.Graphics.OpenGL;
-using Template;
+﻿using System.Numerics;
+
 namespace RAYTRACER
 {
     public class Camera

@@ -1,7 +1,6 @@
 ﻿using System.Numerics;
 using Template;
 using System.Diagnostics;
-using System;
 
 namespace RAYTRACER
 {
