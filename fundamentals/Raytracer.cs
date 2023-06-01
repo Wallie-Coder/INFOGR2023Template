@@ -143,9 +143,11 @@ namespace RAYTRACER
                     if (ClosestPtoLight.Item1 == P)
                     {
                         // set the color
+                        // if this plane has a black/pattern. use P.getColor(intersection.IntersectionPoint.
+                        // otherwire use P.defuseColor.
                         shadowRay.Color = shadowRay.LightSource.Intensity / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location));
                         float dot = Vector3.Dot(intersection.Normal, shadowRay.Direction);
-                        shadowRay.Color = shadowRay.Color * (p.DiffuseColor * Math.Max(0, dot));
+                        shadowRay.Color = shadowRay.Color * (P.GetColor(intersection.IntersectionPoint) * Math.Max(0, dot));
                         pixelColor += shadowRay.Color;
                     }
                 }

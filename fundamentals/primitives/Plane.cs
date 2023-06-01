@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Microsoft.VisualBasic;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace RAYTRACER
@@ -55,7 +56,128 @@ namespace RAYTRACER
 
         public Vector3 GetColor(Vector3 location)
         {
-            return Vector3.Zero;
+            Vector3 intersection = location - point;
+
+
+            Vector3 N = Vector3.Normalize(normal);
+
+            //intersection = new Vector3(intersection.X * (1 - N.X), intersection.Y * (1 - N.Y), intersection.Z * (1 - N.Z));
+
+            float s = intersection.X / intersection.X / (float)(Math.Sqrt((normal.X * normal.X) + (normal.Y * normal.Y)));
+
+            bool x = false;
+            bool y = false;
+
+            if (normal.X == 0 || normal.Y == 0 || normal.Z == 0)
+            {
+                (bool, bool) xy = Getxy(intersection);
+                x = xy.Item1;
+                y = xy.Item2;
+            }
+
+            if (x && y)
+                return new Vector3(1, 1, 1);
+            else if(!x && y)
+                return new Vector3(0, 0, 0);
+            else if(x && !y)
+                return new Vector3(0, 0, 0);
+            else
+                return new Vector3(1, 1, 1);
+
+
+        }
+
+        public (bool, bool) Getxy(Vector3 intersection)
+        {
+            bool x = false;
+            bool y = false;
+
+            if (normal.X != 0 && normal.Y == 0 && normal.Z != 0)
+            {
+                x = ((int)Math.Abs(intersection.Y * normal.X)) % 2 == 0;
+                y = ((int)Math.Abs(intersection.Z * normal.Z)) % 2 == 0;
+
+                if (intersection.Y < 0)
+                {
+                    x = !x;
+                }
+                if (intersection.Z < 0)
+                {
+                    y = !y;
+                }
+            }
+            if (normal.X == 0 && normal.Y != 0 && normal.Z != 0)
+            {
+                x = ((int)Math.Abs(intersection.X * normal.Y)) % 2 == 0;
+                y = ((int)Math.Abs(intersection.Z * normal.Z)) % 2 == 0;
+
+                if (intersection.X < 0)
+                {
+                    x = !x;
+                }
+                if (intersection.Z < 0)
+                {
+                    y = !y;
+                }
+            }
+            if (normal.X != 0 && normal.Y != 0 && normal.Z == 0)
+            {
+                x = ((int)Math.Abs(intersection.X * normal.X)) % 2 == 0;
+                y = ((int)Math.Abs(intersection.Z * normal.Y)) % 2 == 0;
+
+                if (intersection.X < 0)
+                {
+                    x = !x;
+                }
+                if (intersection.Z < 0)
+                {
+                    y = !y;
+                }
+            }
+            if (normal.X == 0 && normal.Y != 0 && normal.Z == 0)
+            {
+                x = ((int)Math.Abs(intersection.X)) % 2 == 0;
+                y = ((int)Math.Abs(intersection.Z)) % 2 == 0;
+
+                if (intersection.X < 0)
+                {
+                    x = !x;
+                }
+                if (intersection.Z < 0)
+                {
+                    y = !y;
+                }
+            }
+            if (normal.X == 0 && normal.Y == 0 && normal.Z != 0)
+            {
+                x = ((int)Math.Abs(intersection.X)) % 2 == 0;
+                y = ((int)Math.Abs(intersection.Y)) % 2 == 0;
+
+                if (intersection.X < 0)
+                {
+                    x = !x;
+                }
+                if (intersection.Y < 0)
+                {
+                    y = !y;
+                }
+            }
+            if (normal.X != 0 && normal.Y == 0 && normal.Z == 0)
+            {
+                x = ((int)Math.Abs(intersection.Y)) % 2 == 0;
+                y = ((int)Math.Abs(intersection.Z)) % 2 == 0;
+
+                if (intersection.Y < 0)
+                {
+                    x = !x;
+                }
+                if (intersection.Z < 0)
+                {
+                    y = !y;
+                }
+            }
+
+            return (x, y);
         }
     }
 }
