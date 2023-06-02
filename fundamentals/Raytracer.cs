@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Template;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace RAYTRACER
 {
@@ -47,9 +48,159 @@ namespace RAYTRACER
             Parallel.For(0, camera.ScreenHeight, IterateOverX);
         }
 
+        // non-multithreaded loop over the y-axis
+        public void Render()
+        {
+
+            for (int y = 0; y < camera.ScreenHeight; y++)
+            {
+                IterateOverX(y);
+            }
+        }
+
+        // iterates over the x axis
+        void IterateOverX(int i)
+        {
+            // iterate over the x axis
+            for (int x = 0; x < camera.ScreenWidth; x++)
+            {
+                Vector3 pixelColor = new Vector3(0, 0, 0);
+                if (MyApplication.AntiAliasing)
+                {
+                    SampledPixelColor(i, x);
+                }
+                else
+                {
+                    pixelColor += CalculatePixelColor(i, x);
+                    int r = (int)(Math.Clamp(pixelColor.X, 0, 1) * 255);
+                    int g = (int)(Math.Clamp(pixelColor.Y, 0, 1) * 255);
+                    int b = (int)(Math.Clamp(pixelColor.Z, 0, 1) * 255);
+                    screen.Plot(x, i, MyApplication.MixColor(r, g, b));
+                }
+
+            }
+        }
+
+        // iterates samplePerPixel times over a single pixel for stochastic sampling
+        void SampledPixelColor(int i, int j)
+        {
+            Vector3 sampledColorTotal = new Vector3(0, 0, 0);
+            for (int s = 0; s < samplesPerPixel; s++)
+            {
+                sampledColorTotal += CalculatePixelColor(i, j);
+            }
+
+            Vector3 pixelColor = ColorFromSamples(sampledColorTotal, samplesPerPixel);
+            int r = (int)(Math.Clamp(pixelColor.X, 0, 1) * 255);
+            int g = (int)(Math.Clamp(pixelColor.Y, 0, 1) * 255);
+            int b = (int)(Math.Clamp(pixelColor.Z, 0, 1) * 255);
+            screen.Plot(j, i, MyApplication.MixColor(r, g, b));
+        }
+
+        // reverts the added sample colors back to a normal rgb value
+        Vector3 ColorFromSamples(Vector3 color, int samplePerPixel)
+        {
+            float r = color.X;
+            float g = color.Y;
+            float b = color.Z;
+
+            float sampleScale = 1f / samplePerPixel;
+            r = Math.Clamp(r * sampleScale, 0, 1);
+            g = Math.Clamp(g * sampleScale, 0, 1);
+            b = Math.Clamp(b * sampleScale, 0, 1);
+            Vector3 result = new Vector3(r, g, b);
+            return result;
+        }
+
+        // calculates the color of a given pixel
+        Vector3 CalculatePixelColor(int i, int j)
+        {
+            Vector3 pixelColor = new Vector3(0, 0, 0);
+
+            Ray primaryRay = camera.CalculateRay(j, i);
+
+            pixelColor = TraceRay(primaryRay, i, j, ref pixelColor);
+
+
+            return new Vector3(pixelColor.X, pixelColor.Y, pixelColor.Z);
+        }
+        // traces rays through the scene
+        Vector3 TraceRay(Ray ray, int i , int j, ref Vector3 finalColor)
+        {
+            Intersection intersection = null!;
+            List<Intersection> result = new List<Intersection>();
+            foreach (Primitive p in scene.Primitives)
+            {
+                if (p is Sphere q)
+                {
+                    if ((camera.Origin - q.Center).LengthSquared() < q.Radius * q.Radius)
+                    {
+                        continue;
+                    }
+
+                    var collide = q.CollisionSphere(ray);
+                    var conclusion = ray.ConcludeFromCollision(collide.Item1, collide.Item2, collide.Item3);
+                    if (conclusion.Item1)
+                    {
+                        intersection = new Intersection(ray, p, conclusion.Item2);
+
+                        result.Add(intersection);
+                    }
+                }
+                if (p is Plane x)
+                {
+
+                    if (x.CollisionPlane(ray) == 0)
+                    {
+                        continue;
+                    }
+
+                    intersection = new Intersection(ray, p, x.CollisionPlane(ray));
+                    result.Add(intersection);
+                }
+            }
+            intersection = FindClosestIntersection(result);
+            
+            if (intersection != null!)
+            {
+                if (i == 180 && j % 20 == 0 && (intersection.GetPrimitive is Sphere || ray.Origin != camera.Origin))
+                {
+                    Vector3 color;
+                    if(ray.Origin != camera.Origin)
+                    {
+                        color = new Vector3(0, 0, 255);
+                    }
+                    else
+                    {
+                        color = new Vector3(255, 255, 0);
+                    }
+                    DebugOutput.RayLines.Add((new Vector2(ray.Origin.X, ray.Origin.Z), new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z), color));
+
+                }
+                if (intersection.GetPrimitive.Specular)
+                {
+                    if(ray.Bounces < Ray.RecursionDepth)
+                        finalColor = intersection.GetPrimitive.GetDiffuseColor(intersection.IntersectionPoint) * TraceRay(new Ray(FindReflectionDirection(ray, intersection), intersection.IntersectionPoint, ray.Bounces + 1), i, j, ref finalColor);
+                }
+                else
+                {
+                    finalColor = CalculateColorByLighting(intersection, intersection.GetPrimitive, i, j);
+                }
+            }
+
+            return finalColor;
+        }
+
+        // returns the direction in which a ray is reflected from a specular
+        Vector3 FindReflectionDirection(Ray incomingRay, Intersection intersection)
+        {
+            return incomingRay.Direction - 2 * Vector3.Dot(incomingRay.Direction, intersection.Normal) * intersection.Normal;
+        }
+
+        // finds the closest intersection given a list of intersections
         Intersection FindClosestIntersection(List<Intersection> intersections)
         {
-            Intersection closest = null;
+            Intersection closest = null!;
             if (intersections.Count > 0)
             {
                 closest = intersections[0];
@@ -65,6 +216,7 @@ namespace RAYTRACER
         }
 
 
+        // calculates the color of a pixel or sampled pixel factoring in light
         Vector3 CalculateColorByLighting(Intersection intersection, Primitive p, int i1, int j1)
         {
             Vector3 pixelColor = new Vector3(0, 0, 0);
@@ -74,7 +226,7 @@ namespace RAYTRACER
                 Light light = scene.Lights[s];
                 shadows.Add(new ShadowRay(scene.Lights[s].Location - intersection.IntersectionPoint, intersection.IntersectionPoint, light));
             }
-            for(int i = 0; i < shadows.Count; i++)
+            for (int i = 0; i < shadows.Count; i++)
             {
                 ShadowRay shadowRay = shadows[i];
                 if (p is Sphere sphere)
@@ -109,7 +261,7 @@ namespace RAYTRACER
                 else if (p is Plane plane)
                 {
 
-                    (Primitive, float) ClosestPtoLight = (p, plane.CollisionPlane(shadowRay));
+                    (Primitive, float) closestPointToLight = (p, plane.CollisionPlane(shadowRay));
 
                     shadowRay.Direction = Vector3.Normalize(shadowRay.Direction);
 
@@ -126,8 +278,8 @@ namespace RAYTRACER
 
                             if (x.CollisionPlane(shadowRay) > float.Epsilon)
                             {
-                                if (x.CollisionPlane(shadowRay) < ClosestPtoLight.Item2)
-                                    ClosestPtoLight = (x, x.CollisionPlane(shadowRay));
+                                if (x.CollisionPlane(shadowRay) < closestPointToLight.Item2)
+                                    closestPointToLight = (x, x.CollisionPlane(shadowRay));
                             }
                         }
 
@@ -142,19 +294,19 @@ namespace RAYTRACER
                             {
                                 if (collision.Item2 > collision.Item3)
                                 {
-                                    if (collision.Item2 > ClosestPtoLight.Item2)
-                                        ClosestPtoLight = (x, collision.Item2);
+                                    if (collision.Item2 > closestPointToLight.Item2)
+                                        closestPointToLight = (x, collision.Item2);
                                 }
                                 else
                                 {
-                                    if (collision.Item3 > ClosestPtoLight.Item2)
-                                        ClosestPtoLight = (x, collision.Item3);
+                                    if (collision.Item3 > closestPointToLight.Item2)
+                                        closestPointToLight = (x, collision.Item3);
                                 }
                             }
                         }
                     }
 
-                    if (ClosestPtoLight.Item1 == plane)
+                    if (closestPointToLight.Item1 == plane)
                     {
                         // set the color
                         shadowRay.Color = shadowRay.LightSource.Intensity / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location));
@@ -168,151 +320,6 @@ namespace RAYTRACER
             }
 
             return pixelColor + p.GetDiffuseColor(intersection.IntersectionPoint) * scene.AmbientLightingIntensity;
-        }
-
-        Vector3 ColorFromSamples(Vector3 color, int samplePerPixel)
-        {
-            float r = color.X;
-            float g = color.Y;
-            float b = color.Z;
-
-            float sampleScale = 1f / samplePerPixel;
-            r = Math.Clamp(r * sampleScale, 0, 1);
-            g = Math.Clamp(g * sampleScale, 0, 1);
-            b = Math.Clamp(b * sampleScale, 0, 1);
-            Vector3 result = new Vector3(r, g, b);
-            return result;
-        }
-
-        Vector3 TraceRay(Ray ray, int i , int j, ref Vector3 finalColor)
-        {
-            Intersection intersection = null;
-            List<Intersection> result = new List<Intersection>();
-            foreach (Primitive p in scene.Primitives)
-            {
-                if (p is Sphere q)
-                {
-                    if ((camera.Origin - q.Center).LengthSquared() < q.Radius * q.Radius)
-                    {
-                        continue;
-                    }
-
-                    var collide = q.CollisionSphere(ray);
-                    var conclusion = ray.ConcludeFromCollision(collide.Item1, collide.Item2, collide.Item3);
-                    if (conclusion.Item1)
-                    {
-                        intersection = new Intersection(ray, p, conclusion.Item2);
-
-                        result.Add(intersection);
-                    }
-                }
-                if (p is Plane x)
-                {
-
-                    if (x.CollisionPlane(ray) == 0)
-                    {
-                        continue;
-                    }
-
-                    intersection = new Intersection(ray, p, x.CollisionPlane(ray));
-                    result.Add(intersection);
-                }
-            }
-            intersection = FindClosestIntersection(result);
-            
-            if (intersection != null)
-            {
-                if (i == 180 && j % 20 == 0 && (intersection.GetPrimitive is Sphere || ray.Origin != camera.Origin))
-                {
-                    Vector3 color;
-                    if(ray.Origin != camera.Origin)
-                    {
-                        color = new Vector3(0, 0, 255);
-                    }
-                    else
-                    {
-                        color = new Vector3(255, 255, 0);
-                    }
-                    DebugOutput.RayLines.Add((new Vector2(ray.Origin.X, ray.Origin.Z), new Vector2(intersection.IntersectionPoint.X, intersection.IntersectionPoint.Z), color));
-
-                }
-                if (intersection.GetPrimitive.Specular)
-                {
-                    if(ray.Bounces < Ray.RecursionDepth)
-                        finalColor = intersection.GetPrimitive.GetDiffuseColor(intersection.IntersectionPoint) * TraceRay(new Ray(FindReflectionDirection(ray, intersection), intersection.IntersectionPoint, ray.Bounces + 1), i, j, ref finalColor);
-                }
-                else
-                {
-                    finalColor = CalculateColorByLighting(intersection, intersection.GetPrimitive, i, j);
-                }
-            }
-
-            return finalColor;
-        }
-
-        Vector3 FindReflectionDirection(Ray incomingRay, Intersection intersection)
-        {
-            return incomingRay.Direction - 2 * Vector3.Dot(incomingRay.Direction, intersection.Normal) * intersection.Normal;
-        }
-
-        Vector3 CalculatePixelColor(int i, int j)
-        {
-            Vector3 pixelColor = new Vector3(0, 0, 0);
-
-            Ray primaryRay = camera.CalculateRay(j, i);
-
-            pixelColor = TraceRay(primaryRay, i , j, ref pixelColor);
-
-            
-            return new Vector3(pixelColor.X, pixelColor.Y, pixelColor.Z);
-        }
-
-        // iterates over the x axis
-        void IterateOverX(int i)
-        {
-            // iterate over the x axis
-            for(int x = 0; x < camera.ScreenWidth;x++)
-            {
-                Vector3 pixelColor = new Vector3(0, 0, 0);
-                if (MyApplication.AntiAliasing)
-                {
-                    SampledPixelColor(i, x);
-                }
-                else
-                {
-                    pixelColor += CalculatePixelColor(i, x);
-                    int r = (int)(Math.Clamp(pixelColor.X, 0, 1) * 255);
-                    int g = (int)(Math.Clamp(pixelColor.Y, 0, 1) * 255);
-                    int b = (int)(Math.Clamp(pixelColor.Z, 0, 1) * 255);
-                    screen.Plot(x, i, MyApplication.MixColor(r, g, b));
-                }
-                
-            }
-        }
-
-        // iterates samplePerPixel times over a single pixel for stochastic sampling
-        void SampledPixelColor(int i, int j)
-        {
-            Vector3 sampledColorTotal = new Vector3(0, 0, 0);
-            for (int s = 0; s < samplesPerPixel; s++)
-            {
-                sampledColorTotal += CalculatePixelColor(i, j);
-            }
-
-            Vector3 pixelColor = ColorFromSamples(sampledColorTotal, samplesPerPixel);
-            int r = (int)(Math.Clamp(pixelColor.X, 0, 1) * 255);
-            int g = (int)(Math.Clamp(pixelColor.Y, 0, 1) * 255);
-            int b = (int)(Math.Clamp(pixelColor.Z, 0, 1) * 255);
-            screen.Plot(j, i, MyApplication.MixColor(r, g, b));
-        }
-
-        public void Render()
-        {
-            // iterate over the y axis
-            for (int y = 0; y < camera.ScreenHeight; y++)
-            {
-                IterateOverX(y);
-            }
         }
     }
 }

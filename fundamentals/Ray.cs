@@ -14,7 +14,7 @@ namespace RAYTRACER
         public static int RecursionDepth { get { return recursionDepth; } }
 
 
-        private int bounces = 0;
+        private int bounces;
         public int Bounces { get { return bounces; } set { bounces = value; } }
 
         protected float epsilon = 0.0001f;

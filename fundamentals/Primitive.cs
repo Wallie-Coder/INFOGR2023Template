@@ -64,10 +64,6 @@ namespace RAYTRACER
         protected Vector3 WeirdLineSphere(Vector2 point)
         {
             float c = (int)(point.X * 100 + point.Y * 100) & 1;
-            if(c == 1)
-            {
-                int x = 10;
-            }
             return new Vector3(c, c, c);
         }
 

@@ -23,10 +23,6 @@ namespace RAYTRACER
         private float fps = 0;
 
 
-
-        private Vector2 sceneSize = new Vector2(20, 20);
-
-
         // CONSTRUCTOR
         public DebugOutput(Raytracer raytracer, Scene scene, Surface screen)
         {
@@ -51,6 +47,7 @@ namespace RAYTRACER
         // draws the sphere and rays from the Camera in the debug screen
         public void Draw()
         {
+            float aspectRatio = screen.width / screen.height;
             float xScale = 1 / 16f * screen.width / 4;
             float yScale = 1 / 9f * screen.height / 2;
 
@@ -91,7 +88,7 @@ namespace RAYTRACER
             int o = MyApplication.MixColor(255, 255, 255);
 
             // draw the screen plane
-            PlotLine(new Vector2(raytracer.Camera.TopLeft.X * xScale, raytracer.Camera.TopLeft.Z * yScale), new Vector2(raytracer.Camera.TopRight.X * xScale, raytracer.Camera.TopRight.Z * yScale), MyApplication.MixColor(0, 0, 255));
+            PlotLine(new Vector2(raytracer.Camera.TopLeft.X * xScale, raytracer.Camera.TopLeft.Z * yScale), new Vector2(raytracer.Camera.TopRight.X * xScale, raytracer.Camera.TopRight.Z * yScale), MyApplication.MixColor(255, 0, 255));
 
             rayLines.Clear();
         }
@@ -122,6 +119,7 @@ namespace RAYTRACER
 
             Vector2 Direction = end - origin;
 
+            // clamp rays 
             if (End.X < -screen.width / 4 && origin.X > -screen.width / 4)
             {
                 float lessenwith = -screen.width / 4 - End.X;
@@ -130,7 +128,7 @@ namespace RAYTRACER
                 End.Y = (int)(End.Y + (Direction.Y * lessenwith));
             }
 
-            // Draw the cut rays.
+            // Draw the clamped rays
             screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), color);
         }
 
