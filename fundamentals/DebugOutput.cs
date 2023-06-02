@@ -9,7 +9,6 @@ namespace RAYTRACER
     {
 
         static private List<(Vector2, Vector2, Vector3)> rayLines = new List<(Vector2 origin, Vector2 end, Vector3 color)>();
-        static private List<(Vector2, int)> Pixels = new List<(Vector2 Location, int Color)>();
         public static List<(Vector2, Vector2, Vector3)> RayLines { get { return rayLines; } }
 
         private List<(Vector2, float)> circles = new List<(Vector2 center, float radius)>();
@@ -78,12 +77,6 @@ namespace RAYTRACER
                 }
             }
 
-            // NEEDS COMMENT
-            foreach ((Vector2, int) p in Pixels)
-            {
-                SetPixel((int)(p.Item1.X * xScale), (int)(p.Item1.Y * yScale), p.Item2);
-            }
-
             // draw a pixel for the camera
             SetPixel((int)(raytracer.Camera.Origin.X * xScale), (int)(raytracer.Camera.Origin.Z * yScale), MyApplication.MixColor(0, 0, 255));
             DebugInfo();
@@ -108,7 +101,7 @@ namespace RAYTRACER
 
         }
 
-        // NEEDS COMMENT
+        // Plots a Line on the debug screen, but cuts the line off on the left size, so the line does not overlap the scene.
         void PlotLine(Vector2 origin, Vector2 end, int color)
         {
             Vector2 Origin = origin;

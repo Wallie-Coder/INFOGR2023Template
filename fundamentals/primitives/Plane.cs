@@ -13,7 +13,6 @@ namespace RAYTRACER
         private Object func;
         // a given point on the plane
         Vector3 point;
-        private bool checkerboard;
 
         // CONSTRUCTOR
         public Plane(Vector3 u, Vector3 v, Vector3 point, Vector3 diffuseColor, Vector3 glossyColor, bool specular = false, Textures texture = Textures.None) :base(diffuseColor, glossyColor, specular, texture)
