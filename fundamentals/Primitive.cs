@@ -1,5 +1,6 @@
 ﻿using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Numerics;
+using Template;
 
 namespace RAYTRACER
 {
@@ -10,7 +11,6 @@ namespace RAYTRACER
 
 
         protected bool specular;
-
         public bool Specular
         {
             get { return specular; }
@@ -47,41 +47,29 @@ namespace RAYTRACER
 
         // CLASS METHODS
 
+        // returns the normal pointing outwards
         public virtual Vector3 OutsideNormal(Vector3 point)
         {
             return Vector3.Zero;
         }
 
         // TEXTURE MAP FUNCTIONS
-        protected Vector3 CheckerboardPlane(Vector3 input, Vector3 point, Vector3 u, Vector3 v)
+        protected Vector3 CheckerboardPlane(Vector2 point)
         {
-            if (this is Plane)
-            {
-                float x = Vector3.Dot(input - point, u);
-                float y = Vector3.Dot(input - point, v);
-                float c = ((int)y + (int)x) & 1;
-                return new Vector3(c, c, c);
-            }
+            float c = ((int)point.Y + (int)point.X) & 1;
+            return new Vector3(c, c, c);
 
-            return diffuseColor;
         }
 
-        protected Vector3 WeirdLineSphere(Vector3 input, Vector3 point, float radius)
+        protected Vector3 WeirdLineSphere(Vector2 point)
         {
-            float theta = (float)Math.Acos((input.Z - point.Z) / radius);
-            float phi = (float)Math.Atan2(input.Y - point.Y, input.X - point.X);
-
-            float u = (float)((phi + Math.PI) / (2 * Math.PI));
-            float v = (float)(theta / Math.PI);
-            float c = (int)(u * 100 + v * 100) & 1;
+            float c = (int)(point.X * 100 + point.Y * 100) & 1;
             if(c == 1)
             {
                 int x = 10;
             }
             return new Vector3(c, c, c);
-
         }
-
 
         // color getters with possibility to override with texture map
         public virtual Vector3 GetDiffuseColor(Vector3 input)
@@ -94,4 +82,6 @@ namespace RAYTRACER
             return specularColor;
         }
     }
+
+   
 }

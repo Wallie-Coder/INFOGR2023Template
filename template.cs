@@ -144,6 +144,8 @@ namespace Template
                 GL.BindTexture(TextureTarget.Texture2D, screenID);
                 GL.Uniform1(GL.GetUniformLocation(programID, "pixels"), 0);
             }
+
+            app.Init();
         }
         protected override void OnUnload()
         {

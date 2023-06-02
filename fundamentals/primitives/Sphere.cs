@@ -46,12 +46,23 @@ namespace RAYTRACER
             return -Vector3.Normalize(center - point);
         }
 
+        // converts 3d sphere coordinates to 2d coordinates
+        protected Vector2 To2DSphere(Vector3 input, Vector3 point, float radius)
+        {
+            float theta = (float)Math.Acos(Math.Clamp((input.Z - point.Z), -radius,radius) / radius);
+            float phi = (float)Math.Atan2(input.Y - point.Y, input.X - point.X);
+
+            float u = (float)((phi + Math.PI) / (2 * Math.PI));
+            float v = (float)(theta / Math.PI);
+            return new Vector2(u, v);
+        }
+
+        // use the color from a specific texture map or the regular color 
         public override Vector3 GetDiffuseColor(Vector3 input)
         {
-            // the formula for checkerboard on spheres in incorrect, always results in a pure black sphere
             if (texture == Textures.WeirdLines)
             {
-                return WeirdLineSphere(input, center, radius);
+                return WeirdLineSphere(To2DSphere(input, center, radius));
             }
 
             return diffuseColor;
@@ -59,10 +70,9 @@ namespace RAYTRACER
 
         public override Vector3 GetSpecularColor(Vector3 input)
         {
-            // the formula for checkerboard on spheres in incorrect, always results in a pure black sphere
             if (texture == Textures.WeirdLines)
             {
-                return WeirdLineSphere(input, center, radius);
+                return WeirdLineSphere(To2DSphere(input, center, radius));
             }
 
             return specularColor;

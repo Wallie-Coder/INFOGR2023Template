@@ -64,12 +64,20 @@ namespace RAYTRACER
             return 0f;
         }
 
+        // converts 3d plane coordinates to 2d coordinates
+        private Vector2 To2DPlane(Vector3 input, Vector3 point, Vector3 u, Vector3 v)
+        {
+            float x = Vector3.Dot(input - point, u);
+            float y = Vector3.Dot(input - point, v);
+            return new Vector2(x, y);
+        }
+
         // use the color from a specific texture map or the regular color
         public override Vector3 GetDiffuseColor(Vector3 input)
         {
             if (texture == Textures.Checkerboard)
             {
-                return CheckerboardPlane(input, point, u, v);
+                return CheckerboardPlane(To2DPlane(input, point, u, v));
             }
 
             return diffuseColor;
@@ -79,7 +87,7 @@ namespace RAYTRACER
         {
             if (texture == Textures.Checkerboard)
             {
-                return CheckerboardPlane(input, point, u, v);
+                return CheckerboardPlane(To2DPlane(input, point, u, v));
             }
             return specularColor;
         }

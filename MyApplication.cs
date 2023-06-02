@@ -15,7 +15,7 @@ namespace Template
         public static bool Multithreading { get { return multithreading; } }
 
 
-        private static bool antiAliasing = true;
+        private static bool antiAliasing = false;
         public static bool AntiAliasing { get { return antiAliasing; } }
 
         DebugOutput debugOutput;
@@ -32,6 +32,12 @@ namespace Template
         }
 
         // CLASS METHODS
+
+        // initialize
+        public void Init()
+        {
+            
+        }
 
         // renders one frame
         public void Tick()
