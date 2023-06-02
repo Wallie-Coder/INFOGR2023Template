@@ -187,9 +187,13 @@ namespace Template
                 }
 
                 lookatTargetNR++;
-                if(lookatTargetNR + 1 >= raytracer.Scene.Primitives.Count)
+                while (raytracer.Scene.Primitives[lookatTargetNR] is RAYTRACER.Plane)
                 {
-                    lookatTargetNR = 0;
+                    lookatTargetNR++;
+                    if (lookatTargetNR + 1 >= raytracer.Scene.Primitives.Count)
+                    {
+                        lookatTargetNR = 0;
+                    }
                 }
             }
 

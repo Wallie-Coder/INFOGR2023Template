@@ -156,6 +156,14 @@ namespace RAYTRACER
 
                     if (ClosestPtoLight.Item1 == plane)
                     {
+                        if (shadowRay.LightSource is Spotlight spotlight)
+                        {
+                            if (!spotlight.RayInSpotlight(shadowRay))
+                            {
+                                continue;
+                            }
+                        }
+
                         // set the color
                         shadowRay.Color = shadowRay.LightSource.Intensity / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location));
                         float dot = Vector3.Dot(intersection.Normal, shadowRay.Direction);

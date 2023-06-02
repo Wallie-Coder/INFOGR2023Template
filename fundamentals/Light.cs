@@ -34,9 +34,9 @@ namespace RAYTRACER
             float rayCos = Vector3.Dot(ray.Direction, centerDirection);
             if (rayCos < 0 - cosAngle || rayCos > 0 + cosAngle)
             {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
     }
 }
