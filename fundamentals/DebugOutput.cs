@@ -110,12 +110,25 @@ namespace RAYTRACER
 
             Vector2 Direction = end - origin;
 
-            if (End.X < -screen.width / 4 && origin.X > -screen.width / 4)
+            if (End.X < -screen.width / 4 && Origin.X > -screen.width / 4)
             {
                 float lessenwith = -screen.width / 4 - End.X;
                 Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
                 End.X = (int)(End.X + (Direction.X * lessenwith));
                 End.Y = (int)(End.Y + (Direction.Y * lessenwith));
+            }
+
+            if (Origin.X < -screen.width / 4 && End.X < -screen.width / 4)
+            {
+                return;
+            }
+
+            if (Origin.X < -screen.width / 4 && End.X > -screen.width / 4)
+            {
+                float lessenwith = -screen.width / 4 - Origin.X;
+                Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
+                Origin.X = (int)(Origin.X + (Direction.X * lessenwith));
+                Origin.Y = (int)(Origin.Y + (Direction.Y * lessenwith));
             }
 
             // Draw the cut rays.
