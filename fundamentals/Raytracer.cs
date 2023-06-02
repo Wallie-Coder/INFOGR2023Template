@@ -25,8 +25,8 @@ namespace RAYTRACER
         public float getsetFOV { get { return FOV; } set { FOV = value; } }
 
 
-        // samples per pixel
-        private const int samplesPerPixel = 3;
+        // samples per pixel,  if < 10 will cause pixelated edges that change every frame
+        private const int samplesPerPixel = 10;
 
         public Vector3 CamTarget { get { return camTarget; } }
         public Vector3 CamOrigin { get { return camOrigin; } }
@@ -281,11 +281,12 @@ namespace RAYTRACER
                 else
                 {
                     pixelColor += CalculatePixelColor(i, x);
+                    int r = (int)(Math.Clamp(pixelColor.X, 0, 1) * 255);
+                    int g = (int)(Math.Clamp(pixelColor.Y, 0, 1) * 255);
+                    int b = (int)(Math.Clamp(pixelColor.Z, 0, 1) * 255);
+                    screen.Plot(x, i, MyApplication.MixColor(r, g, b));
                 }
-                int r = (int)(Math.Clamp(pixelColor.X, 0, 1) * 255);
-                int g = (int)(Math.Clamp(pixelColor.Y, 0, 1) * 255);
-                int b = (int)(Math.Clamp(pixelColor.Z, 0, 1) * 255);
-                screen.Plot(x, i, MyApplication.MixColor(r, g, b));
+                
             }
         }
 

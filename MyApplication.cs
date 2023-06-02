@@ -15,7 +15,7 @@ namespace Template
         public static bool Multithreading { get { return multithreading; } }
 
 
-        private static bool antiAliasing = false;
+        private static bool antiAliasing = true;
         public static bool AntiAliasing { get { return antiAliasing; } }
 
         DebugOutput debugOutput;
