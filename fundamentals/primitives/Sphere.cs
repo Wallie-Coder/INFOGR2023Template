@@ -14,7 +14,7 @@ namespace RAYTRACER
 
 
         // CONSTRUCTOR
-        public Sphere(Vector3 center, float radius, Vector3 diffuseColor, Vector3 glossyColor, bool specular = false) :base(diffuseColor, glossyColor, specular)
+        public Sphere(Vector3 center, float radius, Vector3 diffuseColor, Vector3 glossyColor, bool specular = false, Textures texture = Textures.None) :base(diffuseColor, glossyColor, specular, texture)
         {
             this.center = center;
             this.radius = radius;
@@ -45,5 +45,26 @@ namespace RAYTRACER
         {
             return -Vector3.Normalize(center - point);
         }
+
+        public override Vector3 GetDiffuseColor(Vector3 input)
+        {
+            if (texture == Textures.Checkerboard)
+            {
+                return CheckerboardSphere(input, center, radius);
+            }
+
+            return diffuseColor;
+        }
+
+        public override Vector3 GetSpecularColor(Vector3 input)
+        {
+            if (texture == Textures.Checkerboard)
+            {
+                return CheckerboardSphere(input, center, radius);
+            }
+
+            return specularColor;
+        }
+
     }
 }

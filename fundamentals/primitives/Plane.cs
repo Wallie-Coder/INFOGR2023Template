@@ -16,13 +16,12 @@ namespace RAYTRACER
         private bool checkerboard;
 
         // CONSTRUCTOR
-        public Plane(Vector3 u, Vector3 v, Vector3 point, Vector3 diffuseColor, Vector3 glossyColor, bool checkerboard = false, bool specular = false) :base(diffuseColor, glossyColor, specular)
+        public Plane(Vector3 u, Vector3 v, Vector3 point, Vector3 diffuseColor, Vector3 glossyColor, bool specular = false, Textures texture = Textures.None) :base(diffuseColor, glossyColor, specular, texture)
         {
             this.normal = Vector3.Normalize(Vector3.Cross(u, v));
             this.point = point;
             this.u = u;
             this.v = v;
-            this.checkerboard = checkerboard;
         }
 
         // CLASS METHODS
@@ -65,11 +64,12 @@ namespace RAYTRACER
             return 0f;
         }
 
+        // if the plane is a checkerboard, get the color from that texture map
         public override Vector3 GetDiffuseColor(Vector3 input)
         {
-            if (checkerboard)
+            if (texture == Textures.Checkerboard)
             {
-                return Checkerboard(input, point, u, v);
+                return CheckerboardPlane(input, point, u, v);
             }
 
             return base.GetDiffuseColor(input);
