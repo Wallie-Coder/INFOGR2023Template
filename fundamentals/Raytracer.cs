@@ -97,30 +97,6 @@ namespace RAYTRACER
             screen.Plot(j, i, MyApplication.MixColor(r, g, b));
         }
 
-                    if (ClosestPtoLight.Item1 == plane)
-                    {
-                        if (shadowRay.LightSource is Spotlight spotlight)
-                        {
-                            if (!spotlight.RayInSpotlight(shadowRay))
-                            {
-                                continue;
-                            }
-                        }
-
-                        // set the color
-                        shadowRay.Color = shadowRay.LightSource.Intensity / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location));
-                        float dot = Vector3.Dot(intersection.Normal, shadowRay.Direction);
-                        Vector3 R = Vector3.Normalize(shadowRay.Direction - 2 * dot * intersection.Normal);
-                        Vector3 V = Vector3.Normalize(camera.Origin - intersection.IntersectionPoint);
-                        double q = Math.Pow(Vector3.Dot(R, V), 10);
-                        pixelColor += shadowRay.Color * ((plane.GetDiffuseColor(intersection.IntersectionPoint) * Math.Max(0, dot)) + p.GetSpecularColor(intersection.IntersectionPoint) * (float)Math.Max(0, q));
-                    }
-                }
-            }
-
-            return pixelColor + p.GetDiffuseColor(intersection.IntersectionPoint) * scene.AmbientLightingIntensity;
-        }
-
         Vector3 ColorFromSamples(Vector3 color, int samplePerPixel)
         {
             float r = color.X;
@@ -331,6 +307,15 @@ namespace RAYTRACER
 
                     if (closestPointToLight.Item1 == plane)
                     {
+
+                        if (shadowRay.LightSource is Spotlight spotlight)
+                        {
+                            if (!spotlight.RayInSpotlight(shadowRay))
+                            {
+                                continue;
+                            }
+                        }
+
                         // set the color
                         shadowRay.Color = shadowRay.LightSource.Intensity / (Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location) * Vector3.Distance(shadowRay.Origin, shadowRay.LightSource.Location));
                         float dot = Vector3.Dot(intersection.Normal, shadowRay.Direction);
