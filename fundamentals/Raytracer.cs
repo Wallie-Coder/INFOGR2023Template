@@ -138,7 +138,7 @@ namespace RAYTRACER
                         continue;
                     }
 
-                    var collide = q.CollisionSphere(ray);
+                    var collide = q.Collision(ray);
                     var conclusion = ray.ConcludeFromCollision(collide.Item1, collide.Item2, collide.Item3);
                     if (conclusion.Item1)
                     {
@@ -150,12 +150,12 @@ namespace RAYTRACER
                 if (p is Plane x)
                 {
 
-                    if (x.CollisionPlane(ray) == 0)
+                    if (x.Collision(ray) == 0)
                     {
                         continue;
                     }
 
-                    intersection = new Intersection(ray, p, x.CollisionPlane(ray));
+                    intersection = new Intersection(ray, p, x.Collision(ray));
                     result.Add(intersection);
                 }
             }
@@ -231,7 +231,7 @@ namespace RAYTRACER
                 ShadowRay shadowRay = shadows[i];
                 if (p is Sphere sphere)
                 {
-                    var shadowCollide = sphere.CollisionSphere(shadowRay);
+                    var shadowCollide = sphere.Collision(shadowRay);
 
                     if (shadowRay.ConcludeFromCollision(shadowCollide.Item1, shadowCollide.Item2, shadowCollide.Item3))
                     {
@@ -261,7 +261,7 @@ namespace RAYTRACER
                 else if (p is Plane plane)
                 {
 
-                    (Primitive, float) closestPointToLight = (p, plane.CollisionPlane(shadowRay));
+                    (Primitive, float) closestPointToLight = (p, plane.Collision(shadowRay));
 
                     shadowRay.Direction = Vector3.Normalize(shadowRay.Direction);
 
@@ -276,17 +276,17 @@ namespace RAYTRACER
                         {
                             Plane x = (Plane)p1;
 
-                            if (x.CollisionPlane(shadowRay) > float.Epsilon)
+                            if (x.Collision(shadowRay) > float.Epsilon)
                             {
-                                if (x.CollisionPlane(shadowRay) < closestPointToLight.Item2)
-                                    closestPointToLight = (x, x.CollisionPlane(shadowRay));
+                                if (x.Collision(shadowRay) < closestPointToLight.Item2)
+                                    closestPointToLight = (x, x.Collision(shadowRay));
                             }
                         }
 
                         if (p1 is Sphere)
                         {
                             Sphere x = (Sphere)p1;
-                            var collision = x.CollisionSphere(shadowRay);
+                            var collision = x.Collision(shadowRay);
                             var conclusion =
                                 shadowRay.ConcludeFromCollision(collision.Item1, collision.Item2, collision.Item3);
 

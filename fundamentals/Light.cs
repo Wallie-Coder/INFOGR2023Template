@@ -5,7 +5,7 @@ namespace RAYTRACER
     public class Light
     {
         // MEMBER VARIABLES
-        Vector3 location, intensity;
+        private Vector3 location, intensity;
         public Vector3 Location { get { return location; } }
         public Vector3 Intensity { get { return intensity; } }
 

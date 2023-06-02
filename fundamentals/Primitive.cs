@@ -11,10 +11,8 @@ namespace RAYTRACER
 
 
         protected bool specular;
-        public bool Specular
-        {
-            get { return specular; }
-        }
+        public bool Specular { get { return specular; } }
+
 
         // enum for textures
         public enum Textures  {

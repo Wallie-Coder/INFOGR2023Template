@@ -137,15 +137,17 @@ namespace RAYTRACER
         // rotates the camera basis according to a pitch and yaw quaternion.
         public void Rotate(Quaternion pitch, Quaternion yaw)
         {
-            Vector3 tempZ = Vector3.Transform(Vector3.UnitZ, pitch);
-            screenZ = Vector3.Transform(tempZ, yaw);
-            Vector3 tempX = Vector3.Transform(Vector3.UnitX, pitch);
-            screenX = Vector3.Transform(tempX, yaw);
-            Vector3 tempY = Vector3.Transform(Vector3.UnitY, pitch);
-            screenY = Vector3.Transform(tempY, yaw);
+            screenZ = Vector3.Transform(Vector3.UnitZ, pitch);
+            screenZ = Vector3.Transform(screenZ, yaw);
+            screenX = Vector3.Transform(Vector3.UnitX, pitch);
+            screenX = Vector3.Transform(screenX, yaw);
+            screenY = Vector3.Transform(Vector3.UnitY, pitch);
+            screenY = Vector3.Transform(screenY, yaw);
+            // normalize the transformed vectors
             screenZ = Vector3.Normalize(screenZ);
             screenX = Vector3.Normalize(screenX);
             screenY = Vector3.Normalize(screenY);
+            //recalculate the screen plane size
             horizontal = cameraWidth * screenX;
             vertical = cameraHeight * screenY;
             CalculatePlane();

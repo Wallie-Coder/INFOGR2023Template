@@ -8,13 +8,16 @@ namespace RAYTRACER
     class DebugOutput
     {
 
-        static private List<(Vector2, Vector2, Vector3)> rayLines = new List<(Vector2 origin, Vector2 end, Vector3 color)>();
+        private static List<(Vector2, Vector2, Vector3)> rayLines = new List<(Vector2 origin, Vector2 end, Vector3 color)>();
         public static List<(Vector2, Vector2, Vector3)> RayLines { get { return rayLines; } }
 
         private List<(Vector2, float)> circles = new List<(Vector2 center, float radius)>();
 
         private Surface screen;
         private Raytracer raytracer;
+
+        private float xScale;
+        private float yScale;
 
 
         private Stopwatch t = new Stopwatch();
@@ -30,13 +33,15 @@ namespace RAYTRACER
 
             foreach(Primitive p in scene.Primitives)
             {
-                if(p.GetType() == typeof(Sphere))
+                if(p is Sphere sphere)
                 {
-                    Sphere P = (Sphere)p;
 
-                    circles.Add((new Vector2(P.Center.X, P.Center.Z), P.Radius));
+                    circles.Add((new Vector2(sphere.Center.X, sphere.Center.Z), sphere.Radius));
                 }
             }
+
+            xScale = 1 / 16f * screen.width / 4;
+            yScale = 1 / 9f * screen.height / 2;
 
             t.Start();
         }
@@ -46,10 +51,6 @@ namespace RAYTRACER
         // draws the sphere and rays from the Camera in the debug screen
         public void Draw()
         {
-            float aspectRatio = screen.width / screen.height;
-            float xScale = 1 / 16f * screen.width / 4;
-            float yScale = 1 / 9f * screen.height / 2;
-
             foreach((Vector2, Vector2, Vector3) r in  rayLines) 
             {
                 PlotLine(new Vector2(r.Item1.X * xScale, r.Item1.Y * yScale), new Vector2(r.Item2.X * xScale, r.Item2.Y * yScale), MyApplication.MixColor((int)r.Item3.X, (int)r.Item3.Y, (int)r.Item3.Z));
@@ -152,7 +153,7 @@ namespace RAYTRACER
 
             screen.Print("fps: " + fps.ToString(), screen.width / 2, screen.height - 140, MyApplication.MixColor(255, 255, 255));
             screen.Print("FOV = " + raytracer.getsetFOV.ToString(), screen.width / 2, screen.height - 180, MyApplication.MixColor(255, 255, 255));
-            screen.Print("multithreading: " + MyApplication.Multithreading, screen.width / 2, screen.height - 160, MyApplication.MixColor(255, 255, 255));
+            screen.Print("multithreading: " + MyApplication.Multithreading.ToString().ToLower(), screen.width / 2, screen.height - 160, MyApplication.MixColor(255, 255, 255));
             fpsCounter++;
         }
     }
