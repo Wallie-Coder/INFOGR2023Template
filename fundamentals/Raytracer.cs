@@ -26,7 +26,7 @@ namespace RAYTRACER
 
 
         // samples per pixel
-        private const int samplesPerPixel = 1;
+        private const int samplesPerPixel = 3;
 
         public Vector3 CamTarget { get { return camTarget; } }
         public Vector3 CamOrigin { get { return camOrigin; } }
@@ -273,7 +273,19 @@ namespace RAYTRACER
             // iterate over the x axis
             for(int x = 0; x < camera.ScreenWidth;x++)
             {
-                SampledPixelColor(i, x);
+                Vector3 pixelColor = new Vector3(0, 0, 0);
+                if (MyApplication.AntiAliasing)
+                {
+                    SampledPixelColor(i, x);
+                }
+                else
+                {
+                    pixelColor += CalculatePixelColor(i, x);
+                }
+                int r = (int)(Math.Clamp(pixelColor.X, 0, 1) * 255);
+                int g = (int)(Math.Clamp(pixelColor.Y, 0, 1) * 255);
+                int b = (int)(Math.Clamp(pixelColor.Z, 0, 1) * 255);
+                screen.Plot(x, i, MyApplication.MixColor(r, g, b));
             }
         }
 

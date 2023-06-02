@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Numerics;
+using Template;
 
 namespace RAYTRACER
 {
@@ -108,8 +109,14 @@ namespace RAYTRACER
         // returns a ray through a given pixel on the real screen.
         public Ray CalculateRay(int x, int y)
         {
-            float v = (x + (float)random.NextDouble());
-            float u = (y + (float)random.NextDouble());
+            float v = x;
+            float u = y;
+            if (MyApplication.AntiAliasing)
+            {
+                v += (float)random.NextDouble();
+                u += (float)random.NextDouble();
+            }
+           
             v /= (screenWidth - 1);
             u /= (screenHeight - 1);
             return new Ray(bottomLeft + v * horizontal + u * vertical - origin, origin);

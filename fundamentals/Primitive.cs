@@ -19,6 +19,7 @@ namespace RAYTRACER
         // enum for textures
         public enum Textures  {
             Checkerboard,
+            WeirdLines,
             None
         }
 
@@ -65,14 +66,14 @@ namespace RAYTRACER
             return diffuseColor;
         }
 
-        protected Vector3 CheckerboardSphere(Vector3 input, Vector3 point, float radius)
+        protected Vector3 WeirdLineSphere(Vector3 input, Vector3 point, float radius)
         {
             float theta = (float)Math.Acos((input.Z - point.Z) / radius);
             float phi = (float)Math.Atan2(input.Y - point.Y, input.X - point.X);
 
             float u = (float)((phi + Math.PI) / (2 * Math.PI));
             float v = (float)(theta / Math.PI);
-            float c = (long)(u * 100000000 + v * 100000000) & 1;
+            float c = (int)(u * 100 + v * 100) & 1;
             if(c == 1)
             {
                 int x = 10;

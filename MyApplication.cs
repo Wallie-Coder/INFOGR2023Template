@@ -14,6 +14,10 @@ namespace Template
         private static bool multithreading = true;
         public static bool Multithreading { get { return multithreading; } }
 
+
+        private static bool antiAliasing = false;
+        public static bool AntiAliasing { get { return antiAliasing; } }
+
         DebugOutput debugOutput;
         int lookatTargetNR = 0;
 
