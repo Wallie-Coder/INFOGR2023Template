@@ -26,16 +26,16 @@ namespace RAYTRACER
             this.ray = ray;
             this.primitive = primitive;
             this.t = t;
-            CalculateIntersection(ray, t);
+            CalculateIntersection();
             SetNormal();
         }
 
         // CLASS METHODS
 
         // calculates the point of intersection
-        void CalculateIntersection(Ray r, float t)
+        void CalculateIntersection()
         {
-            intersection = r.Origin + t * r.Direction;
+            intersection = ray.Origin + t * ray.Direction;
         }
 
         // sets the normal of an intersection

@@ -10,9 +10,8 @@ namespace RAYTRACER
         private Vector3 v;
         public Vector3 GetNormal { get { return normal; } }
 
-        private Object func;
         // a given point on the plane
-        Vector3 point;
+        private Vector3 point;
 
         // CONSTRUCTOR
         public Plane(Vector3 u, Vector3 v, Vector3 point, Vector3 diffuseColor, Vector3 glossyColor, bool specular = false, Textures texture = Textures.None) :base(diffuseColor, glossyColor, specular, texture)
@@ -32,7 +31,7 @@ namespace RAYTRACER
         }
 
         // detects collision between a given ray and the plane if there is a collision and where along the ray it is
-        public float CollisionPlane(Ray ray)
+        public float Collision(Ray ray)
         {
             float t = 0;
             Vector3 rayOrigin = ray.Origin;

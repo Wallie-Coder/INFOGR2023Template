@@ -5,7 +5,7 @@ namespace RAYTRACER
     public class Light
     {
         // MEMBER VARIABLES
-        Vector3 location, intensity;
+        private Vector3 location, intensity;
         public Vector3 Location { get { return location; } }
         public Vector3 Intensity { get { return intensity; } }
 
@@ -23,12 +23,18 @@ namespace RAYTRACER
         // MEMBER VARIABLES
         private Vector3 centerDirection;
         private float cosAngle;
+
+
+        // CONSTRUCTOR
         public Spotlight(Vector3 location, Vector3 intensity, Vector3 centerDirection, int openingAngle) : base(location, intensity)
         {
             this.centerDirection = Vector3.Normalize(centerDirection);
             cosAngle = (float)Math.Cos(openingAngle * (Math.PI / 180));
         }
 
+        // CLASS METHODS
+
+        // checks if a ray is in the spotlight cone
         public bool RayInSpotlight(Ray ray)
         {
             float rayCos = Vector3.Dot(ray.Direction, centerDirection);

@@ -161,7 +161,7 @@ namespace Template
             // increase the FOV of the camera
             if (window.IsKeyDown(Keys.U))
             {
-                raytracer.getsetFOV = raytracer.getsetFOV + 2;
+                raytracer.getsetFOV += 2;
                 if (raytracer.getsetFOV > 150)
                     raytracer.getsetFOV = 150;
                 raytracer.Camera.SetFOV(raytracer.getsetFOV, raytracer.CamOrigin, raytracer.CamTarget);
@@ -170,7 +170,7 @@ namespace Template
             // decrease the FOV of the camera
             if (window.IsKeyDown(Keys.I))
             {
-                raytracer.getsetFOV = raytracer.getsetFOV - 2;
+                raytracer.getsetFOV -= 2;
                 if (raytracer.getsetFOV < 30)
                     raytracer.getsetFOV = 30;
                 raytracer.Camera.SetFOV(raytracer.getsetFOV, raytracer.CamOrigin, raytracer.CamTarget);

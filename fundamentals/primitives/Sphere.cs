@@ -23,7 +23,7 @@ namespace RAYTRACER
         // CLASS METHODS
 
         // detects collision between a given ray and the sphere if there is a collision and where along the ray it is
-        public ValueTuple<double, float, float> CollisionSphere(Ray ray)
+        public ValueTuple<double, float, float> Collision(Ray ray)
         {
             Vector3 CenterOrigin = ray.Origin - center;
             double D;
