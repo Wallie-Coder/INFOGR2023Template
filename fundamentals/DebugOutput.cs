@@ -21,11 +21,6 @@ namespace RAYTRACER
         private float fpsCounter = 0;
         private float fps = 0;
 
-
-
-        private Vector2 sceneSize = new Vector2(20, 20);
-
-
         // CONSTRUCTOR
         public DebugOutput(Raytracer raytracer, Scene scene, Surface screen)
         {
