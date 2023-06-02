@@ -9,7 +9,6 @@ namespace RAYTRACER
     {
 
         static private List<(Vector2, Vector2, Vector3)> rayLines = new List<(Vector2 origin, Vector2 end, Vector3 color)>();
-        static private List<(Vector2, int)> Pixels = new List<(Vector2 Location, int Color)>();
         public static List<(Vector2, Vector2, Vector3)> RayLines { get { return rayLines; } }
 
         private List<(Vector2, float)> circles = new List<(Vector2 center, float radius)>();
@@ -75,12 +74,6 @@ namespace RAYTRACER
                 }
             }
 
-            // NEEDS COMMENT
-            foreach ((Vector2, int) p in Pixels)
-            {
-                SetPixel((int)(p.Item1.X * xScale), (int)(p.Item1.Y * yScale), p.Item2);
-            }
-
             // draw a pixel for the camera
             SetPixel((int)(raytracer.Camera.Origin.X * xScale), (int)(raytracer.Camera.Origin.Z * yScale), MyApplication.MixColor(0, 0, 255));
             DebugInfo();
@@ -105,7 +98,7 @@ namespace RAYTRACER
 
         }
 
-        // NEEDS COMMENT
+        // Plots a Line on the debug screen, but cuts the line off on the left size, so the line does not overlap the scene.
         void PlotLine(Vector2 origin, Vector2 end, int color)
         {
             Vector2 Origin = origin;
@@ -128,7 +121,20 @@ namespace RAYTRACER
                 End.Y = (int)(End.Y + (Direction.Y * lessenwith));
             }
 
-            // Draw the clamped rays
+            if (Origin.X < -screen.width / 4 && End.X < -screen.width / 4)
+            {
+                return;
+            }
+
+            if (Origin.X < -screen.width / 4 && End.X > -screen.width / 4)
+            {
+                float lessenwith = -screen.width / 4 - Origin.X;
+                Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
+                Origin.X = (int)(Origin.X + (Direction.X * lessenwith));
+                Origin.Y = (int)(Origin.Y + (Direction.Y * lessenwith));
+            }
+
+            // Draw the cut rays.
             screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), color);
         }
 
