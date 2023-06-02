@@ -152,9 +152,9 @@ namespace RAYTRACER
                 fpsCounter = 0;
             }
 
-            screen.Print("fps: " + fps.ToString(), 640, screen.height - 140, MyApplication.MixColor(255, 255, 255));
+            screen.Print("fps: " + fps.ToString(), screen.width / 2, screen.height - 140, MyApplication.MixColor(255, 255, 255));
             screen.Print("FOV = " + raytracer.getsetFOV.ToString(), screen.width / 2, screen.height - 180, MyApplication.MixColor(255, 255, 255));
-            screen.Print("multithreading: " + MyApplication.Multithreading, 640, screen.height - 160, MyApplication.MixColor(255, 255, 255));
+            screen.Print("multithreading: " + MyApplication.Multithreading, screen.width / 2, screen.height - 160, MyApplication.MixColor(255, 255, 255));
             fpsCounter++;
         }
     }

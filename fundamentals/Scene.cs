@@ -14,7 +14,7 @@ namespace RAYTRACER
         public List<Primitive> Primitives { get { return primitives; } }
 
 
-        Vector3 ambientLightingIntensity = (new Vector3(60, 60, 60)) / 255;
+        Vector3 ambientLightingIntensity = (new Vector3(15, 15, 15)) / 255;
         public Vector3 AmbientLightingIntensity { get { return ambientLightingIntensity; } }
         
         
@@ -23,7 +23,7 @@ namespace RAYTRACER
         {
             lights = new List<Light>
             {
-                new Light(new Vector3(0, -2, 0), new Vector3(10f, 10f, 10f)),
+                new Light(new Vector3(0, -2, 0), new Vector3(20, 20, 20)),
                 //new Light(new Vector3(-2, -4, 5), new Vector3(10f, 10f, 10f)),
                 //new Light(new Vector3(0,-9,0), new Vector3(70,70,70))
                 //new Spotlight(new Vector3(2,-2,3), new Vector3(10,10,10), new Vector3(0,2,2), 5)

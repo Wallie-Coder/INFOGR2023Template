@@ -94,7 +94,7 @@ namespace RAYTRACER
             bottomLeft = origin - horizontal / 2 - vertical / 2 + screenZ;
         }
 
-        // Calcualte the screens size base on new vertical FOV
+        // caclulate the screens size base on new vertical FOV
         public void SetFOV(float fov, Vector3 lookFrom, Vector3 lookAt)
         {
             // calculate the screens size based on vertical FOV
