@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Linq;
+using System.Numerics;
 
 namespace RAYTRACER
 {
@@ -90,6 +91,18 @@ namespace RAYTRACER
             topLeft = origin - horizontal / 2 + vertical / 2 + screenZ;
             bottomRight = origin + horizontal / 2 - vertical / 2 + screenZ;
             bottomLeft = origin - horizontal / 2 - vertical / 2 + screenZ;
+        }
+
+        // Calcualte the screens size base on new vertical FOV
+        public void SetFOV(float fov, Vector3 lookFrom, Vector3 lookAt)
+        {
+            // calculate the screens size based on vertical FOV
+            float theta = (float)Math.Tan(fov * (float)(Math.PI / 180) / 2);
+            cameraHeight = theta * 2;
+            cameraWidth = aspectRatio * cameraHeight;
+            horizontal = cameraWidth * screenX;
+            vertical = cameraHeight * screenY;
+            CalculatePlane();
         }
 
         // returns a ray through a given pixel on the real screen.

@@ -15,6 +15,7 @@ namespace Template
         public static bool Multithreading { get { return multithreading; } }
 
         DebugOutput debugOutput;
+        int lookatTargetNR = 0;
 
         // CONSTRUCTOR
         public MyApplication(Surface screen, OpenTKApp window)
@@ -136,11 +137,54 @@ namespace Template
             // set the Camera to the starting orientation and position.
             if (window.IsKeyDown(Keys.R))
             {
+                // reset the FOV
+                raytracer.getsetFOV = 45;
+                raytracer.Camera.SetFOV(raytracer.getsetFOV, raytracer.CamOrigin, raytracer.CamTarget);
+
+                // reset the camera
                 raytracer.Camera.Origin = new System.Numerics.Vector3(0, 0, 0);
                 raytracer.Camera.CalculateBase(raytracer.CamOrigin, raytracer.CamTarget, Vector3.UnitY);
                 raytracer.Camera.Yaw = (float)Math.Atan2(raytracer.Camera.ScreenZ.X, raytracer.Camera.ScreenZ.Z) * (float)(180 / Math.PI);
                 raytracer.Camera.Pitch = (float)Math.Asin(raytracer.Camera.ScreenZ.Y) * (float)(180 / Math.PI);
             }
+
+            // increase the FOV of the camera
+            if (window.IsKeyDown(Keys.U))
+            {
+                raytracer.getsetFOV = raytracer.getsetFOV + 2;
+                if (raytracer.getsetFOV > 150)
+                    raytracer.getsetFOV = 150;
+                raytracer.Camera.SetFOV(raytracer.getsetFOV, raytracer.CamOrigin, raytracer.CamTarget);
+            }
+
+            // decrease the FOV of the camera
+            if (window.IsKeyDown(Keys.I))
+            {
+                raytracer.getsetFOV = raytracer.getsetFOV - 2;
+                if (raytracer.getsetFOV < 30)
+                    raytracer.getsetFOV = 30;
+                raytracer.Camera.SetFOV(raytracer.getsetFOV, raytracer.CamOrigin, raytracer.CamTarget);
+            }
+
+            // change target to look at (only looks at spheres, will skip the planes)
+            if (window.IsKeyPressed(Keys.T))
+            {
+                if (raytracer.Scene.Primitives[lookatTargetNR] is Sphere)
+                {
+                    Sphere s = (Sphere)raytracer.Scene.Primitives[lookatTargetNR];
+                    Vector3 lookat = s.Center;
+                    lookat = Vector3.Normalize(lookat);
+                    raytracer.Camera.CalculateBase(raytracer.Camera.Origin, lookat, new Vector3(0, 1, 0));
+                }
+
+                lookatTargetNR++;
+                if(lookatTargetNR + 1 >= raytracer.Scene.Primitives.Count)
+                {
+                    lookatTargetNR = 0;
+                }
+            }
+
+
 
             // factor in the changed base and position of the camera to recalculate the camera screen
             raytracer.Camera.CalculatePlane();
