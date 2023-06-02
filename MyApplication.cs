@@ -183,7 +183,6 @@ namespace Template
                 {
                     Sphere s = (Sphere)raytracer.Scene.Primitives[lookatTargetNR];
                     Vector3 lookat = s.Center;
-                    lookat = Vector3.Normalize(lookat);
                     raytracer.Camera.CalculateBase(raytracer.Camera.Origin, lookat, new Vector3(0, 1, 0));
                 }
 
