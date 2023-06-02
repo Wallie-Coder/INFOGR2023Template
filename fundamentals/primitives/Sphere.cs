@@ -48,6 +48,7 @@ namespace RAYTRACER
 
         public override Vector3 GetDiffuseColor(Vector3 input)
         {
+            // the formula for checkerboard on spheres in incorrect, always results in a pure black sphere
             if (texture == Textures.Checkerboard)
             {
                 return CheckerboardSphere(input, center, radius);
@@ -58,6 +59,7 @@ namespace RAYTRACER
 
         public override Vector3 GetSpecularColor(Vector3 input)
         {
+            // the formula for checkerboard on spheres in incorrect, always results in a pure black sphere
             if (texture == Textures.Checkerboard)
             {
                 return CheckerboardSphere(input, center, radius);

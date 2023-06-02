@@ -16,11 +16,13 @@ namespace RAYTRACER
             get { return specular; }
         }
 
+        // enum for textures
         public enum Textures  {
             Checkerboard,
             None
         }
 
+        // the texture of the primitive
         protected Textures texture;
 
         // CONSTRUCTOR

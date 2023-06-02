@@ -64,7 +64,7 @@ namespace RAYTRACER
             return 0f;
         }
 
-        // if the plane is a checkerboard, get the color from that texture map
+        // use the color from a specific texture map or the regular color
         public override Vector3 GetDiffuseColor(Vector3 input)
         {
             if (texture == Textures.Checkerboard)
@@ -72,7 +72,16 @@ namespace RAYTRACER
                 return CheckerboardPlane(input, point, u, v);
             }
 
-            return base.GetDiffuseColor(input);
+            return diffuseColor;
+        }
+
+        public override Vector3 GetSpecularColor(Vector3 input)
+        {
+            if (texture == Textures.Checkerboard)
+            {
+                return CheckerboardPlane(input, point, u, v);
+            }
+            return specularColor;
         }
     }
 }
