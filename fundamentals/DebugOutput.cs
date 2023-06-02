@@ -101,41 +101,35 @@ namespace RAYTRACER
         // Plots a Line on the debug screen, but cuts the line off on the left size, so the line does not overlap the scene.
         void PlotLine(Vector2 origin, Vector2 end, int color)
         {
-            Vector2 Origin = origin;
-            Vector2 End = end;
-
-            Origin.Y = -Origin.Y;
-            End.Y = -End.Y;
-
             origin.Y = -origin.Y;
             end.Y = -end.Y;
 
-            Vector2 Direction = end - origin;
+            Vector2 direction = end - origin;
 
             // clamp rays 
-            if (End.X < -screen.width / 4 && origin.X > -screen.width / 4)
+            if (end.X < -screen.width / 4 && origin.X > -screen.width / 4)
             {
-                float lessenwith = -screen.width / 4 - End.X;
-                Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
-                End.X = (int)(End.X + (Direction.X * lessenwith));
-                End.Y = (int)(End.Y + (Direction.Y * lessenwith));
+                float lessenwith = -screen.width / 4 - end.X;
+                direction = new Vector2(direction.X / direction.X, direction.Y / direction.X);
+                end.X = (int)(end.X + (direction.X * lessenwith));
+                end.Y = (int)(end.Y + (direction.Y * lessenwith));
             }
 
-            if (Origin.X < -screen.width / 4 && End.X < -screen.width / 4)
+            if (origin.X < -screen.width / 4 && end.X < -screen.width / 4)
             {
                 return;
             }
 
-            if (Origin.X < -screen.width / 4 && End.X > -screen.width / 4)
+            if (origin.X < -screen.width / 4 && end.X > -screen.width / 4)
             {
-                float lessenwith = -screen.width / 4 - Origin.X;
-                Direction = new Vector2(Direction.X / Direction.X, Direction.Y / Direction.X);
-                Origin.X = (int)(Origin.X + (Direction.X * lessenwith));
-                Origin.Y = (int)(Origin.Y + (Direction.Y * lessenwith));
+                float lessenwith = -screen.width / 4 - origin.X;
+                direction = new Vector2(direction.X / direction.X, direction.Y / direction.X);
+                origin.X = (int)(origin.X + (direction.X * lessenwith));
+                origin.Y = (int)(origin.Y + (direction.Y * lessenwith));
             }
 
             // Draw the cut rays.
-            screen.Line((int)(Origin.X + screen.width / 4 + screen.width / 2), (int)(Origin.Y + screen.height / 2), (int)(End.X + screen.width / 4 + screen.width / 2), (int)(End.Y + screen.height / 2), color);
+            screen.Line((int)(origin.X + screen.width / 4 + screen.width / 2), (int)(origin.Y + screen.height / 2), (int)(end.X + screen.width / 4 + screen.width / 2), (int)(end.Y + screen.height / 2), color);
         }
 
         // prints info about the camera etc. on the debugscreen
